@@ -5,7 +5,7 @@ class User extends Genome {
     const ID = '@';
 
     public static function read($id, $lot = [], $fail = false) {
-        global $url;
+        extract(Lot::get(null, []));
         $user = ENGINE . DS . 'log' . DS . 'user';
         $state = Extend::state(Path::D(__DIR__, 2));
         if ($path = File::exist($user . DS . $id . '.page')) {
