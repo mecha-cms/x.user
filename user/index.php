@@ -1,14 +1,10 @@
 <?php
 
-function fn_user($data) {
-    global $config;
-    $s = isset($data['author']) ? $data['author'] : $config->page->author;
-    if (isset($s) && is_string($s) && strpos($s, User::ID) === 0) {
-        $user = new User(substr($s, 1));
-        $data['author'] = $user;
-        Config::set('page.author', $user);
+function fn_user($author) {
+    if (is_string($author) && strpos($author, User::ID) === 0) {
+        return new User(substr($author, 1));
     }
-    return $data;
+    return $author;
 }
 
-Hook::set(['fire', 'page.input'], 'fn_user', 1);
+Hook::set('page.author', 'fn_user', 1);

@@ -4,25 +4,20 @@ class User extends Genome {
 
     const ID = '@';
 
-    public static function read($id, $lot = [], $fail = false) {
-        extract(Lot::get(null, []));
-        $user = ENGINE . DS . 'log' . DS . 'user';
-        $state = Extend::state(Path::D(__DIR__, 2));
-        if ($path = File::exist($user . DS . $id . '.page')) {
-            return Page::open($path)->data('url', function($data) use($user, $state, $id, $url) {
-                $s = str_replace([$user . DS, $user], "", Path::D($data['path']));
-                return $url . '/' . $state['slug'] . '/' . ($s ? '/' . $s : "") . $id;
-            })->read($lot, 'user');
-        }
-        return $fail;
-    }
+    public $page = null;
+    public $id = "";
 
-    protected $lot = [];
-    protected $id = "";
-
-    public function __construct($id, $lot = []) {
-        $this->lot = self::read($id, $lot, []);
+    public function __construct($id, $lot = [], $NS = 'user') {
         $this->id = $id;
+        extract(Lot::get(null, []));
+        $folder = ENGINE . DS . 'log' . DS . 'user';
+        $state = Extend::state(Path::D(__DIR__, 2));
+        if ($path = File::exist($folder . DS . $this->id . '.page')) {
+            $page = new Page($path, $lot, $NS);
+            $s = To::url(str_replace([$folder . DS, $folder], "", Path::D($path)));
+            $page->url = $url . '/' . $state['slug'] . '/' . ($s ? '/' . $s : "") . $this->id;
+            $this->page = $page;
+        }
     }
 
     public function __call($key, $lot) {
@@ -37,17 +32,17 @@ class User extends Genome {
     }
 
     public function __set($key, $value = null) {
-        $this->lot[$key] = $value;
+        return $this->page->{$key} = $value;
     }
 
     public function __get($key) {
-        return array_key_exists($key, $this->lot) ? o($this->lot[$key]) : "";
+        return $this->page->{$key};
     }
 
     public function __toString() {
-        $bucket = $this->lot;
+        $page = $this->page;
         $id = $this->id;
-        return array_key_exists('author', $bucket) ? $bucket['author'] : self::ID . (array_key_exists('id', $bucket) ? $bucket['id'] : $this->id);
+        return $page->author ? $page->author : self::ID . ($page->id ?: $id);
     }
 
 }
