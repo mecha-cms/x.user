@@ -9,13 +9,13 @@ class User extends Genome {
 
     public function __construct($id, $lot = [], $NS = 'user') {
         $this->id = $id;
-        extract(Lot::get(null, []));
+        global $url;
         $folder = ENGINE . DS . 'log' . DS . 'user';
         $state = Extend::state(Path::D(__DIR__, 2));
         if ($path = File::exist($folder . DS . $this->id . '.page')) {
             $page = new Page($path, $lot, $NS);
-            $s = To::url(str_replace([$folder . DS, $folder], "", Path::D($path)));
-            $page->url = $url . '/' . $state['slug'] . '/' . ($s ? '/' . $s : "") . $this->id;
+            $s = Path::F($path, $folder);
+            $page->url = $url . '/' . $state['slug'] . '/' . ($s ? '/' . $s : "");
             $this->page = $page;
         }
     }
