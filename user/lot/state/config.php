@@ -1,6 +1,3 @@
 <?php
 
-return [
-    'slug' => 'user',
-    'page' => []
-];
+return ['path' => 'user'];
