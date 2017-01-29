@@ -11,14 +11,13 @@ class User extends Genome {
         $this->key = $id;
         global $url;
         $folder = ENGINE . DS . 'log' . DS . 'user';
-        $state = Extend::state(Path::D(__DIR__, 2));
         if ($path = File::exist($folder . DS . $id . '.page')) {
             if (!array_key_exists('key', $lot)) {
                 $lot['key'] = $id;
             }
             $page = new Page($path, $lot, $NS);
             $s = Path::F($path, $folder);
-            $page->url = $url . '/' . $state['path'] . '/' . ($s ? '/' . $s : "");
+            $page->url = $url . '/' . Extend::state(Path::D(__DIR__, 2), 'path', 'user') . '/' . ($s ? '/' . $s : "");
             $this->page = $page;
         }
     }
