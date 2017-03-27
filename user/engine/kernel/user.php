@@ -17,8 +17,10 @@ class User extends Genome {
             }
             $page = new Page($path, $lot, $NS);
             $s = Path::F($path, $folder);
-            $page->url = $url . '/' . Extend::state(Path::D(__DIR__, 2), 'path', 'user') . '/' . ($s ? '/' . $s : "");
+            $page->url = $url . '/' . Extend::state(Path::D(__DIR__, 2), 'path', 'user') . ($s ? '/' . $s : "");
             $this->page = $page;
+        } else {
+            $this->page = new Page(null, [], $NS);
         }
         self::$__instance__[] = $this;
     }
