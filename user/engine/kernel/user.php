@@ -2,8 +2,6 @@
 
 class User extends Genome {
 
-    const ID = '@';
-
     public $page = null;
     public $key = "";
 
@@ -16,7 +14,7 @@ class User extends Genome {
             }
             $page = new Page($path, $lot, $NS);
             $s = Path::F($path, USER);
-            $page->url = $url . '/' . Extend::state(Path::D(__DIR__, 2), 'path', 'user') . ($s ? '/' . $s : "");
+            $page->url = $url . '/' . Extend::state(Path::N(__FILE__), 'path') . ($s ? '/' . $s : "");
             $this->page = $page;
         } else {
             $this->page = new Page(null, [], $NS);
@@ -47,7 +45,7 @@ class User extends Genome {
     public function __toString() {
         $page = $this->page;
         $key = $this->key;
-        return $page->author ? $page->author : self::ID . ($page->key ?: $key);
+        return $page->author ? $page->author : '@' . ($page->key ?: $key);
     }
 
 }
