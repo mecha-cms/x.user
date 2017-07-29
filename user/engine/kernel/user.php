@@ -19,10 +19,10 @@ class User extends Genome {
         } else {
             $this->page = new Page(null, [], $NS);
         }
-        self::$__instance__[] = $this;
+        parent::__construct();
     }
 
-    public function __call($key, $lot) {
+    public function __call($key, $lot = []) {
         $fail = array_shift($lot);
         $fail_alt = array_shift($lot);
         $x = $this->__get($key);
