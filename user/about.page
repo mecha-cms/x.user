@@ -3,7 +3,64 @@ title: Users
 description: Rich user data.
 author: Taufik Nurrohman
 type: Markdown
-version: 1.2.0
+version: 1.2.1
 ...
+
+### Without User Extension
+
+The page:
+
+~~~ .yaml
+---
+title: Page Title
+author: Taufik Nurrohman
+...
+
+Page content.
+~~~
+
+The property call:
+
+~~~ .php
+<?php echo $page->author; ?>
+~~~
+
+### With User Extension
+
+The page:
+
+~~~ .yaml
+---
+title: Page Title
+author: @ta-tau-taufik
+...
+
+Page content.
+~~~
+
+The user file as `lot\user\ta-tau-taufik.page`:
+
+~~~ .yaml
+---
+link: http://example.com
+author: Taufik Nurrohman
+...
+
+Page content.
+~~~
+
+The property call:
+
+~~~ .html
+<a href="<?php echo $page->author->link; ?>" id="<?php echo $page->author->key; ?>">
+  <?php echo $page->author; ?>
+</a>
+~~~
+
+or:
+
+~~~ .php
+<?php echo $page->author; ?>
+~~~
 
 <!-- block:donate -->
