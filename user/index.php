@@ -14,4 +14,4 @@ function fn_user($author) {
     return $author;
 }
 
-Hook::set('page.author', 'fn_user', 1);
+Hook::set('*.author', 'fn_user', 1);
