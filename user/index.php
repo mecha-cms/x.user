@@ -9,7 +9,7 @@ if (!Folder::exist($f)) {
 
 function fn_user($author) {
     if (is_string($author) && strpos($author, '@') === 0) {
-        return new User(str_replace('@', "", $author));
+        return new User(substr($author, 1));
     }
     return $author;
 }

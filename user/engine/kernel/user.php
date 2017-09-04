@@ -5,7 +5,7 @@ class User extends Genome {
     public $page = null;
     public $key = "";
 
-    public function __construct($id, $lot = [], $NS = 'user') {
+    public function __construct($id, $lot = [], $NS = ['*', 'user']) {
         $this->key = $id;
         global $url;
         if ($path = File::exist(USER . DS . $id . '.page')) {
@@ -40,6 +40,15 @@ class User extends Genome {
 
     public function __get($key) {
         return $this->page->{$key};
+    }
+
+    // Fix case for `isset($page->key)` or `!empty($page->key)`
+    public function __isset($key) {
+        return !!$this->__get($key);
+    }
+
+    public function __unset($key) {
+        $this->__set($key, null);
     }
 
     public function __toString() {
