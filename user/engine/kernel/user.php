@@ -2,59 +2,49 @@
 
 class User extends Genome {
 
-    public $page = null;
-    public $key = "";
+    private $lot = null;
 
     public function __construct($id, $lot = [], $NS = ['*', 'user']) {
-        $this->key = $id;
-        global $url;
-        if ($path = File::exist(USER . DS . $id . '.page')) {
-            if (!array_key_exists('key', $lot)) {
-                $lot['key'] = $id;
-            }
-            $page = new Page($path, $lot, $NS);
-            $s = Path::F($path, USER);
-            $page->url = $url . '/' . Extend::state(Path::N(__FILE__), 'path') . ($s ? '/' . $s : "");
-            $this->page = $page;
-        } else {
-            $this->page = new Page(null, [], $NS);
+        $input = File::exist(USER . DS . $id . '.page', null);
+        $this->lot = new Page($input, $lot, $NS);
+        if (!$this->lot->key) {
+            $this->lot->key = $id;
         }
-        parent::__construct();
     }
 
     public function __call($key, $lot = []) {
-        $fail = array_shift($lot);
-        $fail_alt = array_shift($lot);
-        $x = $this->__get($key);
-        if (is_string($fail) && strpos($fail, '~') === 0) {
-            return call_user_func(substr($fail, 1), $x !== null ? $x : $fail_alt);
-        } else if ($fail instanceof \Closure) {
-            return call_user_func($fail, $x !== null ? $x : $fail_alt);
+        if (!self::kin($key)) {
+            $value = $this->lot->{$key};
+            $s = array_shift($lot) ?: null;
+            if (is_string($s) && strpos($s, '~') === 0) {
+                return call_user_func(substr($s, 1), $value);
+            } else if ($s instanceof \Closure) {
+                return call_user_func($s, $value);
+            }
+            return $value !== null ? $value : $s;
         }
-        return $x !== null ? $x : $fail;
+        return parent::__call($key, $lot);
     }
 
     public function __set($key, $value = null) {
-        return $this->page->{$key} = $value;
+        return $this->lot->{$key} = $value;
     }
 
     public function __get($key) {
-        return $this->page->{$key};
+        return $this->lot->{$key};
     }
 
-    // Fix case for `isset($page->key)` or `!empty($page->key)`
+    // Fix case for `isset($user->key)` or `!empty($user->key)`
     public function __isset($key) {
-        return !!$this->__get($key);
+        return !!$this->lot->{$key};
     }
 
     public function __unset($key) {
-        $this->__set($key, null);
+        $this->lot->{$key} = null;
     }
 
     public function __toString() {
-        $page = $this->page;
-        $key = $this->key;
-        return $page->author ? $page->author : '@' . ($page->key ?: $key);
+        return $this->lot->author('@' . $this->lot->key);
     }
 
 }
