@@ -13,13 +13,11 @@ class User extends Genome {
     }
 
     public function __call($key, $lot = []) {
-        if (!self::kin($key)) {
+        if (!self::_($key)) {
             $value = $this->lot->{$key};
             $s = array_shift($lot) ?: null;
-            if (is_string($s) && strpos($s, '~') === 0) {
-                return call_user_func(substr($s, 1), $value);
-            } else if ($s instanceof \Closure) {
-                return call_user_func($s, $value);
+            if ($s instanceof \Closure) {
+                return call_user_func($s, $value, $this);
             }
             return $value !== null ? $value : $s;
         }
@@ -44,7 +42,7 @@ class User extends Genome {
     }
 
     public function __toString() {
-        return $this->lot->author('@' . $this->lot->key);
+        return $this->lot->author('@' . $this->lot->key) . "";
     }
 
 }
