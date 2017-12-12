@@ -4,9 +4,9 @@ class User extends Genome {
 
     private $lot = null;
 
-    public function __construct($id, $lot = [], $NS = ['*', 'user']) {
+    public function __construct($id, $lot = [], $NS = []) {
         $input = File::exist(USER . DS . $id . '.page', null);
-        $this->lot = new Page($input, $lot, $NS);
+        $this->lot = new Page($input, $lot, array_replace([1 => __c2f__(static::class, '_', '\\')], $NS));
         if (!$this->lot->key) {
             $this->lot->key = $id;
         }
