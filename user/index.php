@@ -15,3 +15,5 @@ function fn_user($author) {
 }
 
 Hook::set('*.author', 'fn_user', 1);
+
+include __DIR__ . DS . 'lot' . DS . 'worker' . DS . 'route.php';

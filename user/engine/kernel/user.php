@@ -6,10 +6,8 @@ class User extends Genome {
 
     public function __construct($id, $lot = [], $NS = []) {
         $input = File::exist(USER . DS . $id . '.page', null);
-        $this->lot = new Page($input, $lot, array_replace([
-            X, // TODO: re-enable the `*.key` hook
-            __c2f__(static::class, '_', '\\')
-        ], $NS));
+        $this->lot = new Page($input, $lot, array_replace([1 => __c2f__(static::class, '_', '\\')], $NS));
+        $this->lot->url = $GLOBALS['URL']['$'] . '/' . Extend::state('user', 'path') . '/' . $id;
         if (!$this->lot->key) {
             $this->lot->key = $id;
         }
@@ -45,7 +43,7 @@ class User extends Genome {
     }
 
     public function __toString() {
-        return $this->lot->author('@' . $this->lot->key) . "";
+        return $this->lot->{'$'}('@' . $this->lot->key) . "";
     }
 
 }

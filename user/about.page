@@ -3,7 +3,7 @@ title: User
 description: Rich user data.
 author: Taufik Nurrohman
 type: Markdown
-version: 1.3.4
+version: 1.4.0
 ...
 
 ### Without User Extension
@@ -42,8 +42,8 @@ The user file as `lot\user\ta-tau-taufik.page`:
 
 ~~~ .yaml
 ---
+$: Taufik Nurrohman
 link: http://example.com
-author: Taufik Nurrohman
 ...
 
 Page content.
