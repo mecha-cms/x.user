@@ -1,0 +1,10 @@
+---
+type: YAML
+...
+
+message_error_token: Invalid token.
+message_error_user_or_pass: Invalid user or pass value.
+message_error_void_field: Please fill out the %{0}% field.
+
+message_success_user_enter: Logged in.
+message_success_user_exit: Logged out.
