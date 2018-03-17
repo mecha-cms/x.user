@@ -28,6 +28,8 @@ Route::set($path, function() use($path, $language, $site) {
                 Message::success('user_exit');
                 // Trigger the hook!
                 Hook::fire('on.user.exit', [USER . DS . $key . '.page', null]);
+                // Redirect to the log in page by default!
+                Guardian::kick($path . HTTP::query(['kick' => isset($r['kick']) ? $r['kick'] : false]));
             }
         // Log in!
         } else {
@@ -73,7 +75,7 @@ Route::set($path, function() use($path, $language, $site) {
                         // Show success message!
                         Message::success('user_enter');
                         // Redirect to the home page by default!
-                        Guardian::kick(isset($r['kick']) ? $r['kick'] : "");
+                        Guardian::kick((isset($r['kick']) ? $r['kick'] : "") . HTTP::query(['kick' => false]));
                     } else {
                         Message::error('user_or_pass');
                     }
@@ -86,7 +88,7 @@ Route::set($path, function() use($path, $language, $site) {
             Request::save('post');
             Request::delete('post', 'pass');
         }
-        Guardian::kick();
+        Guardian::kick($path . HTTP::query());
     }
     Shield::attach(__DIR__ . DS . '..' . DS . 'user.php');
 }, 20);
