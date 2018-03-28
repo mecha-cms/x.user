@@ -2,6 +2,8 @@
 
 $path = Extend::state('user', 'path');
 
+Config::set('is.enter', Is::user());
+
 Route::set($path, function() use($path, $language, $site) {
     $is_enter = Is::user();
     Config::set('page.title', new Anemon([$language->{$is_enter ? 'exit' : 'enter'}, $site->title], ' &#x00B7; '));
@@ -56,7 +58,7 @@ Route::set($path, function() use($path, $language, $site) {
                     // Validate password hash!
                     if (strpos($secret, X) === 0) {
                         $enter = password_verify($pass . ' ' . $key, substr($secret, 1));
-                    // Validate password!
+                    // Validate password text!
                     } else {
                         $enter = $pass === $secret;
                     }
@@ -90,6 +92,11 @@ Route::set($path, function() use($path, $language, $site) {
         }
         Guardian::kick($path . HTTP::query());
     }
+    Config::set('is', [
+        'error' => false,
+        'page' => true,
+        'user' => true
+    ]);
     Shield::attach(__DIR__ . DS . '..' . DS . 'user.php');
 }, 20);
 
@@ -98,16 +105,20 @@ Route::set($path . '/%s%', function($id) use($path, $site) {
         USER . DS . $id . '.page',
         USER . DS . $id . '.archive'
     ])) {
-        Shield::abort();
+        Config::set('is.error', 404);
+        return Shield::abort('404/' . $path . '/' . $id);
     }
-    $page = new Page($file);
-    if ($title = $page->{'$'}) {
-        $page->title = $title;
+    $user = new User($file);
+    if ($title = $user->{'$'}) {
+        $user->author = $user->title = $title;
     }
-    Config::set('page.title', new Anemon(['@' . $id . ' (' . $title . ')', $site->title], ' &#x00B7; '));
-    Lot::set([
-        'page' => $page,
-        'pages' => []
+    Config::set('page.title', new Anemon([$user->key . ' (' . $title . ')', $site->title], ' &#x00B7; '));
+    Lot::set('page', $user);
+    Config::set('is', [
+        'active' => Is::user($user->key),
+        'error' => false,
+        'page' => $user->path,
+        'user' => $user->key
     ]);
-    Shield::attach(($site->is = 'page') . '/' . $path . '/' . $id);
+    Shield::attach('page/' . $path . '/' . $id);
 }, 20);

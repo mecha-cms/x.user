@@ -1,49 +1,20 @@
 <?php
 
-class User extends Genome {
+class User extends Page {
 
-    private $lot = null;
-
-    public function __construct($id, $lot = [], $NS = []) {
-        $input = File::exist(USER . DS . $id . '.page', null);
-        $this->lot = new Page($input, $lot, array_replace([1 => __c2f__(static::class, '_', '\\')], $NS));
-        $this->lot->url = $GLOBALS['URL']['$'] . '/' . Extend::state('user', 'path') . '/' . $id;
-        if (!$this->lot->key) {
-            $this->lot->key = $id;
-        }
-    }
-
-    public function __call($key, $lot = []) {
-        if (!self::_($key)) {
-            $value = $this->lot->{$key};
-            $s = array_shift($lot) ?: null;
-            if ($s instanceof \Closure) {
-                return call_user_func($s, $value, $this);
-            }
-            return $value !== null ? $value : $s;
-        }
-        return parent::__call($key, $lot);
-    }
-
-    public function __set($key, $value = null) {
-        return $this->lot->{$key} = $value;
-    }
-
-    public function __get($key) {
-        return $this->lot->{$key};
-    }
-
-    // Fix case for `isset($user->key)` or `!empty($user->key)`
-    public function __isset($key) {
-        return !!$this->lot->{$key};
-    }
-
-    public function __unset($key) {
-        $this->lot->{$key} = null;
+    public function __construct($input = [], $lot = [], $NS = []) {
+        global $url;
+        parent::__construct($input, array_replace([
+            'key' => is_string($input) ? '@' . ($n = Path::N($input)) : null,
+            'url' => isset($n) ? $url . '/' . Extend::state('user', 'path') . '/' . $n : null
+        ], $lot), $NS);
     }
 
     public function __toString() {
-        return $this->lot->{'$'}('@' . $this->lot->key) . "";
+        if (!isset($this->lot['$'])) {
+            return $this->__call('key');
+        }
+        return parent::__toString();
     }
 
 }

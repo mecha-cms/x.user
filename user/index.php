@@ -13,9 +13,15 @@ r(__DIR__ . DS . 'engine' . DS . 'plug', [
     'is.php'
 ], null, Lot::get(null, []));
 
+// Store user state to registry…
+$state = Extend::state('user');
+if (!empty($state['user'])) {
+    Config::alt(['user' => $state['user']]);
+}
+
 function fn_user($author) {
     if (is_string($author) && strpos($author, '@') === 0) {
-        return new User(substr($author, 1));
+        return new User(USER . DS . substr($author, 1) . '.page');
     }
     return $author;
 }

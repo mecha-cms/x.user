@@ -5,7 +5,7 @@
   <p title="<?php echo $language->pass; ?>"><?php echo Form::password('pass', null, $language->pass, ['class[]' => ['input', 'block']]); ?></p>
   <p><?php echo Form::submit('v', 1, $language->enter, ['class[]' => ['button']]); ?></p>
   <?php else: ?>
-  <p style="text-align:center;"><?php echo Form::submit('x', $is_user, $language->exit, ['class[]' => ['button'], 'title' => $is_user]) . ' ' . HTML::a($language->home, '/', false, ['class[]' => ['button']]); ?></p>
+  <p style="text-align:center;"><?php echo Form::submit('x', $is_user, $language->exit, ['class[]' => ['button'], 'title' => $is_user]) . ' ' . HTML::a($language->home, $url, false, ['class[]' => ['button']]); ?></p>
   <?php endif; ?>
   <?php echo Form::hidden('token', $token); ?>
   <?php echo Form::hidden('kick', Request::get('kick', $url->previous)); ?>

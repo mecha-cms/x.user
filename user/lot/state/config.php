@@ -1,3 +1,8 @@
 <?php
 
-return ['path' => 'user'];
+return [
+    'path' => 'user',
+    'user' => [
+        'status' => 1
+    ]
+];
