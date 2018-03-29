@@ -7,7 +7,7 @@ Config::set('is.enter', Is::user());
 Route::set($path, function() use($path, $language, $site) {
     $is_enter = Is::user();
     Config::set('page.title', new Anemon([$language->{$is_enter ? 'exit' : 'enter'}, $site->title], ' &#x00B7; '));
-    if ($r = Request::post()) {
+    if ($r = HTTP::post()) {
         $key = isset($r['key']) ? $r['key'] : null;
         $pass = isset($r['pass']) ? $r['pass'] : null;
         $token = isset($r['token']) ? $r['token'] : null;
@@ -50,7 +50,7 @@ Route::set($path, function() use($path, $language, $site) {
                 if (file_exists($u = USER . DS . $key . '.page')) {
                     // Reset password by deleting `pass.data` manually, then log in!
                     if (!file_exists($f = USER . DS . $key . DS . 'pass.data')) {
-                        File::write(X . password_hash($pass . ' ' . $key, PASSWORD_DEFAULT))->saveTo($f, 0600);
+                        File::set(X . password_hash($pass . ' ' . $key, PASSWORD_DEFAULT))->saveTo($f, 0600);
                         // Message::success('create', [$language->pass, '<em>' . $pass . '</em>']);
                     }
                     $enter = false;
@@ -65,7 +65,7 @@ Route::set($path, function() use($path, $language, $site) {
                     // Is valid, then…
                     if ($enter) {
                         // Save the token!
-                        File::write($token)->saveTo(Path::F($u) . DS . 'token.data', 0600);
+                        File::set($token)->saveTo(Path::F($u) . DS . 'token.data', 0600);
                         // Set `$GLOBALS['url']['user']` value!
                         Session::set('url.user', '@' . $key);
                         // Set `$GLOBALS['url']['pass']` value!
@@ -87,8 +87,8 @@ Route::set($path, function() use($path, $language, $site) {
             }
         }
         if (Message::$x) {
-            Request::save('post');
-            Request::delete('post', 'pass');
+            HTTP::save('post');
+            HTTP::delete('post', 'pass');
         }
         Guardian::kick($path . HTTP::query());
     }
