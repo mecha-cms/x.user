@@ -6,7 +6,7 @@ Config::set('is.enter', Is::user());
 
 Route::set($path, function() use($path, $language, $site) {
     $is_enter = Is::user();
-    Config::set('page.title', new Anemon([$language->{$is_enter ? 'exit' : 'enter'}, $site->title], ' &#x00B7; '));
+    Config::set('trace', new Anemon([$language->{$is_enter ? 'exit' : 'enter'}, $site->title], ' &#x00B7; '));
     if ($r = HTTP::post()) {
         $key = isset($r['key']) ? $r['key'] : null;
         $pass = isset($r['pass']) ? $r['pass'] : null;
@@ -112,7 +112,7 @@ Route::set($path . '/%s%', function($id) use($path, $site) {
     if ($title = $user->{'$'}) {
         $user->author = $user->title = $title;
     }
-    Config::set('page.title', new Anemon([$user->key . ' (' . $title . ')', $site->title], ' &#x00B7; '));
+    Config::set('trace', new Anemon([$user->key . ' (' . $title . ')', $site->title], ' &#x00B7; '));
     Lot::set('page', $user);
     Config::set('is', [
         'active' => Is::user($user->key),
