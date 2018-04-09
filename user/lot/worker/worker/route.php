@@ -2,15 +2,19 @@
 
 $path = Extend::state('user', 'path');
 
-Config::set('is.enter', Is::user());
-
-Route::set($path, function() use($path, $language, $site) {
-    $is_enter = Is::user();
+Route::set($path, function() use($path) {
+    extract(Lot::get(null, []));
+    $is_enter = $site->is('enter');
     Config::set('trace', new Anemon([$language->{$is_enter ? 'exit' : 'enter'}, $site->title], ' &#x00B7; '));
     if ($r = HTTP::post()) {
         $key = isset($r['key']) ? $r['key'] : null;
         $pass = isset($r['pass']) ? $r['pass'] : null;
         $token = isset($r['token']) ? $r['token'] : null;
+        // Has only 1 user!
+        if (count($users) === 1) {
+            // Set the `key` value to that user automatically
+            $key = $users[0]->key;
+        }
         // Remove the `@` prefix!
         if (strpos($key, '@') === 0) {
             $key = substr($key, 1);
@@ -31,7 +35,7 @@ Route::set($path, function() use($path, $language, $site) {
                 // Trigger the hook!
                 Hook::fire('on.user.exit', [USER . DS . $key . '.page', null]);
                 // Redirect to the log in page by default!
-                Guardian::kick($path . HTTP::query(['kick' => isset($r['kick']) ? $r['kick'] : false]));
+                Guardian::kick((isset($r['kick']) ? $r['kick'] : $path) . HTTP::query(['kick' => false]));
             }
         // Log in!
         } else {
@@ -106,7 +110,7 @@ Route::set($path . '/%s%', function($id) use($path, $site) {
         USER . DS . $id . '.archive'
     ])) {
         Config::set('is.error', 404);
-        return Shield::abort('404/' . $path . '/' . $id);
+        Shield::abort('404/' . $path . '/' . $id);
     }
     $user = new User($file);
     if ($title = $user->{'$'}) {
@@ -118,6 +122,7 @@ Route::set($path . '/%s%', function($id) use($path, $site) {
         'active' => Is::user($user->key),
         'error' => false,
         'page' => $user->path,
+        'pages' => false,
         'user' => $user->key
     ]);
     Shield::attach('page/' . $path . '/' . $id);
