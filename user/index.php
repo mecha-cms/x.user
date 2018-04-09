@@ -28,6 +28,26 @@ function fn_user($author) {
 
 Hook::set('*.author', 'fn_user', 1);
 
+Config::set('is.enter', $user = Is::user());
+
+Lot::set([
+    'user' => new User,
+    'users' => []
+]);
+
+Hook::set('on.ready', function() use($user) {
+    $users = [];
+    if ($files = Get::users()) {
+        foreach ($files as $file) {
+            $users[] = new User($file['path']);
+        }
+    }
+    Lot::set([
+        'user' => new User($user ? USER . DS . substr($user, 1) . '.page' : []),
+        'users' => $users
+    ]);
+}, 0);
+
 // Apply route(s) only if we have at least one user
 if (g(USER, 'page')) {
     include __DIR__ . DS . 'lot' . DS . 'worker' . DS . 'worker' . DS . 'route.php';
