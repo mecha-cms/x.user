@@ -10,8 +10,8 @@ class User extends Page {
     }
 
     public function __toString() {
-        if (!isset($this->lot['$'])) {
-            return $this->__call('key');
+        if (!$this->__call('$')) {
+            return $this->__call('key') ?: "";
         }
         return parent::__toString();
     }

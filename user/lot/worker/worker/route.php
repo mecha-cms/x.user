@@ -2,6 +2,10 @@
 
 $path = Extend::state('user', 'path');
 
+foreach (g(__DIR__ . DS . '..', 'php') as $v) {
+    Shield::set(Path::N($v), $v);
+}
+
 Route::set($path, function() use($path) {
     extract(Lot::get(null, []));
     $is_enter = $site->is('enter');
@@ -70,9 +74,9 @@ Route::set($path, function() use($path) {
                     if ($enter) {
                         // Save the token!
                         File::set($token)->saveTo(Path::F($u) . DS . 'token.data', 0600);
-                        // Set `$GLOBALS['url']['user']` value!
+                        // Set `$url->user` value!
                         Session::set('url.user', '@' . $key);
-                        // Set `$GLOBALS['url']['pass']` value!
+                        // Set `$url->pass` value!
                         Session::set('url.pass', $pass);
                         // Set `$_SESSION['url']['token']` value!
                         Session::set('url.token', $token);
@@ -101,7 +105,7 @@ Route::set($path, function() use($path) {
         'page' => true,
         'user' => true
     ]);
-    Shield::attach(__DIR__ . DS . '..' . DS . 'user.php');
+    Shield::attach('user');
 }, 20);
 
 Route::set($path . '/%s%', function($id) use($path, $site) {
@@ -112,7 +116,7 @@ Route::set($path . '/%s%', function($id) use($path, $site) {
         Config::set('is.error', 404);
         Shield::abort('404/' . $path . '/' . $id);
     }
-    $user = new User($file);
+    $user = new User($file, [], [3 => 'page']);
     if ($title = $user->{'$'}) {
         $user->author = $user->title = $title;
     }
