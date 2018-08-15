@@ -3,14 +3,95 @@ title: User
 description: Rich user data.
 author: Taufik Nurrohman
 type: Markdown
-version: 1.4.0
+version: 1.5.0
 ...
 
 ### File
 
+What you need to do after installing this extension is simply to make a page file in `lot\user` folder and name it as you like. The page file name then can be treated as the user name. For example, here I want to make a user file named as `@ta-tau-taufik`:
+
+~~~ .txt
+.\
+ └── lot\
+     └── user\
+         └── ta-tau-taufik.page
+~~~
+
+And here is the content of `ta-tau-taufik.page` file:
+
+~~~ .yaml
+---
+$: Taufik Nurrohman
+type: Markdown
+status: 1
+...
+
+I am the main author of [this site](%{url}%).
+~~~
+
+### Page
+
+User page is accessible through `%{url}%/user/{$key}` where `{$key}` is the user key/name without the `@` prefix. Example:
+
+~~~ .txt
+%{url}%/user/ta-tau-taufik
+~~~
+
+To go to the log in page, remove the user key/name part from URL:
+
+~~~ .txt
+%{url}%/user
+~~~
+
+> **Note:** If `lot\user\ta-tau-taufik\pass.data` file does not exist, then the password field will function as a password generator. You can type any password in it and `pass.data` file will be created automatically.
+
+### Constant
+
+This extension automatically adds a `user` folder within the `lot` folder, which will also automatically set a new constant based on the folder name with a value of the folder path:
+
+~~~ .php
+USER
+~~~
+
+### Method
+
+There are some methods added to the default [classes][link:../class]:
+
+#### Is → User
+
+~~~ .xmp.php
+Is::user($key = null, $fail = false);
+~~~
+
+**Example:**
+
+Check whether a user is logged in:
+
+~~~ .php
+if (Is::user()) { … }
+~~~
+
+Check whether user `@ta-tau-taufik` is logged in:
+
+~~~ .php
+if (Is::user('ta-tau-taufik')) { … }
+~~~
+
+#### Get → Users
+
+~~~ .xmp.php
+Get::users($folder = USER, …, $sort = [1, 'slug'], …);
+~~~
+
+Arguments are the same with [`Get::pages()`][link:../class/get/pages], except the `$folder` parameter that uses `USER` [constant][link:../constant] value by default, and the `$sort` parameter that uses `slug` as the default sort key instead of `time`.
+
+---
+
+### Result
+
 #### Without User Extension
 
-The page:
+The page in `lot\page\test-page.page`:
 
 ~~~ .yaml
 ---
@@ -29,7 +110,7 @@ The property call:
 
 #### With User Extension
 
-The page:
+The page in `lot\page\test-page.page`:
 
 ~~~ .yaml
 ---
@@ -40,7 +121,7 @@ author: @ta-tau-taufik
 Page content.
 ~~~
 
-The user file as `lot\user\ta-tau-taufik.page`:
+The user file in `lot\user\ta-tau-taufik.page`:
 
 ~~~ .yaml
 ---
@@ -64,61 +145,5 @@ or:
 ~~~ .php
 <?php echo $page->author; ?>
 ~~~
-
----
-
-### Page
-
-User page is accessible through `%{url}%/user/{$key}` where `{$key}` is the user key/name without the `@` prefix. Example:
-
-~~~ .txt
-%{url}%/user/ta-tau-taufik
-~~~
-
-To go to the log in page, remove the user key/name part from URL:
-
-~~~ .txt
-%{url}%/user
-~~~
-
-### Constant
-
-This extension automatically adds a `user` folder within the `lot` folder, which will also automatically set a new constant based on the folder name with a value of the folder path:
-
-~~~ .php
-USER
-~~~
-
-### Method
-
-There are some methods added to the default [classes][link:../class]:
-
-#### Is
-
-~~~ .xmp.php
-Is::user($key = null, $fail = false);
-~~~
-
-**Example:**
-
-Check whether a user is logged in:
-
-~~~ .php
-if (Is::user()) { … }
-~~~
-
-Check whether user `@ta-tau-taufik` is logged in:
-
-~~~ .php
-if (Is::user('ta-tau-taufik')) { … }
-~~~
-
-#### Users
-
-~~~ .xmp.php
-Get::users($folder = USER, …, $sort = [1, 'slug'], …);
-~~~
-
-Arguments are the same with [`Get::pages()`][link:../class/get/pages], except the `$folder` parameter that uses `USER` [constant][link:../constant] value by default, and the `$sort` parameter that uses `slug` as the default sort key instead of `time`.
 
 <!-- block:donate -->

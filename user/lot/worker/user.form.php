@@ -14,5 +14,14 @@
   <?php echo Form::hidden('kick', HTTP::get('kick', $url->previous)); ?>
 </form>
 <script>
-(document.forms[0].key || document.forms[0].pass).focus();
+(function(doc) {
+    var $ = doc.forms[0],
+        key = $.key,
+        pass = $.pass;
+    if (key && key.value) {
+        pass.focus();
+    } else {
+        (key || pass).focus();
+    }
+})(document);
 </script>
