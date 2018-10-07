@@ -8,7 +8,7 @@ version: 1.5.0
 
 ### File
 
-What you need to do after installing this extension is simply to make a page file in `lot\user` folder and name it as you like. The page file name then can be treated as the user name. For example, here I want to make a user file named as `@ta-tau-taufik`:
+All you have to do after installing this extension is to create a page file in the `.\lot\user` folder. Name the page according to the user name you want. For example, here I will create user data with the name `@ta-tau-taufik`:
 
 ~~~ .txt
 .\
@@ -17,7 +17,7 @@ What you need to do after installing this extension is simply to make a page fil
          └── ta-tau-taufik.page
 ~~~
 
-And here is the content of `ta-tau-taufik.page` file:
+And the following is the content of the file:
 
 ~~~ .yaml
 ---
@@ -26,28 +26,22 @@ type: Markdown
 status: 1
 ...
 
-I am the main author of [this site](%{url}%).
+I am the main author of [this site](http://127.0.0.1).
 ~~~
 
 ### Page
 
-User page is accessible through `%{url}%/user/{$key}` where `{$key}` is the user key/name without the `@` prefix. Example:
+User profile page can be accessed via the `http://127.0.0.1/user/ta-tau-taufik` link. To go to the log in page, remove the user name from the link:
 
 ~~~ .txt
-%{url}%/user/ta-tau-taufik
+http://127.0.0.1/user
 ~~~
 
-To go to the log in page, remove the user key/name part from URL:
-
-~~~ .txt
-%{url}%/user
-~~~
-
-> **Note:** If `lot\user\ta-tau-taufik\pass.data` file does not exist, then the password field will function as a password generator. You can type any password in it and `pass.data` file will be created automatically.
+> **Note:** If `.\lot\user\ta-tau-taufik\pass.data` file does not exist, then the password field will function as a password generator. You can type any password in it and `pass.data` file will be created automatically.
 
 ### Constant
 
-This extension automatically adds a `user` folder within the `lot` folder, which will also automatically set a new constant based on the folder name with a value of the folder path:
+This extension will add a folder called `user` in the `.\lot` folder, which will also automatically add a constant named `USER`.
 
 ~~~ .php
 USER
@@ -83,7 +77,7 @@ if (Is::user('ta-tau-taufik')) { … }
 Get::users($folder = USER, …, $sort = [1, 'slug'], …);
 ~~~
 
-Arguments are the same with [`Get::pages()`][link:../class/get/pages], except the `$folder` parameter that uses `USER` [constant][link:../constant] value by default, and the `$sort` parameter that uses `slug` as the default sort key instead of `time`.
+Function arguments are the same as function [`Get::pages()`][link:../class/get/pages], except the `$folder` parameter that uses `USER` [constant][link:../constant] value by default, and the `$sort` parameter that uses `slug` as the default sort key instead of `time`.
 
 ---
 
@@ -91,7 +85,7 @@ Arguments are the same with [`Get::pages()`][link:../class/get/pages], except th
 
 #### Without User Extension
 
-The page in `lot\page\test-page.page`:
+The page in `.\lot\page\test-page.page`:
 
 ~~~ .yaml
 ---
@@ -102,7 +96,7 @@ author: Taufik Nurrohman
 Page content.
 ~~~
 
-The property call:
+To get the author data:
 
 ~~~ .php
 <?php echo $page->author; ?>
@@ -110,7 +104,7 @@ The property call:
 
 #### With User Extension
 
-The page in `lot\page\test-page.page`:
+The page in `.\lot\page\test-page.page`:
 
 ~~~ .yaml
 ---
@@ -121,7 +115,7 @@ author: @ta-tau-taufik
 Page content.
 ~~~
 
-The user file in `lot\user\ta-tau-taufik.page`:
+The user file in `.\lot\user\ta-tau-taufik.page`:
 
 ~~~ .yaml
 ---
@@ -132,7 +126,7 @@ link: http://example.com
 Page content.
 ~~~
 
-The property call:
+To get the author data:
 
 ~~~ .html
 <a href="<?php echo $page->author->link; ?>" id="<?php echo $page->author->key; ?>">
@@ -140,7 +134,7 @@ The property call:
 </a>
 ~~~
 
-or:
+Or:
 
 ~~~ .php
 <?php echo $page->author; ?>

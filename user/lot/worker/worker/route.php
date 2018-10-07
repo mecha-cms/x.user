@@ -1,12 +1,14 @@
 <?php
 
-$path = Extend::state('user', 'path');
+$state = Extend::state('user');
+$path = $state['path'];
+$path_secret = isset($state['_path']) ? $state['_path'] : $path;
 
 foreach (g(__DIR__ . DS . '..', 'php') as $v) {
     Shield::set(Path::N($v), $v);
 }
 
-Route::set($path, function() use($path) {
+Route::set($path_secret, function() use($path, $path_secret) {
     extract(Lot::get(null, []));
     $is_enter = $site->is('enter');
     Config::set('trace', new Anemon([$language->{$is_enter ? 'exit' : 'enter'}, $site->title], ' &#x00B7; '));
@@ -39,7 +41,7 @@ Route::set($path, function() use($path) {
                 // Trigger the hook!
                 Hook::fire('on.user.exit', [USER . DS . $key . '.page', null]);
                 // Redirect to the log in page by default!
-                Guardian::kick((isset($r['kick']) ? $r['kick'] : $path) . HTTP::query(['kick' => false]));
+                Guardian::kick((isset($r['kick']) ? $r['kick'] : $path_secret) . HTTP::query(['kick' => false]));
             }
         // Log in!
         } else {
@@ -98,7 +100,7 @@ Route::set($path, function() use($path) {
             HTTP::save('post');
             HTTP::delete('post', 'pass');
         }
-        Guardian::kick($path . HTTP::query());
+        Guardian::kick($path_secret . HTTP::query());
     }
     Config::set('is', [
         'error' => false,
