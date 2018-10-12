@@ -12,7 +12,7 @@ if (!empty($state['user'])) {
     \Config::alt(['user' => $state['user']]);
 }
 
-function author($author) {
+function author($author = "") {
     if (is_string($author) && strpos($author, '@') === 0) {
         return new \User(USER . DS . substr($author, 1) . '.page');
     }
@@ -36,7 +36,7 @@ function author($author) {
         }
     }
     \Lot::set([
-        'user' => new \User($user ? USER . DS . substr($user, 1) . '.page' : []),
+        'user' => new \User($user ? USER . DS . substr($user, 1) . '.page' : null),
         'users' => $users
     ]);
 }, 0);

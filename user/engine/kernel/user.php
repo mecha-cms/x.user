@@ -2,9 +2,9 @@
 
 class User extends Page {
 
-    public function __construct($input = [], $lot = [], $NS = []) {
-        parent::__construct($input, array_replace([
-            'key' => is_string($input) ? '@' . ($n = Path::N($input)) : null,
+    public function __construct($path = null, $lot = [], $NS = []) {
+        parent::__construct($path, array_replace([
+            'key' => is_string($path) ? '@' . ($n = Path::N($path)) : null,
             'url' => isset($n) ? $GLOBALS['URL']['$'] . '/' . Extend::state('user', 'path') . '/' . $n : null
         ], $lot), $NS);
     }
