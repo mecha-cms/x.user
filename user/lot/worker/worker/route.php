@@ -39,7 +39,7 @@ Route::set($path_secret, function() use($path, $path_secret) {
                 Session::reset('url.token');
                 Message::success('user_exit');
                 // Trigger the hook!
-                Hook::fire('on.user.exit', [USER . DS . $key . '.page', null]);
+                Hook::fire('on.user.exit', [USER . DS . $key . '.page', null], $user);
                 // Redirect to the log in page by default!
                 Guardian::kick((isset($r['kick']) ? $r['kick'] : $path_secret) . HTTP::query(['kick' => false]));
             }
@@ -83,7 +83,7 @@ Route::set($path_secret, function() use($path, $path_secret) {
                         // Set `$_SESSION['url']['token']` value!
                         Session::set('url.token', $token);
                         // Trigger the hook!
-                        Hook::fire('on.user.enter', [$u, $u]);
+                        Hook::fire('on.user.enter', [$u, $u], $user);
                         // Show success message!
                         Message::success('user_enter');
                         // Redirect to the home page by default!

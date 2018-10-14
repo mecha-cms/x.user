@@ -6,7 +6,7 @@ class User extends Page {
         parent::__construct($path, extend([
             'key' => is_string($path) ? '@' . ($n = Path::N($path)) : null,
             'url' => isset($n) ? $GLOBALS['URL']['$'] . '/' . Extend::state('user', 'path') . '/' . $n : null
-        ], $lot), $NS);
+        ], $lot, false), $NS);
     }
 
     public function __toString() {
