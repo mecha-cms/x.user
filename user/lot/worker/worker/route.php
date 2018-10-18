@@ -2,7 +2,7 @@
 
 $state = Extend::state('user');
 $path = $state['path'];
-$path_secret = isset($state['_path']) ? $state['_path'] : $path;
+$path_secret = $state['_path'] ?? $path;
 
 foreach (g(__DIR__ . DS . '..', 'php') as $v) {
     Shield::set(Path::N($v), $v);
@@ -13,11 +13,11 @@ Route::set($path_secret, function() use($path, $path_secret) {
     $is_enter = $site->is('enter');
     Config::set('trace', new Anemon([$language->{$is_enter ? 'exit' : 'enter'}, $site->title], ' &#x00B7; '));
     if ($r = HTTP::post()) {
-        $key = isset($r['key']) ? $r['key'] : null;
-        $pass = isset($r['pass']) ? $r['pass'] : null;
-        $token = isset($r['token']) ? $r['token'] : null;
+        $key = $r['key'] ?? null;
+        $pass = $r['pass'] ?? null;
+        $token = $r['token'] ?? null;
         // Has only 1 user!
-        if (count($users) === 1) {
+        if ($users->count() === 1) {
             // Set the `key` value to that user automatically
             $key = $users[0]->key;
         }
@@ -87,7 +87,7 @@ Route::set($path_secret, function() use($path, $path_secret) {
                         // Show success message!
                         Message::success('user_enter');
                         // Redirect to the home page by default!
-                        Guardian::kick((isset($r['kick']) ? $r['kick'] : "") . HTTP::query(['kick' => false]));
+                        Guardian::kick(($r['kick'] ?? "") . HTTP::query(['kick' => false]));
                     } else {
                         Message::error('user_or_pass');
                     }

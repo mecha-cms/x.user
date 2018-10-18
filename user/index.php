@@ -25,19 +25,16 @@ function author($author = "") {
 
 \Lot::set([
     'user' => new \User,
-    'users' => []
+    'users' => new \Anemon
 ]);
 
 \Hook::set('on.ready', function() use($user) {
     $users = [];
-    if ($files = \Get::users()) {
-        foreach ($files as $file) {
-            $users[] = new \User($file['path']);
-        }
-    }
     \Lot::set([
         'user' => new \User($user ? USER . DS . substr($user, 1) . '.page' : null),
-        'users' => $users
+        'users' => \Get::users()->map(function($v) {
+            return new \User($v['path']);
+        })
     ]);
 }, 0);
 
