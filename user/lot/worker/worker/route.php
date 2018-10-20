@@ -116,7 +116,7 @@ Route::set($path . '/%s%', function($id) use($path, $site) {
         USER . DS . $id . '.archive'
     ])) {
         Config::set('is.error', 404);
-        Shield::abort('404/' . $path . '/' . $id);
+        return Shield::abort('404/' . $path . '/' . $id);
     }
     $user = new User($file, [], [3 => 'page']);
     if ($title = $user->{'$'}) {
@@ -131,5 +131,5 @@ Route::set($path . '/%s%', function($id) use($path, $site) {
         'pages' => false,
         'user' => $user->key
     ]);
-    Shield::attach('page/' . $path . '/' . $id);
+    return Shield::attach('page/' . $path . '/' . $id);
 }, 20);
