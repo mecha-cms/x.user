@@ -1,10 +1,7 @@
 <?php namespace fn\user;
 
 // Require the plug manually…
-\r(__DIR__ . DS . 'engine' . DS . 'plug', [
-    'get.php',
-    'is.php'
-], null, \Lot::get(null, []));
+\r(['get', 'is'], __DIR__ . DS . 'engine' . DS . 'plug', \Lot::get(null, []));
 
 // Store user state to registry…
 $state = \Extend::state('user');
@@ -19,7 +16,7 @@ function author($author = "") {
     return $author;
 }
 
-\Hook::set('*.author', __NAMESPACE__ . '\author', 1);
+\Hook::set('*.author', __NAMESPACE__ . "\\author", 1);
 
 \Config::set('is.enter', $user = \Is::user());
 
