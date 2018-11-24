@@ -4,6 +4,6 @@ return [
     'path' => 'user',
     '_path' => null, // Secret log in path
     'user' => [
-        'status' => 1
+        'status' => 0 // Default to pending
     ]
 ];

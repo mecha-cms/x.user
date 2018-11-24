@@ -12,7 +12,7 @@ Route::set($path_secret, function() use($path, $path_secret) {
     extract(Lot::get(null, []));
     $is_enter = $site->is('enter');
     Config::set('trace', new Anemon([$language->{$is_enter ? 'exit' : 'enter'}, $site->title], ' &#x00B7; '));
-    if ($r = HTTP::post()) {
+    if ($r = HTTP::post(null, [], false)) {
         $key = $r['key'] ?? null;
         $pass = $r['pass'] ?? null;
         $token = $r['token'] ?? null;
@@ -25,6 +25,7 @@ Route::set($path_secret, function() use($path, $path_secret) {
         if (strpos($key, '@') === 0) {
             $key = substr($key, 1);
         }
+        $u = USER . DS . $key . '.page';
         // Log out!
         if ($is_enter) {
             // Check token…
@@ -37,11 +38,14 @@ Route::set($path_secret, function() use($path, $path_secret) {
                 Session::reset('url.user');
                 Session::reset('url.pass');
                 Session::reset('url.token');
+                Cookie::reset('url.user');
+                Cookie::reset('url.pass');
+                Cookie::reset('url.token');
                 Message::success('user_exit');
                 // Trigger the hook!
-                Hook::fire('on.user.exit', [USER . DS . $key . '.page', null], $user);
+                Hook::fire('on.user.exit', [$u, null], $user);
                 // Redirect to the log in page by default!
-                Guardian::kick((isset($r['kick']) ? $r['kick'] : $path_secret) . HTTP::query(['kick' => false]));
+                Guardian::kick(($r['kick'] ?? $path_secret) . HTTP::query(['kick' => false]));
             }
         // Log in!
         } else {
@@ -57,11 +61,11 @@ Route::set($path_secret, function() use($path, $path_secret) {
             // No error(s), go to the next step(s)…
             } else {
                 // Check if user already registered…
-                if (file_exists($u = USER . DS . $key . '.page')) {
+                if (file_exists($u)) {
                     // Reset password by deleting `pass.data` manually, then log in!
-                    if (!file_exists($f = USER . DS . $key . DS . 'pass.data')) {
-                        File::set(X . password_hash($pass . ' ' . $key, PASSWORD_DEFAULT))->saveTo($f, 0600);
-                        // Message::success('create', [$language->pass, '<em>' . $pass . '</em>']);
+                    if (!file_exists($f = Path::F($u) . DS . 'pass.data')) {
+                        File::put(X . password_hash($pass . ' ' . $key, PASSWORD_DEFAULT))->saveTo($f, 0600);
+                        Message::info('is', [$language->pass, '<em>' . $pass . '</em>']);
                     }
                     $enter = false;
                     $secret = File::open($f)->get(0, "");
@@ -75,13 +79,14 @@ Route::set($path_secret, function() use($path, $path_secret) {
                     // Is valid, then…
                     if ($enter) {
                         // Save the token!
-                        File::set($token)->saveTo(Path::F($u) . DS . 'token.data', 0600);
-                        // Set `$url->user` value!
+                        File::put($token)->saveTo(Path::F($u) . DS . 'token.data', 0600);
                         Session::set('url.user', '@' . $key);
-                        // Set `$url->pass` value!
-                        Session::set('url.pass', $pass);
-                        // Set `$_SESSION['url']['token']` value!
+                        // Session::set('url.pass', $pass);
                         Session::set('url.token', $token);
+                        // Duplicate session to cookie for 7 day(s)
+                        Cookie::set('url.user', '@' . $key, 7);
+                        // Cookie::set('url.pass', $pass, 7);
+                        Cookie::set('url.token', $token, 7);
                         // Trigger the hook!
                         Hook::fire('on.user.enter', [$u, $u], $user);
                         // Show success message!
@@ -97,8 +102,7 @@ Route::set($path_secret, function() use($path, $path_secret) {
             }
         }
         if (Message::$x) {
-            HTTP::save('post');
-            HTTP::delete('post', 'pass');
+            HTTP::save()->delete('pass');
         }
         Guardian::kick($path_secret . HTTP::query());
     }
@@ -107,7 +111,7 @@ Route::set($path_secret, function() use($path, $path_secret) {
         'page' => true,
         'user' => true
     ]);
-    Shield::attach('user');
+    return Shield::attach('user');
 }, 20);
 
 Route::set($path . '/%s%', function($id) use($path, $site) {

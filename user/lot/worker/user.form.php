@@ -1,10 +1,10 @@
 <?php
 
 $_state = Extend::state('user');
-$_path = isset($_state['_path']) ? $_state['_path'] : $_state['path'];
+$_path = $_state['_path'] ?? $_state['path'];
 
 ?>
-<form class="form-user form-user:<?php echo ($_user = Is::user()) ? 'exit' : 'enter'; ?>" action="<?php echo $url . '/' . $_path . $url->query('&amp;'); ?>" method="post" style="display:block;max-width:15em;margin-right:auto;margin-left:auto;">
+<form name="user" class="form-user form-user:<?php echo ($_user = Is::user()) ? 'exit' : 'enter'; ?>" action="<?php echo $url . '/' . $_path . $url->query('&amp;'); ?>" method="post" style="display:block;max-width:15em;margin-right:auto;margin-left:auto;">
   <?php echo $message; ?>
   <?php if (!$_user): ?>
   <?php if (count($users) > 1): ?>
@@ -20,7 +20,7 @@ $_path = isset($_state['_path']) ? $_state['_path'] : $_state['path'];
 </form>
 <script>
 (function(doc) {
-    var $ = doc.forms[0],
+    var $ = doc.forms.user,
         key = $.key,
         pass = $.pass;
     if (key && key.value) {
