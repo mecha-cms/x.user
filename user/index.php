@@ -9,8 +9,30 @@ if (!empty($state['user'])) {
     \Config::alt(['user' => $state['user']]);
 }
 
+function a($a) {
+    if ($a && is_string($a) && strpos($a, '@') !== false) {
+        $out = "";
+        $parts = preg_split('#(<[!/]?[a-zA-Z\d:.-]+[\s\S]*?>)#', $a, null, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+        foreach ($parts as $v) {
+            if (strpos($v, '<') === 0 && substr($v, -1) === '>') {
+                $out .= $v; // HTML tag
+            } else {
+                $out .= strpos($v, '@') !== false ? preg_replace_callback('#@[a-z\d-]+#', function($m) {
+                    if ($f = \File::exist(USER . DS . substr($m[0], 1) . '.page')) {
+                        $f = new \User($f);
+                        return \HTML::a($f . "", $f->url, true, ['title' => $f->key]);
+                    }
+                    return $m[0];
+                }, $v) : $v; // Plain text
+            }
+        }
+        return $out;
+    }
+    return $a;
+}
+
 function author($author = "") {
-    if (is_string($author) && strpos($author, '@') === 0) {
+    if ($author && is_string($author) && strpos($author, '@') === 0) {
         return new \User(USER . DS . substr($author, 1) . '.page');
     }
     return $author;
@@ -26,8 +48,14 @@ function avatar($avatar, array $lot = []) {
     return $GLOBALS['URL']['protocol'] . 'www.gravatar.com/avatar/' . md5($this->email) . '?s=' . $w . '&amp;d=' . $d;
 }
 
+\Hook::set([
+    '*.content',
+    '*.description',
+    '*.excerpt', // `excerpt` plugin
+    '*.title'
+], __NAMESPACE__ . "\\a", 2);
 \Hook::set('*.author', __NAMESPACE__ . "\\author", 2);
-\Hook::set('user.avatar', __NAMESPACE__ . "\\avatar", 0);
+\Hook::set('*.avatar', __NAMESPACE__ . "\\avatar", 0);
 
 \Config::set('is.enter', $user = \Is::user());
 
