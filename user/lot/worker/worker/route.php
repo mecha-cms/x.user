@@ -1,6 +1,7 @@
 <?php
 
 $state = Extend::state('user');
+$max = $state['try'] ?? 5;
 $path = $state['path'];
 $path_secret = $state['_path'] ?? $path;
 
@@ -8,7 +9,7 @@ foreach (g(__DIR__ . DS . '..', 'php') as $v) {
     Shield::set(Path::N($v), $v);
 }
 
-Route::set($path_secret, function() use($path, $path_secret) {
+Route::set($path_secret, function() use($max, $path, $path_secret) {
     extract(Lot::get(null, []));
     $is_enter = $site->is('enter');
     Config::set('trace', new Anemon([$language->{$is_enter ? 'exit' : 'enter'}, $site->title], ' &#x00B7; '));
@@ -26,6 +27,19 @@ Route::set($path_secret, function() use($path, $path_secret) {
             $key = substr($key, 1);
         }
         $u = USER . DS . $key . '.page';
+        $try = USER . DS . $key . DS . 'try.data';
+        $try_data = (array) e(File::open($try)->read());
+        $ip = Get::IP();
+        if (!isset($try_data[$ip])) {
+            $try_data[$ip] = 1;
+        } else {
+            ++$try_data[$ip];
+        }
+        if ($try_data[$ip] > $max) {
+            Guardian::abort('Please delete the <code>' . str_replace(ROOT, '.', Path::D($try, 2)) . DS . $key[0] . str_repeat('&#x2022;', strlen($key) - 1) . DS . 'try.data</code> file to sign in.');
+        } else {
+            Message::info('user_enter_try', $max - $try_data[$ip]);
+        }
         // Log out!
         if ($is_enter) {
             // Check token…
@@ -35,15 +49,17 @@ Route::set($path_secret, function() use($path, $path_secret) {
                 Message::error('void_field', $language->user, true);
             } else {
                 File::open(USER . DS . $r['x'] . DS . 'token.data')->delete();
-                Session::reset('url.user');
-                Session::reset('url.pass');
-                Session::reset('url.token');
                 Cookie::reset('url.user');
                 Cookie::reset('url.pass');
                 Cookie::reset('url.token');
+                Session::reset('url.user');
+                Session::reset('url.pass');
+                Session::reset('url.token');
                 Message::success('user_exit');
                 // Trigger the hook!
                 Hook::fire('on.user.exit', [$u, null], $user);
+                // Remove log-in attempt log
+                File::open($try)->delete();
                 // Redirect to the log in page by default!
                 Guardian::kick(($r['kick'] ?? $path_secret) . HTTP::query(['kick' => false]));
             }
@@ -62,6 +78,8 @@ Route::set($path_secret, function() use($path, $path_secret) {
             } else {
                 // Check if user already registered…
                 if (file_exists($u)) {
+                    // Record log-in attempt
+                    File::put(json_encode($try_data))->saveTo($try, 0600);
                     // Reset password by deleting `pass.data` manually, then log in!
                     if (!file_exists($f = Path::F($u) . DS . 'pass.data')) {
                         File::put(X . password_hash($pass . ' ' . $key, PASSWORD_DEFAULT))->saveTo($f, 0600);
@@ -87,10 +105,13 @@ Route::set($path_secret, function() use($path, $path_secret) {
                         Cookie::set('url.user', '@' . $key, 7);
                         // Cookie::set('url.pass', $pass, 7);
                         Cookie::set('url.token', $token, 7);
+                        // Show success message!
+                        Message::reset();
+                        Message::success('user_enter');
                         // Trigger the hook!
                         Hook::fire('on.user.enter', [$u, $u], $user);
-                        // Show success message!
-                        Message::success('user_enter');
+                        // Remove log-in attempt log
+                        File::open($try)->delete();
                         // Redirect to the home page by default!
                         Guardian::kick(($r['kick'] ?? "") . HTTP::query(['kick' => false]));
                     } else {

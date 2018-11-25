@@ -6,5 +6,7 @@ message_error_token: Token tidak valid.
 message_error_user_or_pass: Pengguna atau kunci tidak valid.
 message_error_void_field: Mohon isi bidang %{0}%.
 
+message_info_user_enter_try: Coba lagi: %{0}%
+
 message_success_user_enter: Berhasil masuk.
 message_success_user_exit: Berhasil keluar.
