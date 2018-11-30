@@ -35,15 +35,10 @@ Route::set($path_secret, function() use($max, $path, $path_secret) {
         } else {
             ++$try_data[$ip];
         }
-        if ($try_data[$ip] > $max) {
-            Guardian::abort('Please delete the <code>' . str_replace(ROOT, '.', Path::D($try, 2)) . DS . $key[0] . str_repeat('&#x2022;', strlen($key) - 1) . DS . 'try.data</code> file to sign in.');
-        } else {
-            Message::info('user_enter_try', $max - $try_data[$ip]);
-        }
         // Log out!
         if ($is_enter) {
             // Check token…
-            if (Is::void($token) || !Guardian::check($token)) {
+            if (Is::void($token) || !Guardian::check($token, 'user')) {
                 Message::error('token');
             } else if (!isset($r['x']) || Is::void($r['x'])) {
                 Message::error('void_field', $language->user, true);
@@ -66,7 +61,7 @@ Route::set($path_secret, function() use($max, $path, $path_secret) {
         // Log in!
         } else {
             // Check token…
-            if (Is::void($token) || !Guardian::check($token)) {
+            if (Is::void($token) || !Guardian::check($token, 'user')) {
                 Message::error('token');
             // Check user name…
             } else if (Is::void($key)) {
@@ -76,6 +71,11 @@ Route::set($path_secret, function() use($max, $path, $path_secret) {
                 Message::error('void_field', $language->pass, true);
             // No error(s), go to the next step(s)…
             } else {
+                if ($try_data[$ip] > $max) {
+                    Guardian::abort('Please delete the <code>' . str_replace(ROOT, '.', Path::D($try, 2)) . DS . $key[0] . str_repeat('&#x2022;', strlen($key) - 1) . DS . 'try.data</code> file to sign in.');
+                } else {
+                    Message::info('user_enter_try', $max - $try_data[$ip]);
+                }
                 // Check if user already registered…
                 if (file_exists($u)) {
                     // Record log-in attempt

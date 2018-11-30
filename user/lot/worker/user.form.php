@@ -15,7 +15,7 @@ $_path = $_state['_path'] ?? $_state['path'];
   <?php else: ?>
   <p style="text-align:center;"><?php echo HTML::a($language->profile, $url . '/' . $_state['path'] . '/' . substr($_user, 1), false, ['class[]' => ['button']]) . ' ' . Form::submit('x', $_user, $language->exit, ['class[]' => ['button'], 'title' => $_user]); ?></p>
   <?php endif; ?>
-  <?php echo Form::hidden('token', $token); ?>
+  <?php echo Form::hidden('token', Guardian::token('user')); ?>
   <?php echo Form::hidden('kick', HTTP::get('kick', $url->previous)); ?>
 </form>
 <script>
