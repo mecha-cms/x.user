@@ -8,7 +8,7 @@ version: 1.5.0
 
 ### File
 
-All you have to do after installing this extension is to create a page file in the `.\lot\user` folder. Name the page according to the user name you want. For example, here I will create user data with the name `@ta-tau-taufik`:
+All you have to do after installing this extension is to create a page file in the `.\lot\user` folder. Name the page according to the user name you want. For example, here I will create user data with the name `@‌ta-tau-taufik`:
 
 ~~~ .txt
 .\
@@ -65,7 +65,7 @@ Check whether a user is logged in:
 if (Is::user()) { … }
 ~~~
 
-Check whether user `@ta-tau-taufik` is logged in:
+Check whether user `@‌ta-tau-taufik` is logged in:
 
 ~~~ .php
 if (Is::user('ta-tau-taufik')) { … }
@@ -77,7 +77,7 @@ if (Is::user('ta-tau-taufik')) { … }
 Get::users($folder = USER, …, $sort = [1, 'slug'], …);
 ~~~
 
-Function arguments are the same as function [`Get::pages()`][link:../class/get/pages], except the `$folder` parameter that uses `USER` [constant][link:../constant] value by default, and the `$sort` parameter that uses `slug` as the default sort key instead of `time`.
+Function arguments are the same as function `Get::pages()`, except the `$folder` parameter that uses `USER` constant value by default, and the `$sort` parameter that uses `slug` as the default sort key instead of `time`.
 
 ---
 
@@ -109,7 +109,7 @@ The page in `.\lot\page\test-page.page`:
 ~~~ .yaml
 ---
 title: Page Title
-author: @ta-tau-taufik
+author: @‌ta-tau-taufik
 ...
 
 Page content.

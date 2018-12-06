@@ -156,5 +156,7 @@ Route::set($path . '/%s%', function($id) use($path, $site) {
         'pages' => false,
         'user' => $user->key
     ]);
+    // Force to disable comment in user page
+    Shield::reset('comments');
     return Shield::attach('page/' . $path . '/' . $id);
 }, 20);
