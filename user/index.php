@@ -66,9 +66,9 @@ function avatar($avatar, array $lot = []) {
 
 // Apply route(s) only if we have at least one user
 if (\g(USER, 'page')) {
-    \Hook::set('on.ready', function(){
+    \Hook::set('on.ready', function() {
         \Lot::set('users', \Get::users()->map(function($v) {
-            return new \User($v['path']);
+            return new \User($v);
         }));
     }, 0);
     include __DIR__ . DS . 'lot' . DS . 'worker' . DS . 'worker' . DS . 'route.php';
