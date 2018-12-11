@@ -11,8 +11,8 @@ foreach (g(__DIR__ . DS . '..', 'php') as $v) {
 
 Route::set($path_secret, function() use($max, $path, $path_secret) {
     extract(Lot::get());
-    $is_enter = $site->is('enter');
-    Config::set('trace', new Anemon([$language->{$is_enter ? 'exit' : 'enter'}, $site->title], ' &#x00B7; '));
+    $is_enter = $config->is('enter');
+    Config::set('trace', new Anemon([$language->{$is_enter ? 'exit' : 'enter'}, $config->title], ' &#x00B7; '));
     if ($r = HTTP::post(null, [], false)) {
         $key = $r['key'] ?? null;
         $pass = $r['pass'] ?? null;
@@ -135,7 +135,7 @@ Route::set($path_secret, function() use($max, $path, $path_secret) {
     return Shield::attach('user');
 }, 20);
 
-Route::set($path . '/%s%', function($id) use($path, $site) {
+Route::set($path . '/%s%', function($id) use($config, $path) {
     if (!$file = File::exist([
         USER . DS . $id . '.page',
         USER . DS . $id . '.archive'
@@ -147,7 +147,7 @@ Route::set($path . '/%s%', function($id) use($path, $site) {
     if ($title = $user->{'$'}) {
         $user->author = $user->title = $title;
     }
-    Config::set('trace', new Anemon([$user->key . ' (' . $title . ')', $site->title], ' &#x00B7; '));
+    Config::set('trace', new Anemon([$user->key . ' (' . $title . ')', $config->title], ' &#x00B7; '));
     Lot::set('page', $user);
     Config::set('is', [
         'active' => Is::user($user->key),

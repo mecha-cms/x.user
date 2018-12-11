@@ -1,7 +1,7 @@
 <?php namespace fn\user;
 
 // Require the plug manually…
-\r(['get', 'is'], __DIR__ . DS . 'engine' . DS . 'plug', \Lot::get(null, []));
+\r(['get', 'is'], __DIR__ . DS . 'engine' . DS . 'plug', \Lot::get());
 
 // Store user state to registry…
 $state = \Extend::state('user');
