@@ -10,7 +10,7 @@
   <body style="margin:0;padding:0;width:100%;height:100%;display:table;overflow:hidden;">
     <div style="margin:0;padding:0;width:100%;height:100%;display:table-row;">
       <div style="margin:0;padding:0;width:100%;height:100%;display:table-cell;vertical-align:middle;">
-        <?php Shield::get('user.form'); ?>
+        <?php static::get('user.form'); ?>
       </div>
     </div>
   </body>
