@@ -5,7 +5,7 @@ $_path = $_state['_path'] ?? $_state['path'];
 
 ?>
 <form name="user" class="form-user form-user:<?php echo ($_user = Is::user()) ? 'exit' : 'enter'; ?>" action="<?php echo $url . '/' . $_path . $url->query('&amp;'); ?>" method="post" style="display:block;max-width:15em;margin-right:auto;margin-left:auto;">
-  <?php echo $message; ?>
+  <?php static::message(); ?>
   <?php if (!$_user): ?>
   <?php if (count($users) > 1): ?>
   <p title="<?php echo $language->user; ?>"><?php echo Form::text('key', null, $language->user, ['class[]' => ['input', 'block']]); ?></p>
