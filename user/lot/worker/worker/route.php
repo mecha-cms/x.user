@@ -10,7 +10,7 @@ foreach (g(__DIR__ . DS . '..', 'php') as $v) {
 }
 
 Route::set($path_secret, function() use($max, $path, $path_secret) {
-    extract(Lot::get());
+    extract(Lot::get(), EXTR_SKIP);
     $is_enter = $config->is('enter');
     Config::set('trace', new Anemon([$language->{$is_enter ? 'exit' : 'enter'}, $config->title], ' &#x00B7; '));
     if ($r = HTTP::post(null, [], false)) {
