@@ -123,7 +123,8 @@ Route::set($path_secret, function() use($max, $path, $path_secret) {
             }
         }
         if (Message::$x) {
-            HTTP::save()->delete('pass');
+            unset($r['pass']);
+            Session::set(Form::session, $r);
         }
         Guardian::kick($path_secret . HTTP::query());
     }
