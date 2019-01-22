@@ -10,15 +10,15 @@ if (!empty($state['user'])) {
 }
 
 function a($a) {
-    if ($a && is_string($a) && strpos($a, '@') !== false) {
+    if ($a && \is_string($a) && \strpos($a, '@') !== false) {
         $out = "";
-        $parts = preg_split('#(<[!/]?[a-zA-Z\d:.-]+[\s\S]*?>)#', $a, null, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+        $parts = \preg_split('#(<[!/]?[a-zA-Z\d:.-]+[\s\S]*?>)#', $a, null, \PREG_SPLIT_NO_EMPTY | \PREG_SPLIT_DELIM_CAPTURE);
         foreach ($parts as $v) {
-            if (strpos($v, '<') === 0 && substr($v, -1) === '>') {
+            if (\strpos($v, '<') === 0 && \substr($v, -1) === '>') {
                 $out .= $v; // HTML tag
             } else {
-                $out .= strpos($v, '@') !== false ? preg_replace_callback('#@[a-z\d-]+#', function($m) {
-                    if ($f = \File::exist(USER . DS . substr($m[0], 1) . '.page')) {
+                $out .= \strpos($v, '@') !== false ? \preg_replace_callback('#@[a-z\d-]+#', function($m) {
+                    if ($f = \File::exist(USER . DS . \substr($m[0], 1) . '.page')) {
                         $f = new \User($f);
                         return \HTML::a($f . "", $f->url, true, ['title' => $f->key]);
                     }
@@ -32,8 +32,8 @@ function a($a) {
 }
 
 function author($author = "") {
-    if ($author && is_string($author) && strpos($author, '@') === 0) {
-        return new \User(USER . DS . substr($author, 1) . '.page');
+    if ($author && \is_string($author) && \strpos($author, '@') === 0) {
+        return new \User(USER . DS . \substr($author, 1) . '.page');
     }
     return $author;
 }
@@ -42,10 +42,10 @@ function avatar($avatar, array $lot = []) {
     if ($avatar) {
         return $avatar;
     }
-    $w = array_shift($lot) ?? 72;
-    $h = array_shift($lot) ?? $w;
-    $d = array_shift($lot) ?? 'monsterid';
-    return $GLOBALS['URL']['protocol'] . 'www.gravatar.com/avatar/' . md5($this->email) . '?s=' . $w . '&amp;d=' . $d;
+    $w = \array_shift($lot) ?? 72;
+    $h = \array_shift($lot) ?? $w;
+    $d = \array_shift($lot) ?? 'monsterid';
+    return $GLOBALS['URL']['protocol'] . 'www.gravatar.com/avatar/' . \md5($this->email) . '?s=' . $w . '&amp;d=' . $d;
 }
 
 \Hook::set([
@@ -60,7 +60,7 @@ function avatar($avatar, array $lot = []) {
 \Config::set('is.enter', $user = \Is::user());
 
 \Lot::set([
-    'user' => new \User($user ? USER . DS . substr($user, 1) . '.page' : null),
+    'user' => new \User($user ? USER . DS . \substr($user, 1) . '.page' : null),
     'users' => new \Anemon
 ]);
 
