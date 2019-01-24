@@ -3,7 +3,7 @@ title: User
 description: Rich user data.
 author: Taufik Nurrohman
 type: Markdown
-version: 1.6.4
+version: 1.6.5
 
 dependency:
   extension:
@@ -125,7 +125,7 @@ The user file in `.\lot\user\ta-tau-taufik.page`:
 ~~~ .yaml
 ---
 $: Taufik Nurrohman
-link: http://example.com
+link: 'http://example.com'
 ...
 
 Page content.
