@@ -1,8 +1,9 @@
 <?php
 
-$key = substr($user = Cookie::get('url.user', Session::get('url.user')), 1);
+$session = URL::session . '.';
+$key = substr($user = Cookie::get($session . 'user', Session::get($session . 'user')), 1);
 $a = File::open(USER . DS . $key . DS . 'token.data')->get(0, "");
-$b = Cookie::get('url.token', Session::get('url.token', ""));
+$b = Cookie::get($session . 'token', Session::get($session . 'token', ""));
 
 $user = $a && $b && $a === $b ? $user : false;
 

@@ -44,12 +44,12 @@ Route::set($path_secret, function() use($max, $path, $path_secret) {
                 Message::error('void_field', $language->user, true);
             } else {
                 File::open(USER . DS . $r['x'] . DS . 'token.data')->delete();
-                Cookie::reset('url.user');
-                Cookie::reset('url.pass');
-                Cookie::reset('url.token');
-                Session::reset('url.user');
-                Session::reset('url.pass');
-                Session::reset('url.token');
+                Cookie::reset(URL::session . '.user');
+                Cookie::reset(URL::session . '.pass');
+                Cookie::reset(URL::session . '.token');
+                Session::reset(URL::session . '.user');
+                Session::reset(URL::session . '.pass');
+                Session::reset(URL::session . '.token');
                 Message::success('user_exit');
                 // Trigger the hook!
                 Hook::fire('on.user.exit', [$u, null], $user);
@@ -98,13 +98,13 @@ Route::set($path_secret, function() use($max, $path, $path_secret) {
                     if ($enter) {
                         // Save the token!
                         File::put($token)->saveTo(Path::F($u) . DS . 'token.data', 0600);
-                        Session::set('url.user', '@' . $key);
-                        // Session::set('url.pass', $pass);
-                        Session::set('url.token', $token);
+                        Session::set(URL::session . '.user', '@' . $key);
+                        // Session::set(URL::session . '.pass', $pass);
+                        Session::set(URL::session . '.token', $token);
                         // Duplicate session to cookie for 7 day(s)
-                        Cookie::set('url.user', '@' . $key, 7);
-                        // Cookie::set('url.pass', $pass, 7);
-                        Cookie::set('url.token', $token, 7);
+                        Cookie::set(URL::session . '.user', '@' . $key, 7);
+                        // Cookie::set(URL::session . '.pass', $pass, 7);
+                        Cookie::set(URL::session . '.token', $token, 7);
                         // Show success message!
                         Message::reset();
                         Message::success('user_enter');
