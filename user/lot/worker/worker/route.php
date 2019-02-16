@@ -102,9 +102,9 @@ Route::set($path_secret, function() use($max, $path, $path_secret) {
                         // Session::set(URL::session . '.pass', $pass);
                         Session::set(URL::session . '.token', $token);
                         // Duplicate session to cookie for 7 day(s)
-                        Cookie::set(URL::session . '.user', '@' . $key, 7);
-                        // Cookie::set(URL::session . '.pass', $pass, 7);
-                        Cookie::set(URL::session . '.token', $token, 7);
+                        Cookie::set(URL::session . '.user', '@' . $key, '7 days');
+                        // Cookie::set(URL::session . '.pass', $pass, '7 days');
+                        Cookie::set(URL::session . '.token', $token, '7 days');
                         // Show success message!
                         Message::reset();
                         Message::success('user_enter');

@@ -3,12 +3,12 @@ title: User
 description: Rich user data.
 author: Taufik Nurrohman
 type: Markdown
-version: 1.7.0
+version: 1.7.1
 
 dependency:
   extension:
-    - form
-    - page
+  - form
+  - page
 ...
 
 ### File
@@ -114,7 +114,7 @@ The page in `.\lot\page\test-page.page`:
 ~~~ .yaml
 ---
 title: Page Title
-author: @‌ta-tau-taufik
+author: '@‌ta-tau-taufik'
 ...
 
 Page content.
