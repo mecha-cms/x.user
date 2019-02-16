@@ -1,7 +1,8 @@
 <?php namespace fn\user;
 
 // Require the plug manually…
-\r(__DIR__ . DS . 'engine' . DS . 'plug' . DS . '%[get,is]%');
+require __DIR__ . DS . 'engine' . DS . 'plug' . DS . 'get.php';
+require __DIR__ . DS . 'engine' . DS . 'plug' . DS . 'is.php';
 
 // Store user state to registry…
 $state = \Extend::state('user');
@@ -12,10 +13,10 @@ if (!empty($state['user'])) {
 function a($a) {
     if ($a && \is_string($a) && \strpos($a, '@') !== false) {
         $out = "";
-        $parts = \preg_split('#(<[!/]?[a-zA-Z\d:.-]+[\s\S]*?>)#', $a, null, \PREG_SPLIT_NO_EMPTY | \PREG_SPLIT_DELIM_CAPTURE);
+        $parts = \preg_split('#(<pre(?:\s[^>]*)?>[\s\S]*?</pre>|<code(?:\s[^>]*)?>[\s\S]*?</code>|<kbd(?:\s[^>]*)?>[\s\S]*?</kbd>|<script(?:\s[^>]*)?>[\s\S]*?</script>|<style(?:\s[^>]*)?>[\s\S]*?</style>|<textarea(?:\s[^>]*)?>[\s\S]*?</textarea>|<[^>]+>)#i', $a, null, \PREG_SPLIT_NO_EMPTY | \PREG_SPLIT_DELIM_CAPTURE);
         foreach ($parts as $v) {
             if (\strpos($v, '<') === 0 && \substr($v, -1) === '>') {
-                $out .= $v; // HTML tag
+                $out .= $v; // Is a HTML tag
             } else {
                 $out .= \strpos($v, '@') !== false ? \preg_replace_callback('#@[a-z\d-]+#', function($m) {
                     if ($f = \File::exist(USER . DS . \substr($m[0], 1) . '.page')) {
@@ -23,7 +24,7 @@ function a($a) {
                         return \HTML::a($f . "", $f->url, true, ['title' => $f->key]);
                     }
                     return $m[0];
-                }, $v) : $v; // Plain text
+                }, $v) : $v; // Is a plain text
             }
         }
         return $out;
