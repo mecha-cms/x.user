@@ -13,7 +13,7 @@ Route::set($path_secret, function() use($max, $path, $path_secret) {
     extract(Lot::get(), EXTR_SKIP);
     $is_enter = $config->is('enter');
     Config::set('trace', new Anemon([$language->{$is_enter ? 'exit' : 'enter'}, $config->title], ' &#x00B7; '));
-    if ($r = HTTP::post(null, [], false)) {
+    if ($r = HTTP::post(null, false)) {
         $key = $r['key'] ?? null;
         $pass = $r['pass'] ?? null;
         $token = $r['token'] ?? null;
@@ -28,7 +28,7 @@ Route::set($path_secret, function() use($max, $path, $path_secret) {
         }
         $u = USER . DS . $key . '.page';
         $try = USER . DS . $key . DS . 'try.data';
-        $try_data = (array) e(File::open($try)->read());
+        $try_data = (array) e(content($try));
         $ip = Get::IP();
         if (!isset($try_data[$ip])) {
             $try_data[$ip] = 1;
