@@ -2,11 +2,21 @@
 
 class User extends Page {
 
-    public function __construct(string $path = null, array $lot = [], $NS = []) {
+    // Set pre-defined user property
+    public static $data = [];
+
+    public function __construct(string $path = null, array $lot = [], array $prefix = []) {
         $n = $path ? Path::N($path) : "";
         parent::__construct($path, extend([
             'url' => $n ? $GLOBALS['URL']['$'] . '/' . Extend::state('user', 'path') . '/' . $n : null
-        ], $lot, false), $NS);
+        ], static::$data, $lot), $prefix);
+    }
+
+    public function __toString() {
+        if (!$this->__call('$')) {
+            return $this->key() ?: "";
+        }
+        return parent::__toString();
     }
 
     public function key() {
@@ -15,13 +25,6 @@ class User extends Page {
 
     public function pass() {
         return File::open(Path::F($this->path) . DS . 'pass.data')->get(0);
-    }
-
-    public function __toString() {
-        if (!$this->__call('$')) {
-            return $this->__call('key') ?: "";
-        }
-        return parent::__toString();
     }
 
 }

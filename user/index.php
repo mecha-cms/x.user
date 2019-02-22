@@ -3,6 +3,7 @@
 // Require the plug manually…
 require __DIR__ . DS . 'engine' . DS . 'plug' . DS . 'get.php';
 require __DIR__ . DS . 'engine' . DS . 'plug' . DS . 'is.php';
+require __DIR__ . DS . 'engine' . DS . 'plug' . DS . 'user.php';
 
 // Store user state to registry…
 $state = \Extend::state('user');

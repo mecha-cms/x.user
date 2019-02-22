@@ -3,7 +3,7 @@ title: User
 description: Rich user data.
 author: Taufik Nurrohman
 type: Markdown
-version: 1.7.1
+version: 1.8.0
 
 dependency:
   extension:
