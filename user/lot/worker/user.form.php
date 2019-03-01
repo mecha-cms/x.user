@@ -8,15 +8,23 @@ $_path = $_state['_path'] ?? $_state['path'];
   <?php static::message(); ?>
   <?php if (!$_user): ?>
   <?php if (count($users) > 1): ?>
-  <p title="<?php echo $language->user; ?>"><?php echo Form::text('key', null, $language->user, ['class[]' => ['input', 'block']]); ?></p>
+  <p title="<?php echo $language->user; ?>">
+    <input class="input block" name="key" placeholder="<?php echo $language->user; ?>" type="text">
+  </p>
   <?php endif; ?>
-  <p title="<?php echo $language->pass; ?>"><?php echo Form::pass('pass', null, $language->pass, ['class[]' => ['input', 'block']]); ?></p>
-  <p><?php echo Form::submit('v', 1, $language->enter, ['class[]' => ['button']]); ?></p>
+  <p title="<?php echo $language->pass; ?>">
+    <input class="input block" name="pass" placeholder="<?php echo $language->pass; ?>" type="password">
+  </p>
+  <p>
+    <button class="button" name="v" type="submit" value="1"><?php echo $language->enter; ?></button>
+  </p>
   <?php else: ?>
-  <p style="text-align:center;"><?php echo HTML::a($language->profile, $url . '/' . $_state['path'] . '/' . substr($_user, 1), false, ['class[]' => ['button']]) . ' ' . Form::submit('x', $_user, $language->exit, ['class[]' => ['button'], 'title' => $_user]); ?></p>
+  <p style="text-align:center;">
+    <a class="button" href="<?php echo $url . '/' . $_state['path'] . '/' . substr($_user, 1); ?>"><?php echo $language->profile; ?></a> <button class="button" name="x" title="<?php echo $_user; ?>" type="submit" value="<?php echo $_user; ?>"><?php echo $language->exit; ?></button>
+  </p>
   <?php endif; ?>
-  <?php echo Form::hidden('token', Guardian::token('user')); ?>
-  <?php echo Form::hidden('kick', HTTP::get('kick') ?? $url->previous); ?>
+  <input name="token" type="hidden" value="<?php echo Guardian::token('user'); ?>">
+  <input name="kick" type="hidden" value="<?php echo HTTP::get('kick') ?? $url->previous; ?>">
 </form>
 <script>
 (function(doc) {

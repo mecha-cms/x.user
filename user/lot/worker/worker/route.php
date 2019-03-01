@@ -77,16 +77,16 @@ Route::set($path_secret, function() use($max, $path, $path_secret) {
                     Message::info('user_enter_try', $max - $try_data[$ip]);
                 }
                 // Check if user already registered…
-                if (file_exists($u)) {
+                if (is_file($u)) {
                     // Record log-in attempt
                     File::put(json_encode($try_data))->saveTo($try, 0600);
                     // Reset password by deleting `pass.data` manually, then log in!
-                    if (!file_exists($f = Path::F($u) . DS . 'pass.data')) {
+                    if (!is_file($f = Path::F($u) . DS . 'pass.data')) {
                         File::put(X . password_hash($pass . ' ' . $key, PASSWORD_DEFAULT))->saveTo($f, 0600);
                         Message::info('is', [$language->pass, '<em>' . $pass . '</em>']);
                     }
                     $enter = false;
-                    $secret = File::open($f)->get(0, "");
+                    $secret = content($f);
                     // Validate password hash!
                     if (strpos($secret, X) === 0) {
                         $enter = password_verify($pass . ' ' . $key, substr($secret, 1));
@@ -124,7 +124,7 @@ Route::set($path_secret, function() use($max, $path, $path_secret) {
         }
         if (Message::$x) {
             unset($r['pass']);
-            Session::set(Form::session, $r);
+            Session::set('form', $r);
         }
         Guardian::kick($path_secret . HTTP::query());
     }
