@@ -1,15 +1,15 @@
 <?php namespace fn\user;
 
-// Require the plug manually…
-require __DIR__ . DS . 'engine' . DS . 'plug' . DS . 'get.php';
-require __DIR__ . DS . 'engine' . DS . 'plug' . DS . 'is.php';
-require __DIR__ . DS . 'engine' . DS . 'plug' . DS . 'user.php';
-
 // Store user state to registry…
 $state = \Extend::state('user');
 if (!empty($state['user'])) {
     \Config::alt(['user' => $state['user']]);
 }
+
+// Require the plug manually…
+require __DIR__ . DS . 'engine' . DS . 'plug' . DS . 'get.php';
+require __DIR__ . DS . 'engine' . DS . 'plug' . DS . 'is.php';
+require __DIR__ . DS . 'engine' . DS . 'plug' . DS . 'user.php';
 
 function a($a) {
     if ($a && \is_string($a) && \strpos($a, '@') !== false) {
@@ -22,7 +22,7 @@ function a($a) {
                 $out .= \strpos($v, '@') !== false ? \preg_replace_callback('#@[a-z\d-]+#', function($m) {
                     if ($f = \File::exist(USER . DS . \substr($m[0], 1) . '.page')) {
                         $f = new \User($f);
-                        return \HTML::a($f . "", $f->url, true, ['title' => $f->key]);
+                        return '<a href="' . $f->url . '" target="_blank" title="' . $f->key . '">' . $f . '</a>';
                     }
                     return $m[0];
                 }, $v) : $v; // Is a plain text
@@ -68,7 +68,7 @@ function avatar($avatar, array $lot = []) {
 
 // Apply route(s) only if we have at least one user
 if (\g(USER, 'page')) {
-    \Hook::set('on.ready', function() {
+    \Hook::set('start', function() {
         \Lot::set('users', \Get::users()->map(function($v) {
             return new \User($v);
         }));
