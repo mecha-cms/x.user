@@ -67,7 +67,7 @@ function avatar($avatar, array $lot = []) {
 ]);
 
 // Apply route(s) only if we have at least one user
-if (\g(USER, 'page')) {
+if (\y(\g(USER, 'page'))) {
     \Hook::set('start', function() {
         \Lot::set('users', \Get::users()->map(function($v) {
             return new \User($v);
