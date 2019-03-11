@@ -23,7 +23,7 @@ $_path = $_state['_path'] ?? $_state['path'];
     <a class="button" href="<?php echo $url . '/' . $_state['path'] . '/' . substr($_user, 1); ?>"><?php echo $language->profile; ?></a> <button class="button" name="x" title="<?php echo $_user; ?>" type="submit" value="<?php echo $_user; ?>"><?php echo $language->exit; ?></button>
   </p>
   <?php endif; ?>
-  <input name="token" type="hidden" value="<?php echo Guardian::token('user'); ?>">
+  <input name="token" type="hidden" value="<?php echo Guard::token('user'); ?>">
   <input name="kick" type="hidden" value="<?php echo HTTP::get('kick') ?? $url->previous; ?>">
 </form>
 <script>
