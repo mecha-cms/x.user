@@ -59,7 +59,7 @@ Route::set(x($path_secret), function() use($max, $path, $path_secret) {
                 // Remove log-in attempt log
                 File::open($try)->delete();
                 // Redirect to the log in page by default!
-                Guard::kick(($r['kick'] ?? $path_secret) . URL::query('&', ['kick' => false]));
+                Guard::kick(($r['kick'] ?? $path_secret) . $url->query('&', ['kick' => false]));
             }
         // Log in!
         } else {
@@ -120,7 +120,7 @@ Route::set(x($path_secret), function() use($max, $path, $path_secret) {
                         // Remove log-in attempt log
                         File::open($try)->delete();
                         // Redirect to the home page by default!
-                        Guard::kick(($r['kick'] ?? "") . URL::query('&', ['kick' => false]));
+                        Guard::kick(($r['kick'] ?? "") . $url->query('&', ['kick' => false]));
                     } else {
                         Message::error('user_or_pass');
                         ++$errors;
@@ -135,7 +135,7 @@ Route::set(x($path_secret), function() use($max, $path, $path_secret) {
             unset($r['pass']);
             Session::set('form', $r);
         }
-        Guard::kick($path_secret . URL::query());
+        Guard::kick($path_secret . $url->query);
     }
     Config::set('is', [
         'error' => false,

@@ -47,7 +47,7 @@ function avatar($avatar, array $lot = []) {
     $w = \array_shift($lot) ?? 72;
     $h = \array_shift($lot) ?? $w;
     $d = \array_shift($lot) ?? 'monsterid';
-    return $GLOBALS['URL']['protocol'] . 'www.gravatar.com/avatar/' . \md5($this->email) . '?s=' . $w . '&amp;d=' . $d;
+    return $GLOBALS['URL']['scheme'] . '://www.gravatar.com/avatar/' . \md5($this->email) . '?s=' . $w . '&d=' . $d;
 }
 
 \Hook::set([

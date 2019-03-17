@@ -24,7 +24,7 @@ $_path = $_state['_path'] ?? $_state['path'];
   </p>
   <?php endif; ?>
   <input name="token" type="hidden" value="<?php echo Guard::token('user'); ?>">
-  <input name="kick" type="hidden" value="<?php echo HTTP::get('kick') ?? $url->previous; ?>">
+  <input name="kick" type="hidden" value="<?php echo strtr(HTTP::get('kick'), ['&' => '&amp;']); ?>">
 </form>
 <script>
 (function(doc) {
