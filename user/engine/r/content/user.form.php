@@ -9,18 +9,18 @@ $_path = $_state['_path'] ?? $_state['path'];
   <?php if (!$_user): ?>
   <?php if (count($users) > 1): ?>
   <p title="<?php echo $language->user; ?>">
-    <input class="input block" name="key" placeholder="<?php echo $language->user; ?>" type="text">
+    <input class="input width" name="key" placeholder="<?php echo $language->user; ?>" type="text">
   </p>
   <?php endif; ?>
   <p title="<?php echo $language->pass; ?>">
-    <input class="input block" name="pass" placeholder="<?php echo $language->pass; ?>" type="password">
+    <input class="input width" name="pass" placeholder="<?php echo $language->pass; ?>" type="password">
   </p>
   <p>
-    <button class="button" name="v" type="submit" value="1"><?php echo $language->enter; ?></button>
+    <button class="button" name="v" type="submit" value="1"><?php echo $language->doEnter; ?></button>
   </p>
   <?php else: ?>
   <p style="text-align:center;">
-    <a class="button" href="<?php echo $url . '/' . $_state['path'] . '/' . substr($_user, 1); ?>"><?php echo $language->profile; ?></a> <button class="button" name="x" title="<?php echo $_user; ?>" type="submit" value="<?php echo $_user; ?>"><?php echo $language->exit; ?></button>
+    <a class="button" href="<?php echo $url . '/' . $_state['path'] . '/' . substr($_user, 1); ?>"><?php echo $language->profile; ?></a> <button class="button" name="x" title="<?php echo $_user; ?>" type="submit" value="<?php echo $_user; ?>"><?php echo $language->doExit; ?></button>
   </p>
   <?php endif; ?>
   <input name="token" type="hidden" value="<?php echo Guard::token('user'); ?>">

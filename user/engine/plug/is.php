@@ -1,6 +1,6 @@
 <?php
 
-$key = substr($user = Cookie::get('user.key') ?? Session::get('user.key') ?? "", 1);
+$key = substr($user = Cookie::get('user.user') ?? Session::get('user.user') ?? "", 1);
 $a = File::open(USER . DS . $key . DS . 'token.data')->get(0) ?? "";
 $b = Cookie::get('user.token') ?? Session::get('user.token') ?? "";
 

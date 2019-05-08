@@ -13,14 +13,14 @@ class User extends Page {
     }
 
     public function __toString() {
-        if (!$this->__call('$')) {
-            return $this->key() ?: "";
+        if (is_string($v = $this->offsetGet('$'))) {
+            return $v;
         }
-        return parent::__toString();
+        return $this->user;
     }
 
-    public function key() {
-        return $this->path ? '@' . Path::N($this->path) : null;
+    public function user() {
+        return $this->exist ? '@' . Path::N($this->path) : null;
     }
 
     public function pass() {
