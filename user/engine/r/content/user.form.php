@@ -9,11 +9,11 @@ $_path = $_state['_path'] ?? $_state['path'];
   <?php if (!$_user): ?>
   <?php if (count($users) > 1): ?>
   <p title="<?php echo $language->user; ?>">
-    <input class="input width" name="key" placeholder="<?php echo $language->user; ?>" type="text">
+    <input class="input width" name="user[key]" placeholder="<?php echo $language->user; ?>" type="text">
   </p>
   <?php endif; ?>
   <p title="<?php echo $language->pass; ?>">
-    <input class="input width" name="pass" placeholder="<?php echo $language->pass; ?>" type="password">
+    <input class="input width" name="user[pass]" placeholder="<?php echo $language->pass; ?>" type="password">
   </p>
   <p>
     <button class="button" name="v" type="submit" value="1"><?php echo $language->doEnter; ?></button>

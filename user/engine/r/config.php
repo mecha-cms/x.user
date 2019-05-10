@@ -10,7 +10,7 @@ if (!empty($state['user'])) {
 
 Config::set('is.enter', $user = Is::user());
 
-$GLOBALS['user'] = new User($user ? USER . DS . \substr($user, 1) . '.page' : null);
-$GLOBALS['users'] = Get::users()->map(function($v) {
+$GLOBALS['user'] = $user = new User($user ? USER . DS . \substr($user, 1) . '.page' : null);
+$GLOBALS['users'] = $users = Get::users()->map(function($v) {
     return new User($v);
 });

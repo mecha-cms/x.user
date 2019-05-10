@@ -5,15 +5,15 @@ $max = $state['try'] ?? 5;
 $path = $state['path'];
 $secret = $state['_path'] ?? $path;
 
-Route::set($secret, function($r, $k) use($max, $path, $secret) {
-    $is_enter = $this->config::is('enter');
-    $this->title([$this->language->{'do' . ($is_enter ? 'Exit' : 'Enter')}, $this->config->title]);
+Route::set($secret, function($form, $k) use($config, $language, $max, $path, $secret, $url, $user, $users) {
+    $is_enter = Config::is('enter');
+    $this->trace([$language->{'do' . ($is_enter ? 'Exit' : 'Enter')}, $config->title]);
     if ($k === 'POST') {
-        $key = $r['key'] ?? null;
-        $pass = $r['pass'] ?? null;
-        $token = $r['token'] ?? null;
+        $key = $form['user']['key'] ?? null;
+        $pass = $form['user']['pass'] ?? null;
+        $token = $form['token'] ?? null;
         // Has only 1 user!
-        if (count($this->users) === 1) {
+        if (count($users) === 1) {
             // Set the `key` value to that user automatically
             $key = $users[0]->key;
         }
@@ -34,105 +34,103 @@ Route::set($secret, function($r, $k) use($max, $path, $secret) {
         // Log out!
         if ($is_enter) {
             // Check token…
-            if (Is::void($token) || !Guard::check($token, 'user')) {
-                $this->message::error('token');
+            if (Is::void($token) || !$this->check($token, 'user')) {
+                Message::error('token');
                 ++$errors;
-            } else if (!isset($r['x']) || Is::void($r['x'])) {
-                $this->message::error('void-field', $this->language->user, true);
+            } else if (!isset($form['x']) || Is::void($form['x'])) {
+                Message::error('void-field', $language->user, true);
                 ++$errors;
             } else {
-                File::open(USER . DS . $r['x'] . DS . 'token.data')->delete();
-                Cookie::let('user.user');
+                File::open(USER . DS . $form['x'] . DS . 'token.data')->let();
+                Cookie::let('user.key');
                 Cookie::let('user.pass');
                 Cookie::let('user.token');
-                Session::let('user.user');
+                Session::let('user.key');
                 Session::let('user.pass');
                 Session::let('user.token');
-                $this->message::success('user-exit');
+                Message::success('user-exit');
                 // Trigger the hook!
-                Hook::fire('on.user.exit', [$u, null], $user);
+                Hook::fire('on.user.exit', [new File($u), null], $user);
                 // Remove log-in attempt log
-                File::open($try)->delete();
+                File::open($try)->let();
                 // Redirect to the log in page by default!
-                $this->kick(($r['kick'] ?? $secret) . $this->url->query('&', ['kick' => false]));
+                $this->kick(($form['kick'] ?? $secret) . $url->query('&', ['kick' => false]));
             }
         // Log in!
         } else {
             // Check token…
-            if (Is::void($token) || !Guard::check($token, 'user')) {
-                $this->message::error('token');
+            if (Is::void($token) || !$this->check($token, 'user')) {
+                Message::error('token');
                 ++$errors;
-            // Check user name…
+            // Check user key…
             } else if (Is::void($key)) {
-                $this->message::error('void-field', $this->language->user, true);
+                Message::error('void-field', $language->user, true);
                 ++$errors;
             // Check user pass…
             } else if (Is::void($pass)) {
-                $this->message::error('void-field', $rhis->language->pass, true);
+                Message::error('void-field', $language->pass, true);
                 ++$errors;
             // No error(s), go to the next step(s)…
             } else {
                 if ($try_data[$ip] > $max) {
                     Guard::abort('Please delete the <code>' . str_replace(ROOT, '.', Path::D($try, 2)) . DS . $key[0] . str_repeat('&#x2022;', strlen($key) - 1) . DS . 'try.data</code> file to sign in.');
                 } else {
-                    $this->message::info('user-enter-try', $max - $try_data[$ip]);
+                    Message::info('user-enter-try', $max - $try_data[$ip]);
                     ++$errors;
                 }
                 // Check if user already registered…
                 if (is_file($u)) {
                     // Record log-in attempt
-                    File::put(json_encode($try_data))->saveTo($try, 0600);
+                    File::set(json_encode($try_data))->saveTo($try, 0600);
                     // Reset password by deleting `pass.data` manually, then log in!
                     if (!is_file($f = Path::F($u) . DS . 'pass.data')) {
-                        File::put(X . password_hash($pass . ' ' . $key, PASSWORD_DEFAULT))->saveTo($f, 0600);
-                        $this->message::info('is', [$this->language->pass, '<em>' . $pass . '</em>']);
+                        File::set(X . password_hash($pass . ' ' . $key, PASSWORD_DEFAULT))->saveTo($f, 0600);
+                        Message::info('is', [$language->pass, '<em>' . $pass . '</em>']);
                     }
-                    $enter = false;
-                    $secret = content($f);
                     // Validate password hash!
-                    if (strpos($secret, X) === 0) {
-                        $enter = password_verify($pass . ' ' . $key, substr($secret, 1));
+                    if (strpos($h = content($f), X) === 0) {
+                        $enter = password_verify($pass . ' ' . $key, substr($h, 1));
                     // Validate password text!
                     } else {
-                        $enter = $pass === $secret;
+                        $enter = $pass === $h;
                     }
                     // Is valid, then…
-                    if ($enter) {
+                    if (!empty($enter)) {
                         // Save the token!
-                        File::put($token)->saveTo(Path::F($u) . DS . 'token.data', 0600);
-                        Session::set('user.user', '@' . $key);
+                        File::set($token)->saveTo(Path::F($u) . DS . 'token.data', 0600);
+                        Session::set('user.key', '@' . $key);
                         // Session::set('user.pass', $pass);
                         Session::set('user.token', $token);
                         // Duplicate session to cookie for 7 day(s)
-                        Cookie::set('user.user', '@' . $key, '7 days');
+                        Cookie::set('user.key', '@' . $key, '7 days');
                         // Cookie::set('user.pass', $pass, '7 days');
                         Cookie::set('user.token', $token, '7 days');
                         // Show success message!
-                        $this->message::let();
-                        $this->message::success('user-enter');
+                        Message::let();
+                        Message::success('user-enter');
                         // Trigger the hook!
-                        Hook::fire('on.user.enter', [$u, $u], $user);
+                        Hook::fire('on.user.enter', [new File($u), null], $user);
                         // Remove log-in attempt log
-                        File::open($try)->delete();
+                        File::open($try)->let();
                         // Redirect to the home page by default!
-                        $this->kick(($r['kick'] ?? "") . $this->url->query('&', ['kick' => false]));
+                        $this->kick(($form['kick'] ?? "") . $url->query('&', ['kick' => false]));
                     } else {
-                        $this->message::error('user-or-pass');
+                        Message::error('user-or-pass');
                         ++$errors;
                     }
                 } else {
-                    $this->message::error('user-or-pass');
+                    Message::error('user-or-pass');
                     ++$errors;
                 }
             }
         }
         if ($errors > 0) {
-            unset($r['pass']);
-            Session::set('form', $r);
+            unset($form['user']['pass']);
+            Session::set('form', $form);
         }
-        $this->kick($secret . $this->url->query);
+        $this->kick($secret . $url->query);
     }
-    $this->config::set('is', [
+    Config::set('is', [
         'error' => false,
         'page' => true,
         'user' => true
@@ -140,21 +138,21 @@ Route::set($secret, function($r, $k) use($max, $path, $secret) {
     $this->view('user');
 });
 
-Route::set($path . '/:user', function() use($config, $path) {
-    $id = $this->user;
-    if (!$file = File::exist([
+Route::set($path . '/:slug', function() use($config, $path) {
+    $id = $this->slug;
+    if (!$f = File::exist([
         USER . DS . $id . '.page',
         USER . DS . $id . '.archive'
     ])) {
-        $this->config::set('is.error', 404);
+        Config::set('is.error', 404);
         $this->view('404/' . $path . '/' . $id);
     }
-    $GLOBALS['page'] = $user = new User($file, [], [3 => 'page']);
-    if ($title = $user->{'$'}) {
+    $GLOBALS['page'] = $user = new User($f, [], [3 => 'page']);
+    if ($title = $user . "") {
         $user->author = $user->title = $title;
     }
-    $this->title([$user->user . ' (' . $title . ')', $this->config->title]);
-    $this->config::set('is', [
+    $this->trace([$user->user . ' (' . $title . ')', $config->title]);
+    Config::set('is', [
         'active' => !!Is::user($user->user),
         'error' => false,
         'page' => true,

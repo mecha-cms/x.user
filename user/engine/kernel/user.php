@@ -16,15 +16,19 @@ class User extends Page {
         if (is_string($v = $this->offsetGet('$'))) {
             return $v;
         }
-        return $this->user;
+        return $this->user . "";
     }
 
-    public function user() {
-        return $this->exist ? '@' . Path::N($this->path) : null;
+    public function key() {
+        return $this->name;
     }
 
     public function pass() {
         return File::open(Path::F($this->path) . DS . 'pass.data')->get(0);
+    }
+
+    public function user() {
+        return $this->exist ? '@' . Path::N($this->path) : null;
     }
 
 }
