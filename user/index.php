@@ -10,6 +10,6 @@ require __DIR__ . DS . 'engine' . DS . 'r' . DS . 'language.php';
 require __DIR__ . DS . 'engine' . DS . 'r' . DS . 'user.php';
 
 // Apply route(s) only if we have at least one user
-if (y(g(USER, 'page'))) {
+if (glob(USER . DS . '*.page', GLOB_NOSORT)) {
     require __DIR__ . DS . 'engine' . DS . 'r' . DS . 'route.php';
 }

@@ -4,12 +4,12 @@ $_state = Extend::state('user');
 $_path = $_state['_path'] ?? $_state['path'];
 
 ?>
-<form name="user" class="form-user form-user:<?php echo ($_user = Is::user()) ? 'exit' : 'enter'; ?>" action="<?php echo $url . '/' . $_path . $url->query('&amp;'); ?>" method="post" style="display:block;max-width:15em;margin-right:auto;margin-left:auto;">
-  <?php static::message(); ?>
+<form action="<?php echo $url . '/' . $_path . $url->query('&amp;'); ?>" class="form-user form-user:<?php echo ($_user = Is::user()) ? 'exit' : 'enter'; ?>" method="post" name="user" style="display:block;max-width:15em;margin-right:auto;margin-left:auto;">
+  <?php echo $message; ?>
   <?php if (!$_user): ?>
   <?php if (count($users) > 1): ?>
   <p title="<?php echo $language->user; ?>">
-    <input class="input width" name="user[key]" placeholder="<?php echo $language->user; ?>" type="text">
+    <input autofocus class="input width" name="user[key]" placeholder="<?php echo $language->user; ?>" type="text">
   </p>
   <?php endif; ?>
   <p title="<?php echo $language->pass; ?>">
@@ -23,18 +23,6 @@ $_path = $_state['_path'] ?? $_state['path'];
     <a class="button" href="<?php echo $url . '/' . $_state['path'] . '/' . substr($_user, 1); ?>"><?php echo $language->profile; ?></a> <button class="button" name="x" title="<?php echo $_user; ?>" type="submit" value="<?php echo $_user; ?>"><?php echo $language->doExit; ?></button>
   </p>
   <?php endif; ?>
-  <input name="token" type="hidden" value="<?php echo Guard::token('user'); ?>">
+  <input name="token" type="hidden" value="<?php echo token('user'); ?>">
   <input name="kick" type="hidden" value="<?php echo strtr(HTTP::get('kick'), ['&' => '&amp;']); ?>">
 </form>
-<script>
-(function(doc) {
-    var $ = doc.forms.user,
-        key = $.key,
-        pass = $.pass;
-    if (key && key.value) {
-        pass.focus();
-    } else {
-        (key || pass).focus();
-    }
-})(document);
-</script>

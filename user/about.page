@@ -3,12 +3,14 @@ title: User
 description: Rich user data.
 author: Taufik Nurrohman
 type: Markdown
-version: 1.8.1
+version: 1.8.5
 
-dependency:
-  extension:
-  - form
-  - page
+lot:
+  extend:
+    form: 1
+    message: 1
+    page: 1
+    shield: 1
 ...
 
 ### File

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html dir="<?php echo $site->direction; ?>" class style="margin:0;padding:0;width:100%;height:100%;display:block;overflow:hidden;">
+<html class dir="<?php echo $site->direction; ?>" style="margin:0;padding:0;width:100%;height:100%;display:block;overflow:hidden;">
   <head>
     <meta charset="<?php echo $site->charset; ?>">
-    <meta name="viewport" content="width=device-width">
-    <meta name="robots" content="noindex">
+    <meta content="width=device-width" name="viewport">
+    <meta content="noindex" name="robots">
     <title><?php echo To::text($site->trace); ?></title>
     <link href="<?php echo $url; ?>/favicon.ico" rel="shortcut icon">
   </head>
