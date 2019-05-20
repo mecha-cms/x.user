@@ -1,6 +1,6 @@
 <?php
 
-$state = Extend::state('user');
+$state = extend('user');
 $max = $state['try'] ?? 5;
 $path = $state['path'];
 $secret = $state['_path'] ?? $path;
@@ -148,7 +148,7 @@ Route::set($path . '/:slug', function() use($config, $path) {
         $this->view('404/' . $path . '/' . $id);
     }
     $GLOBALS['page'] = $user = new User($f, [], [3 => 'page']);
-    if ($title = $user . "") {
+    if ($title = (string) $user) {
         $user->author = $user->title = $title;
     }
     $this->trace([$user->user . ' (' . $title . ')', $config->title]);

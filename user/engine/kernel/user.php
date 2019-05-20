@@ -8,7 +8,7 @@ class User extends Page {
     public function __construct(string $path = null, array $lot = [], array $prefix = []) {
         $n = $path ? Path::N($path) : "";
         parent::__construct($path, array_replace_recursive([
-            'url' => $n ? $GLOBALS['URL']['$'] . '/' . Extend::state('user', 'path') . '/' . $n : null
+            'url' => $n ? $GLOBALS['URL']['$'] . '/' . extend('user')['path'] . '/' . $n : null
         ], static::$data, $lot), $prefix);
     }
 
@@ -16,7 +16,7 @@ class User extends Page {
         if (is_string($v = $this->offsetGet('$'))) {
             return $v;
         }
-        return $this->user . "";
+        return (string) $this->user;
     }
 
     public function key() {

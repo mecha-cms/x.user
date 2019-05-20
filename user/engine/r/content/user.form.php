@@ -1,6 +1,6 @@
 <?php
 
-$_state = Extend::state('user');
+$_state = extend('user');
 $_path = $_state['_path'] ?? $_state['path'];
 
 ?>
