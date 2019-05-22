@@ -5,9 +5,9 @@ $max = $state['try'] ?? 5;
 $path = $state['path'];
 $secret = $state['_path'] ?? $path;
 
-Route::set($secret, function($form, $k) use($config, $language, $max, $path, $secret, $url, $user, $users) {
+Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path, $secret, $url, $user, $users) {
     $is_enter = Config::is('enter');
-    $this->trace([$language->{'do' . ($is_enter ? 'Exit' : 'Enter')}, $config->title]);
+    $GLOBALS['t'][] = $language->{'do' . ($is_enter ? 'Exit' : 'Enter')};
     if ($k === 'POST') {
         $key = $form['user']['key'] ?? null;
         $pass = $form['user']['pass'] ?? null;
@@ -34,7 +34,7 @@ Route::set($secret, function($form, $k) use($config, $language, $max, $path, $se
         // Log out!
         if ($is_enter) {
             // Check token…
-            if (Is::void($token) || !$this->check($token, 'user')) {
+            if (Is::void($token) || !Guard::check($token, 'user')) {
                 Message::error('token');
                 ++$errors;
             } else if (!isset($form['x']) || Is::void($form['x'])) {
@@ -54,12 +54,12 @@ Route::set($secret, function($form, $k) use($config, $language, $max, $path, $se
                 // Remove log-in attempt log
                 File::open($try)->let();
                 // Redirect to the log in page by default!
-                $this->kick(($form['kick'] ?? $secret) . $url->query('&', ['kick' => false]));
+                Guard::kick(($form['kick'] ?? $secret) . $url->query('&', ['kick' => false]));
             }
         // Log in!
         } else {
             // Check token…
-            if (Is::void($token) || !$this->check($token, 'user')) {
+            if (Is::void($token) || !Guard::check($token, 'user')) {
                 Message::error('token');
                 ++$errors;
             // Check user key…
@@ -84,11 +84,11 @@ Route::set($secret, function($form, $k) use($config, $language, $max, $path, $se
                     File::set(json_encode($try_data))->saveTo($try, 0600);
                     // Reset password by deleting `pass.data` manually, then log in!
                     if (!is_file($f = Path::F($u) . DS . 'pass.data')) {
-                        File::set(X . password_hash($pass . ' ' . $key, PASSWORD_DEFAULT))->saveTo($f, 0600);
+                        File::set(P . password_hash($pass . ' ' . $key, PASSWORD_DEFAULT))->saveTo($f, 0600);
                         Message::info('is', [$language->pass, '<em>' . $pass . '</em>']);
                     }
                     // Validate password hash!
-                    if (strpos($h = content($f), X) === 0) {
+                    if (strpos($h = content($f), P) === 0) {
                         $enter = password_verify($pass . ' ' . $key, substr($h, 1));
                     // Validate password text!
                     } else {
@@ -113,7 +113,7 @@ Route::set($secret, function($form, $k) use($config, $language, $max, $path, $se
                         // Remove log-in attempt log
                         File::open($try)->let();
                         // Redirect to the home page by default!
-                        $this->kick(($form['kick'] ?? "") . $url->query('&', ['kick' => false]));
+                        Guard::kick(($form['kick'] ?? "") . $url->query('&', ['kick' => false]));
                     } else {
                         Message::error('user-or-pass');
                         ++$errors;
@@ -128,7 +128,7 @@ Route::set($secret, function($form, $k) use($config, $language, $max, $path, $se
             unset($form['user']['pass']);
             Session::set('form', $form);
         }
-        $this->kick($secret . $url->query);
+        Guard::kick($secret . $url->query);
     }
     Config::set('is', [
         'error' => false,
@@ -138,20 +138,22 @@ Route::set($secret, function($form, $k) use($config, $language, $max, $path, $se
     $this->view('user');
 });
 
-Route::set($path . '/:slug', function() use($config, $path) {
+Route::set($path . '/:slug', function() use($config, $language, $path) {
     $id = $this->slug;
     if (!$f = File::exist([
         USER . DS . $id . '.page',
         USER . DS . $id . '.archive'
     ])) {
         Config::set('is.error', 404);
+        $GLOBALS['t'][] = $language->isError;
         $this->view('404/' . $path . '/' . $id);
     }
-    $GLOBALS['page'] = $user = new User($f, [], [3 => 'page']);
-    if ($title = (string) $user) {
-        $user->author = $user->title = $title;
+    $user = new User($f, [], [3 => 'page']);
+    if ($t = (string) $user) {
+        $user->author = $user->title = $t;
     }
-    $this->trace([$user->user . ' (' . $title . ')', $config->title]);
+    $GLOBALS['t'][] = $user->user . ' (' . $t . ')';
+    $GLOBALS['page'] = $user;
     Config::set('is', [
         'active' => !!Is::user($user->user),
         'error' => false,
