@@ -42,12 +42,8 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
                 ++$errors;
             } else {
                 File::open(USER . DS . $form['x'] . DS . 'token.data')->let();
-                Cookie::let('user.key');
-                Cookie::let('user.pass');
-                Cookie::let('user.token');
-                Session::let('user.key');
-                Session::let('user.pass');
-                Session::let('user.token');
+                Cookie::let(['user.key', 'user.pass', 'user.token']);
+                Session::let(['user.key', 'user.pass', 'user.token']);
                 Message::success('user-exit');
                 // Trigger the hook!
                 Hook::fire('on.user.exit', [new File($u), null], $user);
@@ -84,12 +80,12 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
                     File::set(json_encode($try_data))->saveTo($try, 0600);
                     // Reset password by deleting `pass.data` manually, then log in!
                     if (!is_file($f = Path::F($u) . DS . 'pass.data')) {
-                        File::set(P . password_hash($pass . ' ' . $key, PASSWORD_DEFAULT))->saveTo($f, 0600);
+                        File::set(P . password_hash($pass . '@' . $key, PASSWORD_DEFAULT))->saveTo($f, 0600);
                         Message::info('is', [$language->pass, '<em>' . $pass . '</em>']);
                     }
                     // Validate password hash!
                     if (strpos($h = content($f), P) === 0) {
-                        $enter = password_verify($pass . ' ' . $key, substr($h, 1));
+                        $enter = password_verify($pass . '@' . $key, substr($h, 1));
                     // Validate password text!
                     } else {
                         $enter = $pass === $h;
@@ -98,15 +94,14 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
                     if (!empty($enter)) {
                         // Save the token!
                         File::set($token)->saveTo(Path::F($u) . DS . 'token.data', 0600);
-                        Session::set('user.key', '@' . $key);
+                        Session::set('user.key', $key);
                         // Session::set('user.pass', $pass);
                         Session::set('user.token', $token);
                         // Duplicate session to cookie for 7 day(s)
-                        Cookie::set('user.key', '@' . $key, '7 days');
+                        Cookie::set('user.key', $key, '7 days');
                         // Cookie::set('user.pass', $pass, '7 days');
                         Cookie::set('user.token', $token, '7 days');
                         // Show success message!
-                        Message::let();
                         Message::success('user-enter');
                         // Trigger the hook!
                         Hook::fire('on.user.enter', [new File($u), null], $user);
