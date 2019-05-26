@@ -1,8 +1,8 @@
 <?php
 
-$key = Cookie::get('user.key') ?? Session::get('user.key') ?? "";
-$a = File::open(USER . DS . $key . DS . 'token.data')->get(0) ?? "";
-$b = Cookie::get('user.token') ?? Session::get('user.token') ?? "";
+$key = Cookie::get('user.key');
+$a = Cookie::get('user.token');
+$b = content(USER . DS . $key . DS . 'token.data');
 
 $user = $a && $b && $a === $b ? '@' . $key : false;
 

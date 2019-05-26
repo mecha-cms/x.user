@@ -4,7 +4,7 @@
     <meta charset="<?php echo $site->charset; ?>">
     <meta content="width=device-width" name="viewport">
     <meta content="noindex" name="robots">
-    <title><?php echo To::text($site->trace); ?></title>
+    <title><?php echo w($t->reverse); ?></title>
     <link href="<?php echo $url; ?>/favicon.ico" rel="shortcut icon">
   </head>
   <body style="margin:0;padding:0;width:100%;height:100%;display:table;overflow:hidden;">

@@ -4,7 +4,7 @@
 $state = extend('user');
 if (!empty($state['user'])) {
     // Prioritize default state
-    Config::alt($state);
+    Config::over($state);
     User::$data = array_replace_recursive(Page::$data, (array) Config::get('user', true));
 }
 

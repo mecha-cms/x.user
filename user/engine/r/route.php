@@ -70,9 +70,6 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
             } else {
                 if ($try_data[$ip] > $max) {
                     Guard::abort('Please delete the <code>' . str_replace(ROOT, '.', Path::D($try, 2)) . DS . $key[0] . str_repeat('&#x2022;', strlen($key) - 1) . DS . 'try.data</code> file to sign in.');
-                } else {
-                    Message::info('user-enter-try', $max - $try_data[$ip]);
-                    ++$errors;
                 }
                 // Check if user already registered…
                 if (is_file($u)) {
@@ -94,13 +91,11 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
                     if (!empty($enter)) {
                         // Save the token!
                         File::set($token)->saveTo(Path::F($u) . DS . 'token.data', 0600);
-                        Session::set('user.key', $key);
-                        // Session::set('user.pass', $pass);
-                        Session::set('user.token', $token);
-                        // Duplicate session to cookie for 7 day(s)
                         Cookie::set('user.key', $key, '7 days');
                         // Cookie::set('user.pass', $pass, '7 days');
                         Cookie::set('user.token', $token, '7 days');
+                        // Remove try again message
+                        Message::let();
                         // Show success message!
                         Message::success('user-enter');
                         // Trigger the hook!
@@ -122,6 +117,7 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
         if ($errors > 0) {
             unset($form['user']['pass']);
             Session::set('form', $form);
+            Message::info('user-enter-try', $max - $try_data[$ip]);
         }
         Guard::kick($secret . $url->query);
     }

@@ -6,7 +6,7 @@ Language::set([
     'message-error-user-or-pass' => 'Invalid user or pass value.',
     'message-error-token' => 'Invalid token.',
     'message-error-void-field' => 'Please fill out the %s field.',
-    'message-info-user-enter-try' => 'Try again: %d',
+    'message-info-user-enter-try' => 'Try again for %d more times.',
     'message-success-user-enter' => 'Logged in.',
     'message-success-user-exit' => 'Logged out.',
     'pass' => ['Pass', 'Pass', 'Passes'],
