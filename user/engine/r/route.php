@@ -68,7 +68,7 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
                 ++$errors;
             // No error(s), go to the next step(s)…
             } else {
-                if ($try_data[$ip] > $max) {
+                if ($try_data[$ip] > $max - 1) {
                     Guard::abort('Please delete the <code>' . str_replace(ROOT, '.', Path::D($try, 2)) . DS . $key[0] . str_repeat('&#x2022;', strlen($key) - 1) . DS . 'try.data</code> file to sign in.');
                 }
                 // Check if user already registered…
@@ -117,7 +117,9 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
         if ($errors > 0) {
             unset($form['user']['pass']);
             Session::set('form', $form);
-            Message::info('user-enter-try', $max - $try_data[$ip]);
+            if (is_file($u)) {
+                Message::info('user-enter-try', $max - $try_data[$ip]);
+            }
         }
         Guard::kick($secret . $url->query);
     }
