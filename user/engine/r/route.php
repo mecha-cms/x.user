@@ -8,7 +8,7 @@ $secret = $state['_path'] ?? $path;
 Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path, $secret, $url, $user, $users) {
     $is_enter = Config::is('enter');
     $GLOBALS['t'][] = $language->{'do' . ($is_enter ? 'Exit' : 'Enter')};
-    if ($k === 'POST') {
+    if ($k === 'post') {
         $key = $form['user']['key'] ?? null;
         $pass = $form['user']['pass'] ?? null;
         $token = $form['token'] ?? null;
