@@ -1,6 +1,6 @@
 <?php
 
-$state = extend('user');
+$state = extension('user');
 $max = $state['try'] ?? 5;
 $path = $state['path'];
 $secret = $state['_path'] ?? $path;
@@ -131,7 +131,7 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
     $this->view('user');
 });
 
-Route::set($path . '/:slug', function() use($config, $language, $path) {
+Route::set($path . '/<slug>', function() use($config, $language, $path) {
     $id = $this->slug;
     if (!$f = File::exist([
         USER . DS . $id . '.page',

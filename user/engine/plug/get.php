@@ -1,4 +1,4 @@
 <?php
 
-// Based on `.\lot\extend\page\engine\plug\get.php`
+// Based on `.\lot\x\page\engine\plug\get.php`
 Get::_('users', ["_\\get\\pages", [USER, 'page', "\\Users"]]);
