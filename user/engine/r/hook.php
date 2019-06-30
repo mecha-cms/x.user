@@ -9,9 +9,9 @@ function a($a) {
                 $out .= $v; // Is a HTML tag
             } else {
                 $out .= \strpos($v, '@') !== false ? \preg_replace_callback('#@[a-z\d-]+#', function($m) {
-                    if ($f = \File::exist(USER . DS . \substr($m[0], 1) . '.page')) {
+                    if (\is_file($f = USER . DS . \substr($m[0], 1) . '.page')) {
                         $f = new \User($f);
-                        return '<a href="' . $f->url . '" target="_blank" title="' . $f->key . '">' . $f . '</a>';
+                        return '<a href="' . $f->url . '" target="_blank" title="' . $f->user . '">' . $f . '</a>';
                     }
                     return $m[0];
                 }, $v) : $v; // Is a plain text
