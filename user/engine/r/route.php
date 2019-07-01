@@ -128,7 +128,7 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
         'page' => true,
         'user' => true
     ]);
-    $this->view('user');
+    $this->content('user');
 });
 
 Route::set($path . '/<slug>', function() use($config, $language, $path) {
@@ -139,7 +139,7 @@ Route::set($path . '/<slug>', function() use($config, $language, $path) {
     ])) {
         Config::set('is.error', 404);
         $GLOBALS['t'][] = $language->isError;
-        $this->view('404/' . $path . '/' . $id);
+        $this->content('404/' . $path . '/' . $id);
     }
     $user = new User($f, [], [3 => 'page']);
     if ($t = (string) $user) {
@@ -157,5 +157,5 @@ Route::set($path . '/<slug>', function() use($config, $language, $path) {
     // Force to disable comment in user page
     Content::let('comments');
     $this->status(200);
-    $this->view('page/' . $path . '/' . $id);
+    $this->content('page/' . $path . '/' . $id);
 });
