@@ -131,7 +131,7 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
     $this->content('user');
 });
 
-Route::set($path . '/<slug>', function() use($config, $language, $path) {
+Route::set($path . '/:slug', function() use($config, $language, $path) {
     $id = $this->slug;
     if (!$f = File::exist([
         USER . DS . $id . '.page',
