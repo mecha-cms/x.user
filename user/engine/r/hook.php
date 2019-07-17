@@ -1,4 +1,4 @@
-<?php namespace _\user;
+<?php namespace _\lot\x\user;
 
 function a($a) {
     if ($a && \is_string($a) && \strpos($a, '@') !== false) {
@@ -40,11 +40,11 @@ function avatar($avatar, array $lot = []) {
 }
 
 \Hook::set([
-    '*.content',
-    '*.description',
-    '*.excerpt', // `excerpt` plugin
-    '*.title'
+    'page.content',
+    'page.description',
+    'page.excerpt', // `excerpt` plugin
+    'page.title'
 ], __NAMESPACE__ . "\\a", 2);
 
-\Hook::set('*.author', __NAMESPACE__ . "\\author", 2);
-\Hook::set('*.avatar', __NAMESPACE__ . "\\avatar", 0);
+\Hook::set('page.author', __NAMESPACE__ . "\\author", 2);
+\Hook::set('user.avatar', __NAMESPACE__ . "\\avatar", 0);

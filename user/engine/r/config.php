@@ -1,7 +1,7 @@
 <?php
 
 // Store comment state to registry…
-$state = extension('user');
+$state = state('user');
 if (!empty($state['user'])) {
     // Prioritize default state
     Config::over($state);

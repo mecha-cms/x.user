@@ -3,14 +3,12 @@ title: User
 description: Rich user data.
 author: Taufik Nurrohman
 type: Markdown
-version: 1.9.4
+version: 1.9.5
 
-lot:
-  x:
-    form: 1
-    message: 1
-    page: 1
-    shield: 1
+use:
+  '.\lot\x\alert': 1
+  '.\lot\x\content': 1
+  '.\lot\x\page': 1
 ...
 
 ### File
@@ -19,9 +17,9 @@ All you have to do after installing this extension is to create a page file in t
 
 ~~~ .txt
 .\
- └── lot\
-     └── user\
-         └── ta-tau-taufik.page
+└── lot\
+    └── user\
+        └── ta-tau-taufik.page
 ~~~
 
 And the following is the content of the file:
@@ -61,7 +59,7 @@ There are some methods added to the default classes:
 #### Is → User
 
 ~~~ .xmp.php
-Is::user($key = null, $fail = false);
+Is::user(string $key = null);
 ~~~
 
 **Example:**
@@ -81,10 +79,10 @@ if (Is::user('ta-tau-taufik')) { … }
 #### Get → Users
 
 ~~~ .xmp.php
-Get::users($folder = USER, …, $sort = [1, 'slug'], …);
+Get::users(string $folder = USER, string $x = 'page');
 ~~~
 
-Function arguments are the same as function `Get::pages()`, except the `$folder` parameter that uses `USER` constant value by default, and the `$sort` parameter that uses `slug` as the default sort key instead of `time`.
+Function arguments are the same as function `Get::pages()`, except the `$folder` parameter that uses `USER` constant value by default.
 
 ---
 
@@ -92,7 +90,7 @@ Function arguments are the same as function `Get::pages()`, except the `$folder`
 
 #### Without User Extension
 
-The page in `.\lot\page\test-page.page`:
+The page in `.\lot\page\lorem-ipsum.page`:
 
 ~~~ .yaml
 ---
@@ -111,7 +109,7 @@ To get the author data:
 
 #### With User Extension
 
-The page in `.\lot\page\test-page.page`:
+The page in `.\lot\page\lorem-ipsum.page`:
 
 ~~~ .yaml
 ---
@@ -136,7 +134,7 @@ Page content.
 To get the author data:
 
 ~~~ .html
-<a href="<?php echo $page->author->link; ?>" id="<?php echo $page->author->key; ?>">
+<a href="<?php echo $page->author->link; ?>">
   <?php echo $page->author; ?>
 </a>
 ~~~
@@ -146,5 +144,3 @@ Or:
 ~~~ .php
 <?php echo $page->author; ?>
 ~~~
-
-<!-- block:donate -->

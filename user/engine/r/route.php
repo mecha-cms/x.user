@@ -1,9 +1,9 @@
 <?php
 
-$state = extension('user');
+$state = state('user');
 $max = $state['try'] ?? 5;
-$path = $state['path'];
-$secret = $state['_path'] ?? $path;
+$path = $state['/'];
+$secret = $state['//'] ?? $path;
 
 Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path, $secret, $url, $user, $users) {
     $is_enter = Config::is('enter');
@@ -35,16 +35,16 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
         if ($is_enter) {
             // Check token…
             if (Is::void($token) || !Guard::check($token, 'user')) {
-                Message::error('token');
+                Alert::error('token');
                 ++$errors;
             } else if (!isset($form['x']) || Is::void($form['x'])) {
-                Message::error('void-field', $language->user, true);
+                Alert::error('void-field', $language->user, true);
                 ++$errors;
             } else {
                 File::open(USER . DS . $form['x'] . DS . 'token.data')->let();
                 Cookie::let(['user.key', 'user.pass', 'user.token']);
                 Session::let(['user.key', 'user.pass', 'user.token']);
-                Message::success('user-exit');
+                Alert::success('user-exit');
                 // Trigger the hook!
                 Hook::fire('on.user.exit', [new File($u), null], $user);
                 // Remove log-in attempt log
@@ -56,29 +56,24 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
         } else {
             // Check token…
             if (Is::void($token) || !Guard::check($token, 'user')) {
-                Message::error('token');
+                Alert::error('token');
                 ++$errors;
             // Check user key…
             } else if (Is::void($key)) {
-                Message::error('void-field', $language->user, true);
+                Alert::error('void-field', $language->user, true);
                 ++$errors;
             // Check user pass…
             } else if (Is::void($pass)) {
-                Message::error('void-field', $language->pass, true);
+                Alert::error('void-field', $language->pass, true);
                 ++$errors;
             // No error(s), go to the next step(s)…
             } else {
-                if ($try_data[$ip] > $max - 1) {
-                    Guard::abort('Please delete the <code>' . str_replace(ROOT, '.', Path::D($try, 2)) . DS . $key[0] . str_repeat('&#x2022;', strlen($key) - 1) . DS . 'try.data</code> file to sign in.');
-                }
                 // Check if user already registered…
                 if (is_file($u)) {
-                    // Record log-in attempt
-                    File::set(json_encode($try_data))->saveTo($try, 0600);
                     // Reset password by deleting `pass.data` manually, then log in!
                     if (!is_file($f = Path::F($u) . DS . 'pass.data')) {
                         File::set(P . password_hash($pass . '@' . $key, PASSWORD_DEFAULT))->saveTo($f, 0600);
-                        Message::info('is', [$language->pass, '<em>' . $pass . '</em>']);
+                        Alert::info('is', [$language->pass, '<em>' . $pass . '</em>']);
                     }
                     // Validate password hash!
                     if (strpos($h = content($f), P) === 0) {
@@ -95,9 +90,9 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
                         // Cookie::set('user.pass', $pass, '7 days');
                         Cookie::set('user.token', $token, '7 days');
                         // Remove try again message
-                        Message::let();
+                        Alert::let();
                         // Show success message!
-                        Message::success('user-enter');
+                        Alert::success('user-enter');
                         // Trigger the hook!
                         Hook::fire('on.user.enter', [new File($u), null], $user);
                         // Remove log-in attempt log
@@ -105,20 +100,28 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
                         // Redirect to the home page by default!
                         Guard::kick(($form['kick'] ?? "") . $url->query('&', ['kick' => false]));
                     } else {
-                        Message::error('user-or-pass');
+                        Alert::error('user-or-pass');
                         ++$errors;
                     }
                 } else {
-                    Message::error('user-or-pass');
+                    Alert::error('user-or-pass');
                     ++$errors;
                 }
             }
         }
         if ($errors > 0) {
+            // Store form data to session but `pass`
             unset($form['user']['pass']);
             Session::set('form', $form);
+            // Check for log-in attempt quota
+            if ($try_data[$ip] > $max - 1) {
+                Guard::abort('Please delete the <code>' . str_replace(ROOT, '.', Path::D($try, 2)) . DS . $key[0] . str_repeat('&#x2022;', strlen($key) - 1) . DS . 'try.data</code> file to enter.');
+            }
             if (is_file($u)) {
-                Message::info('user-enter-try', $max - $try_data[$ip]);
+                // Show remaining log-in attempt quota
+                Alert::info('user-enter-try', $max - $try_data[$ip]);
+                // Record log-in attempt
+                File::set(json_encode($try_data))->saveTo($try, 0600);
             }
         }
         Guard::kick($secret . $url->query);
@@ -128,7 +131,7 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
         'page' => true,
         'user' => true
     ]);
-    $this->content('user');
+    $this->content(__DIR__ . DS . 'content' . DS . 'page.php');
 });
 
 Route::set($path . '/:slug', function() use($config, $language, $path) {
@@ -141,7 +144,7 @@ Route::set($path . '/:slug', function() use($config, $language, $path) {
         $GLOBALS['t'][] = $language->isError;
         $this->content('404/' . $path . '/' . $id);
     }
-    $user = new User($f, [], [3 => 'page']);
+    $user = new User($f);
     if ($t = (string) $user) {
         $user->author = $user->title = $t;
     }
