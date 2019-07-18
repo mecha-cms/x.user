@@ -7,7 +7,6 @@ version: 1.9.5
 
 use:
   '.\lot\x\alert': 1
-  '.\lot\x\content': 1
   '.\lot\x\page': 1
 ...
 
