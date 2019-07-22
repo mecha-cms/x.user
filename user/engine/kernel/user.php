@@ -2,18 +2,16 @@
 
 class User extends Page {
 
-    // Set pre-defined user property
-    public static $data = [];
-
     public function __construct(string $path = null, array $lot = [], array $prefix = []) {
+        global $url;
         $n = $path ? Path::N($path) : "";
         parent::__construct($path, array_replace_recursive([
-            'url' => $n ? $GLOBALS['URL']['$'] . '/' . state('user')['/'] . '/' . $n : null
-        ], static::$data, $lot), $prefix);
+            'url' => $n ? $url . '/' . state('user')['/'] . '/' . $n : null
+        ], $lot), $prefix);
     }
 
     public function __toString() {
-        if (is_string($v = $this->offsetGet('$'))) {
+        if (is_string($v = $this->offsetGet('author'))) {
             return $v;
         }
         return (string) $this->user;

@@ -5,7 +5,6 @@ $state = state('user');
 if (!empty($state['user'])) {
     // Prioritize default state
     Config::over($state);
-    User::$data = array_replace_recursive(Page::$data, (array) Config::get('user', true));
 }
 
 Config::set('is.enter', $user = Is::user());

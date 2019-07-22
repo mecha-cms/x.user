@@ -1,16 +1,16 @@
 <?php
 
 $state = state('user');
-$max = $state['try'] ?? 5;
+$max = state('user:guard')['try'] ?? 5;
 $path = $state['/'];
 $secret = $state['//'] ?? $path;
 
-Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path, $secret, $url, $user, $users) {
+Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path, $state, $secret, $url, $user, $users) {
     $is_enter = Config::is('enter');
     $GLOBALS['t'][] = $language->{'do' . ($is_enter ? 'Exit' : 'Enter')};
     if ($k === 'post') {
-        $key = $form['user']['key'] ?? null;
-        $pass = $form['user']['pass'] ?? null;
+        $key = $form['key'] ?? null;
+        $pass = $form['pass'] ?? null;
         $token = $form['token'] ?? null;
         // Has only 1 user!
         if (count($users) === 1) {
@@ -30,16 +30,16 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
         } else {
             ++$try_data[$ip];
         }
-        $errors = 0;
+        $error = $form['_error'] ?? 0;
         // Log out!
         if ($is_enter) {
             // Check token…
             if (Is::void($token) || !Guard::check($token, 'user')) {
                 Alert::error('token');
-                ++$errors;
+                ++$error;
             } else if (!isset($form['x']) || Is::void($form['x'])) {
                 Alert::error('void-field', $language->user, true);
-                ++$errors;
+                ++$error;
             } else {
                 File::open(USER . DS . $form['x'] . DS . 'token.data')->let();
                 Cookie::let(['user.key', 'user.pass', 'user.token']);
@@ -57,15 +57,15 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
             // Check token…
             if (Is::void($token) || !Guard::check($token, 'user')) {
                 Alert::error('token');
-                ++$errors;
+                ++$error;
             // Check user key…
             } else if (Is::void($key)) {
                 Alert::error('void-field', $language->user, true);
-                ++$errors;
+                ++$error;
             // Check user pass…
             } else if (Is::void($pass)) {
                 Alert::error('void-field', $language->pass, true);
-                ++$errors;
+                ++$error;
             // No error(s), go to the next step(s)…
             } else {
                 // Check if user already registered…
@@ -101,17 +101,17 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
                         Guard::kick(($form['kick'] ?? "") . $url->query('&', ['kick' => false]));
                     } else {
                         Alert::error('user-or-pass');
-                        ++$errors;
+                        ++$error;
                     }
                 } else {
                     Alert::error('user-or-pass');
-                    ++$errors;
+                    ++$error;
                 }
             }
         }
-        if ($errors > 0) {
+        if ($error > 0) {
             // Store form data to session but `pass`
-            unset($form['user']['pass']);
+            unset($form['pass']);
             Session::set('form', $form);
             // Check for log-in attempt quota
             if ($try_data[$ip] > $max - 1) {

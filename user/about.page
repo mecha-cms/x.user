@@ -3,7 +3,7 @@ title: User
 description: Rich user data.
 author: Taufik Nurrohman
 type: Markdown
-version: 1.9.5
+version: 1.10.2
 
 use:
   '.\lot\x\alert': 1
@@ -25,7 +25,7 @@ And the following is the content of the file:
 
 ~~~ .yaml
 ---
-'$': Taufik Nurrohman
+author: Taufik Nurrohman
 type: Markdown
 status: 1
 ...
@@ -123,7 +123,7 @@ The user file in `.\lot\user\ta-tau-taufik.page`:
 
 ~~~ .yaml
 ---
-'$': Taufik Nurrohman
+author: Taufik Nurrohman
 link: 'http://example.com'
 ...
 
