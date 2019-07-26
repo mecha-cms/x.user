@@ -3,10 +3,9 @@
 class User extends Page {
 
     public function __construct(string $path = null, array $lot = [], array $prefix = []) {
-        global $url;
         $n = $path ? Path::N($path) : "";
         parent::__construct($path, array_replace_recursive([
-            'url' => $n ? $url . '/' . state('user')['/'] . '/' . $n : null
+            'url' => $n ? $GLOBALS['url'] . '/' . state('user')['/'] . '/' . $n : null
         ], $lot), $prefix);
     }
 

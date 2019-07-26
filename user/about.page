@@ -3,7 +3,7 @@ title: User
 description: Rich user data.
 author: Taufik Nurrohman
 type: Markdown
-version: 1.10.2
+version: 1.10.3
 
 use:
   '.\lot\x\alert': 1
@@ -55,7 +55,7 @@ USER
 
 There are some methods added to the default classes:
 
-#### Is → User
+#### Is
 
 ~~~ .xmp.php
 Is::user(string $key = null);
@@ -75,10 +75,10 @@ Check whether user `@‌ta-tau-taufik` is logged in:
 if (Is::user('ta-tau-taufik')) { … }
 ~~~
 
-#### Get → Users
+#### Get
 
 ~~~ .xmp.php
-Get::users(string $folder = USER, string $x = 'page');
+Get::users(string $folder = USER, string $x = 'page'): Users;
 ~~~
 
 Function arguments are the same as function `Get::pages()`, except the `$folder` parameter that uses `USER` constant value by default.
