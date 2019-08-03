@@ -72,7 +72,9 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
                 if (is_file($u)) {
                     // Reset password by deleting `pass.data` manually, then log in!
                     if (!is_file($f = Path::F($u) . DS . 'pass.data')) {
-                        File::set(P . password_hash($pass . '@' . $key, PASSWORD_DEFAULT))->saveTo($f, 0600);
+                        $file = new File($f);
+                        $file->set(P . password_hash($pass . '@' . $key, PASSWORD_DEFAULT));
+                        $file->save(0600);
                         Alert::info('is', [$language->pass, '<em>' . $pass . '</em>']);
                     }
                     // Validate password hash!
@@ -85,7 +87,9 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
                     // Is valid, then…
                     if (!empty($enter)) {
                         // Save the token!
-                        File::set($token)->saveTo(Path::F($u) . DS . 'token.data', 0600);
+                        $file = new File(Path::F($u) . DS . 'token.data');
+                        $file->set($token);
+                        $file->save(0600);
                         Cookie::set('user.key', $key, '7 days');
                         // Cookie::set('user.pass', $pass, '7 days');
                         Cookie::set('user.token', $token, '7 days');
@@ -121,7 +125,9 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
                 // Show remaining log-in attempt quota
                 Alert::info('user-enter-try', $max - $try_data[$ip]);
                 // Record log-in attempt
-                File::set(json_encode($try_data))->saveTo($try, 0600);
+                $file = new File($try);
+                $file->set(json_encode($try_data));
+                $file->save(0600);
             }
         }
         Guard::kick($secret . $url->query);
@@ -134,8 +140,8 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
     $this->content(__DIR__ . DS . 'content' . DS . 'page.php');
 });
 
-Route::set($path . '/:slug', function() use($config, $language, $path) {
-    $id = $this->slug;
+Route::set($path . '/:name', function() use($config, $language, $path) {
+    $id = $this->name;
     if (!$f = File::exist([
         USER . DS . $id . '.page',
         USER . DS . $id . '.archive'
