@@ -2,11 +2,11 @@
 
 class User extends Page {
 
-    public function __construct(string $path = null, array $lot = [], array $prefix = []) {
+    public function __construct(string $path = null, array $lot = []) {
         $n = $path ? Path::N($path) : "";
         parent::__construct($path, array_replace_recursive([
             'url' => $n ? $GLOBALS['url'] . '/' . state('user')['/'] . '/' . $n : null
-        ], $lot), $prefix);
+        ], $lot));
     }
 
     public function __toString() {
