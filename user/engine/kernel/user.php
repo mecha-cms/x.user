@@ -3,10 +3,7 @@
 class User extends Page {
 
     public function __construct(string $path = null, array $lot = []) {
-        $n = $path ? Path::N($path) : "";
-        parent::__construct($path, array_replace_recursive([
-            'url' => $n ? $GLOBALS['url'] . '/' . state('user')['/'] . '/' . $n : null
-        ], $lot));
+        parent::__construct($path, $lot);
     }
 
     public function __toString() {
@@ -16,16 +13,13 @@ class User extends Page {
         return (string) $this->user;
     }
 
-    public function key() {
-        return $this->name;
-    }
-
-    public function pass() {
-        return File::open(Path::F($this->path) . DS . 'pass.data')->get(0);
+    public function URL() {
+        $n = $this->exist ? $this->name : null;
+        return $n ? $GLOBALS['url'] . '/' . state('user')['/'] . '/' . $n : null;
     }
 
     public function user() {
-        return $this->exist ? '@' . Path::N($this->path) : null;
+        return $this->exist ? '@' . $this->name : null;
     }
 
 }

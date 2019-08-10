@@ -41,14 +41,14 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
                 Alert::error('void-field', $language->user, true);
                 ++$error;
             } else {
-                File::open(USER . DS . $form['x'] . DS . 'token.data')->let();
+                (new File(USER . DS . $form['x'] . DS . 'token.data'))->let();
                 Cookie::let(['user.key', 'user.pass', 'user.token']);
                 Session::let(['user.key', 'user.pass', 'user.token']);
                 Alert::success('user-exit');
                 // Trigger the hook!
                 Hook::fire('on.user.exit', [new File($u), null], $user);
                 // Remove log-in attempt log
-                File::open($try)->let();
+                (new File($try))->let();
                 // Redirect to the log in page by default!
                 Guard::kick(($form['kick'] ?? $secret) . $url->query('&', ['kick' => false]));
             }
@@ -100,7 +100,7 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
                         // Trigger the hook!
                         Hook::fire('on.user.enter', [new File($u), null], $user);
                         // Remove log-in attempt log
-                        File::open($try)->let();
+                        (new File($try))->let();
                         // Redirect to the home page by default!
                         Guard::kick(($form['kick'] ?? "") . $url->query('&', ['kick' => false]));
                     } else {
@@ -148,6 +148,7 @@ Route::set($path . '/:name', function() use($config, $language, $path) {
     ])) {
         Config::set('is.error', 404);
         $GLOBALS['t'][] = $language->isError;
+        $this->status(404);
         $this->content('404/' . $path . '/' . $id);
     }
     $user = new User($f);
@@ -165,6 +166,5 @@ Route::set($path . '/:name', function() use($config, $language, $path) {
     ]);
     // Force to disable comment in user page
     Content::let('comments');
-    $this->status(200);
     $this->content('page/' . $path . '/' . $id);
 });

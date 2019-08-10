@@ -1,6 +1,5 @@
 <?php
 
-require __DIR__ . DS . 'engine' . DS . 'plug' . DS . 'get.php';
 require __DIR__ . DS . 'engine' . DS . 'plug' . DS . 'is.php';
 
 require __DIR__ . DS . 'engine' . DS . 'r' . DS . 'config.php';

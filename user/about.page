@@ -43,48 +43,6 @@ http://127.0.0.1/user
 
 > **Note:** If `.\lot\user\ta-tau-taufik\pass.data` file does not exist, then the password field will function as a password generator. You can type any password in it and `pass.data` file will be created automatically.
 
-### Constant
-
-This extension will add a folder called `user` in the `.\lot` folder, which will also automatically add a constant named `USER`.
-
-~~~ .php
-USER
-~~~
-
-### Method
-
-There are some methods added to the default classes:
-
-#### Is
-
-~~~ .xmp.php
-Is::user(string $key = null);
-~~~
-
-**Example:**
-
-Check whether a user is logged in:
-
-~~~ .php
-if (Is::user()) { … }
-~~~
-
-Check whether user `@‌ta-tau-taufik` is logged in:
-
-~~~ .php
-if (Is::user('ta-tau-taufik')) { … }
-~~~
-
-#### Get
-
-~~~ .xmp.php
-Get::users(string $folder = USER, string $x = 'page'): Users;
-~~~
-
-Function arguments are the same as function `Get::pages()`, except the `$folder` parameter that uses `USER` constant value by default.
-
----
-
 ### Result
 
 #### Without User Extension
