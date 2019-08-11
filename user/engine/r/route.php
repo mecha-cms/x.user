@@ -9,7 +9,7 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
     $is_enter = Config::is('enter');
     $GLOBALS['t'][] = $language->{'do' . ($is_enter ? 'Exit' : 'Enter')};
     if ($k === 'post') {
-        $key = $form['key'] ?? null;
+        $key = $form['user'] ?? null;
         $pass = $form['pass'] ?? null;
         $token = $form['token'] ?? null;
         // Has only 1 user!
@@ -73,8 +73,7 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
                     // Reset password by deleting `pass.data` manually, then log in!
                     if (!is_file($f = Path::F($u) . DS . 'pass.data')) {
                         $file = new File($f);
-                        $file->set(P . password_hash($pass . '@' . $key, PASSWORD_DEFAULT));
-                        $file->save(0600);
+                        $file->set(P . password_hash($pass . '@' . $key, PASSWORD_DEFAULT))->save(0600);
                         Alert::info('is', [$language->pass, '<em>' . $pass . '</em>']);
                     }
                     // Validate password hash!
@@ -88,8 +87,7 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
                     if (!empty($enter)) {
                         // Save the token!
                         $file = new File(Path::F($u) . DS . 'token.data');
-                        $file->set($token);
-                        $file->save(0600);
+                        $file->set($token)->save(0600);
                         Cookie::set('user.key', $key, '7 days');
                         // Cookie::set('user.pass', $pass, '7 days');
                         Cookie::set('user.token', $token, '7 days');
@@ -126,8 +124,7 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
                 Alert::info('user-enter-try', $max - $try_data[$ip]);
                 // Record log-in attempt
                 $file = new File($try);
-                $file->set(json_encode($try_data));
-                $file->save(0600);
+                $file->set(json_encode($try_data))->save(0600);
             }
         }
         Guard::kick($secret . $url->query);

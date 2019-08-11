@@ -15,7 +15,7 @@ $_path = $_state['//'] ?? $_state['/'];
   <?php else: ?>
   <?php if ($users->count() > 1): ?>
   <p title="<?php echo $language->user; ?>">
-    <input autofocus class="input width" name="key" placeholder="<?php echo $language->user; ?>" type="text">
+    <input autofocus class="input width" name="user" placeholder="<?php echo $language->user; ?>" type="text">
   </p>
   <?php endif; ?>
   <p title="<?php echo $language->pass; ?>">
