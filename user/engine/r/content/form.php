@@ -26,7 +26,7 @@ $_path = $_state['//'] ?? $_state['/'];
   </p>
   <?php endif; ?>
   <input name="token" type="hidden" value="<?php echo token('user'); ?>">
-  <?php if ("" !== ($_kick = strtr((string) ($_GET['kick'] ?? ""), ['&' => '&amp;']))): ?>
+  <?php if ("" !== ($_kick = strtr(Get::get('kick') ?? "", ['&' => '&amp;']))): ?>
   <input name="kick" type="hidden" value="<?php echo $_kick; ?>">
   <?php endif; ?>
 </form>
