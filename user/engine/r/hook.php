@@ -9,7 +9,7 @@ function a($a) {
                 $out .= $v; // Is a HTML tag
             } else {
                 $out .= \strpos($v, '@') !== false ? \preg_replace_callback('/@[a-z\d-]+/', function($m) {
-                    if (\is_file($f = USER . DS . \substr($m[0], 1) . '.page')) {
+                    if (\is_file($f = \USER . \DS . \substr($m[0], 1) . '.page')) {
                         $f = new \User($f);
                         return '<a href="' . $f->url . '" target="_blank" title="' . $f->user . '">' . $f . '</a>';
                     }
@@ -24,7 +24,7 @@ function a($a) {
 
 function author($author = "") {
     if ($author && \is_string($author) && \strpos($author, '@') === 0) {
-        return new \User(USER . DS . \substr($author, 1) . '.page');
+        return new \User(\USER . \DS . \substr($author, 1) . '.page');
     }
     return $author;
 }

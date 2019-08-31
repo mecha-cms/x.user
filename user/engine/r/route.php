@@ -31,13 +31,14 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
             ++$try_data[$ip];
         }
         $error = $form['_error'] ?? 0;
+        // Check token…
+        if (Is::void($token) || !Guard::check($token, 'user')) {
+            Alert::error('token');
+            ++$error;
+        }
         // Log out!
         if ($is_enter) {
-            // Check token…
-            if (Is::void($token) || !Guard::check($token, 'user')) {
-                Alert::error('token');
-                ++$error;
-            } else if (!isset($form['x']) || Is::void($form['x'])) {
+            if (!isset($form['x']) || Is::void($form['x'])) {
                 Alert::error('void-field', $language->user, true);
                 ++$error;
             } else {
@@ -54,12 +55,8 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
             }
         // Log in!
         } else {
-            // Check token…
-            if (Is::void($token) || !Guard::check($token, 'user')) {
-                Alert::error('token');
-                ++$error;
             // Check user key…
-            } else if (Is::void($key)) {
+            if (Is::void($key)) {
                 Alert::error('void-field', $language->user, true);
                 ++$error;
             // Check user pass…
@@ -138,15 +135,15 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
 });
 
 Route::set($path . '/:name', function() use($config, $language, $path) {
-    $id = $this->name;
+    $name = $this->name;
     if (!$f = File::exist([
-        USER . DS . $id . '.page',
-        USER . DS . $id . '.archive'
+        USER . DS . $name . '.page',
+        USER . DS . $name . '.archive'
     ])) {
         Config::set('is.error', 404);
         $GLOBALS['t'][] = $language->isError;
         $this->status(404);
-        $this->content('404/' . $path . '/' . $id);
+        $this->content('404/' . $path . '/' . $name);
     }
     $user = new User($f);
     if ($t = (string) $user) {
