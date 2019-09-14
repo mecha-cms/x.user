@@ -134,8 +134,26 @@ Route::set($secret, 200, function($form, $k) use($config, $language, $max, $path
     $this->content(__DIR__ . DS . 'content' . DS . 'page.php');
 });
 
-Route::set($path . '/:name', function() use($config, $language, $path) {
+Route::set($path . '/:name', function($form, $k) use($config, $language, $path, $secret, $url, $user) {
     $name = $this->name;
+    // Force log out with `http://127.0.0.1/user/.name?token=b4d455`
+    if (
+        $k === 'get' && !empty($form['token']) && $form['token'] === $user['token'] &&
+        strpos($name, '.') === 0 && strlen($name) > 1 && $name[1] !== '.'
+    ) {
+        $name = substr($name, 1);
+        (new File(USER . DS . $name . DS . 'token.data'))->let();
+        Cookie::let(['user.key', 'user.pass', 'user.token']);
+        Session::let(['user.key', 'user.pass', 'user.token']);
+        Alert::success('user-exit');
+        // Trigger the hook!
+        Hook::fire('on.user.exit', [new File($user->path), null], $user);
+        // Redirect to the log in page by default!
+        Guard::kick(($form['kick'] ?? $secret) . $url->query('&', [
+            'kick' => false,
+            'token' => false
+        ]));
+    }
     if (!$f = File::exist([
         USER . DS . $name . '.page',
         USER . DS . $name . '.archive'
@@ -160,5 +178,5 @@ Route::set($path . '/:name', function() use($config, $language, $path) {
     ]);
     // Force to disable comment in user page
     Content::let('comments');
-    $this->content('page/' . $path . '/' . $id);
+    $this->content('page/' . $path . '/' . $name);
 });
