@@ -29,7 +29,7 @@
       padding: 0;
       max-width: 15em;
     ">
-      <?php static::form('user'); ?>
+      <?php static::form('user' . (Is::user() ? '.exit' : "")); ?>
     </div>
   </body>
 </html>

@@ -7,7 +7,7 @@ class User extends Page {
     }
 
     public function __toString() {
-        if (is_string($v = parent::offsetGet('author'))) {
+        if (is_string($v = parent::get('author'))) {
             return $v;
         }
         return (string) $this->user();
@@ -15,7 +15,7 @@ class User extends Page {
 
     public function URL(...$lot) {
         $n = $this->exist ? parent::name() : null;
-        return $n ? $GLOBALS['url'] . '/' . state('user')['/'] . '/' . $n : null;
+        return $n ? $GLOBALS['url'] . State::get('x.user.path') . '/' . $n : null;
     }
 
     public function user() {
