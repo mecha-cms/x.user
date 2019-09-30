@@ -50,7 +50,7 @@ namespace _\lot\x\user\route {
         extract($GLOBALS, \EXTR_SKIP);
         $GLOBALS['t'][] = $language->{'do' . (\Is::user() ? 'Exit' : 'Enter')};
         $state = \State::get('x.user', true);
-        $secret = \trim($state['_path'] ?? "", '/');
+        $secret = \trim($state['guard']['path'] ?? "", '/');
         if ($type === 'Post') {
             $key = $lot['user'] ?? null;
             $pass = $lot['pass'] ?? null;
@@ -158,5 +158,5 @@ namespace _\lot\x\user\route {
         $this->content(__DIR__ . \DS . 'content' . \DS . 'page.php');
     }
     $state = \State::get('x.user', true);
-    \Route::set(\trim($state['_path'] ?? $state['path'], '/'), 200, __NAMESPACE__ . "\\enter");
+    \Route::set(\trim($state['guard']['path'] ?? $state['path'], '/'), 200, __NAMESPACE__ . "\\enter");
 }

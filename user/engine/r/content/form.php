@@ -1,7 +1,7 @@
 <?php
 
 $_state = State::get('x.user', true);
-$_path = $_state['_path'] ?? $_state['path'];
+$_path = $_state['guard']['path'] ?? $_state['path'];
 
 ?>
 <form action="<?php echo $url . $_path . $url->query('&amp;'); ?>" class="form-user form-user:<?php echo ($_enter = Is::user()) ? 'exit' : 'enter'; ?>" method="post" name="user">

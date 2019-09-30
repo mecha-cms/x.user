@@ -2,8 +2,8 @@
 
 return [
     'path' => '/user',
-    '_path' => '/asdf', // Secret log-in path
     'guard' => [
+        'path' => null, // Secret log-in path
         'try' => 5 // Maximum log-in attempt
     ]
 ];
