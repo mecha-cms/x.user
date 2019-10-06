@@ -61,7 +61,7 @@ Page content.
 To get the author data:
 
 ~~~ .php
-<?php echo $page->author; ?>
+<?= $page->author; ?>
 ~~~
 
 #### With User Extension
@@ -91,13 +91,13 @@ Page content.
 To get the author data:
 
 ~~~ .html
-<a href="<?php echo $page->author->link; ?>">
-  <?php echo $page->author; ?>
+<a href="<?= $page->author->link; ?>">
+  <?= $page->author; ?>
 </a>
 ~~~
 
 Or:
 
 ~~~ .php
-<?php echo $page->author; ?>
+<?= $page->author; ?>
 ~~~

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class dir="<?php echo $site->direction; ?>" style="
+<html class dir="<?= $site->direction; ?>" style="
   margin: 0;
   padding: 0;
   width: 100%;
@@ -8,11 +8,11 @@
   overflow: hidden;
 ">
   <head>
-    <meta charset="<?php echo $site->charset; ?>">
+    <meta charset="<?= $site->charset; ?>">
     <meta content="width=device-width" name="viewport">
     <meta content="noindex" name="robots">
-    <title><?php echo w($t->reverse); ?></title>
-    <link href="<?php echo $url; ?>/favicon.ico" rel="shortcut icon">
+    <title><?= w($t->reverse); ?></title>
+    <link href="<?= $url; ?>/favicon.ico" rel="shortcut icon">
   </head>
   <body style="
     margin: 0;
@@ -29,7 +29,7 @@
       padding: 0;
       max-width: 15em;
     ">
-      <?php static::form('user' . (Is::user() ? '.exit' : "")); ?>
+      <?= self::form('user.' . (Is::user() ? 'exit' : 'enter')); ?>
     </div>
   </body>
 </html>

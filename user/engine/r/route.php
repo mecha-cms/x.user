@@ -4,8 +4,9 @@ namespace _\lot\x\user {
     function route($lot, $type) {
         extract($GLOBALS, \EXTR_SKIP);
         $name = $this->name;
-        $path = \trim(\State::get('x.user.path'), '/');
-        $secret = \trim(\State::get('x.user._path'), '/');
+        $state = \State::get('x.user', true);
+        $path = \trim($state['path'], '/');
+        $secret = \trim($state['guard']['path'] ?? $path, '/');
         // Force log out with `http://127.0.0.1/user/name?exit=b4d455`
         if ($type === 'Get' && !empty($lot['exit']) && $lot['exit'] === $user['token']) {
             (new \File(USER . DS . $name . DS . 'token.data'))->let();

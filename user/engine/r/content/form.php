@@ -4,21 +4,21 @@ $_state = State::get('x.user', true);
 $_path = $_state['guard']['path'] ?? $_state['path'];
 
 ?>
-<form action="<?php echo $url . $_path . $url->query('&amp;'); ?>" class="form-user form-user:<?php echo ($_enter = Is::user()) ? 'exit' : 'enter'; ?>" method="post" name="user">
-  <?php echo $alert; ?>
+<form action="<?= $url . $_path . $url->query('&amp;'); ?>" class="form-user form-user:<?= ($_enter = Is::user()) ? 'exit' : 'enter'; ?>" method="post" name="user">
+  <?= $alert; ?>
   <?php if ($users->count() > 1): ?>
-  <p title="<?php echo $language->user; ?>">
-    <input autofocus class="input width" name="user" placeholder="<?php echo $language->user; ?>" type="text">
+  <p title="<?= $language->user; ?>">
+    <input autofocus class="input width" name="user" placeholder="<?= $language->user; ?>" type="text">
   </p>
   <?php endif; ?>
-  <p title="<?php echo $language->pass; ?>">
-    <input class="input width" name="pass" placeholder="<?php echo $language->pass; ?>" type="password">
+  <p title="<?= $language->pass; ?>">
+    <input class="input width" name="pass" placeholder="<?= $language->pass; ?>" type="password">
   </p>
   <p>
-    <button class="button" name="v" type="submit" value="1"><?php echo $language->doEnter; ?></button>
+    <button class="button" name="v" type="submit" value="1"><?= $language->doEnter; ?></button>
   </p>
-  <input name="token" type="hidden" value="<?php echo Guard::token('user'); ?>">
+  <input name="token" type="hidden" value="<?= Guard::token('user'); ?>">
   <?php if ("" !== ($_kick = strtr(Get::get('kick') ?? "", ['&' => '&amp;']))): ?>
-  <input name="kick" type="hidden" value="<?php echo $_kick; ?>">
+  <input name="kick" type="hidden" value="<?= $_kick; ?>">
   <?php endif; ?>
 </form>

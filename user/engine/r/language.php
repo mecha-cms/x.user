@@ -13,6 +13,7 @@ Language::set([
     'do-log-out' => ['Logged Out', 'Log Out', 'Logging Out'],
     'do-sign-in' => ['Signed In', 'Sign In', 'Signing In'],
     'do-sign-out' => ['Signed Out', 'Sign Out', 'Signing Out'],
+    'email' => ['E-Mail', 'E-Mail', 'E-Mails'],
     'guest' => ['Guest', 'Guest', 'Guests'],
     'pass' => ['Pass', 'Pass', 'Passes'],
     'profile' => ['Profile', 'Profile', 'Profiles'],
