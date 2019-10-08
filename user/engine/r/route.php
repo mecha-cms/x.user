@@ -5,7 +5,7 @@ namespace _\lot\x\user {
         extract($GLOBALS, \EXTR_SKIP);
         $name = $this->name;
         $state = \State::get('x.user', true);
-        $path = \trim($state['path'], '/');
+        $path = \trim($state['path'] ?? "", '/');
         $secret = \trim($state['guard']['path'] ?? $path, '/');
         // Force log out with `http://127.0.0.1/user/name?exit=b4d455`
         if ($type === 'Get' && !empty($lot['exit']) && $lot['exit'] === $user['token']) {
@@ -20,7 +20,7 @@ namespace _\lot\x\user {
             \Guard::kick(($lot['kick'] ?? $secret) . $url->query('&', [
                 'exit' => false,
                 'kick' => false
-            ]));
+            ]) . $url->hash);
         }
         if (!$f = \File::exist([
             \USER . \DS . $name . '.page',
@@ -51,7 +51,8 @@ namespace _\lot\x\user\route {
         extract($GLOBALS, \EXTR_SKIP);
         $GLOBALS['t'][] = $language->{'do' . (\Is::user() ? 'Exit' : 'Enter')};
         $state = \State::get('x.user', true);
-        $secret = \trim($state['guard']['path'] ?? "", '/');
+        $path = \trim($state['path'] ?? "", '/');
+        $secret = \trim($state['guard']['path'] ?? $path, '/');
         if ($type === 'Post') {
             $key = $lot['user'] ?? null;
             $pass = $lot['pass'] ?? null;
@@ -123,7 +124,7 @@ namespace _\lot\x\user\route {
                         // Remove log-in attempt log
                         (new \File($try))->let();
                         // Redirect to the home page by default!
-                        \Guard::kick(($lot['kick'] ?? "") . $url->query('&', ['kick' => false]));
+                        \Guard::kick(($lot['kick'] ?? "") . $url->query('&', ['kick' => false]) . $url->hash);
                     } else {
                         \Alert::error('user-or-pass');
                         ++$error;
@@ -149,7 +150,7 @@ namespace _\lot\x\user\route {
                     $file->set(\json_encode($try_data))->save(0600);
                 }
             }
-            \Guard::kick($secret . $url->query);
+            \Guard::kick($secret . $url->query . $url->hash);
         }
         \State::set('is', [
             'error' => false,
