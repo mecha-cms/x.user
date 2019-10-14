@@ -7,5 +7,3 @@ if (!is_dir($dir = LOT . DS . basename(__DIR__))) {
 } else if (!defined('DEBUG') || !DEBUG) {
     unlink(__FILE__);
 }
-
-// TODO: Rename `$` key to `author` in all user file(s)
