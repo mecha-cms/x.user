@@ -81,9 +81,8 @@ namespace _\lot\x\user\route {
             if (\Is::void($token) || !\Guard::check($token, 'user')) {
                 \Alert::error('token');
                 ++$error;
-            }
             // Check user key…
-            if (\Is::void($key)) {
+            } else if (\Is::void($key)) {
                 \Alert::error('void-field', $language->user, true);
                 ++$error;
             // Check user pass…
@@ -113,7 +112,6 @@ namespace _\lot\x\user\route {
                         $file = new \File(\Path::F($u) . \DS . 'token.data');
                         $file->set($token)->save(0600);
                         \Cookie::set('user.key', $key, '7 days');
-                        // \Cookie::set('user.pass', $pass, '7 days');
                         \Cookie::set('user.token', $token, '7 days');
                         // Remove try again message
                         \Alert::let();

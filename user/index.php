@@ -9,6 +9,8 @@ require __DIR__ . DS . 'engine' . DS . 'r' . DS . 'state.php';
 require __DIR__ . DS . 'engine' . DS . 'r' . DS . 'user.php';
 
 // Apply route(s) only if we have at least one user
-if (glob(USER . DS . '*.page', GLOB_NOSORT)) {
+if (q(g(USER, 'page')) > 0) {
     require __DIR__ . DS . 'engine' . DS . 'r' . DS . 'route.php';
+} else {
+    require __DIR__ . DS . 'engine' . DS . 'r' . DS . 'route' . DS . 'set.php';
 }

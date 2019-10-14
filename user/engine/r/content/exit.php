@@ -3,6 +3,7 @@
 $_state = State::get('x.user', true);
 
 ?>
+<?= $alert; ?>
 <p style="
   text-align: center;
 ">

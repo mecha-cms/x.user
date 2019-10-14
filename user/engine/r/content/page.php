@@ -29,7 +29,11 @@
       padding: 0;
       max-width: 15em;
     ">
+      <?php if (q(g(USER, 'page')) === 0): ?>
+      <?= self::form('user.set'); ?>
+      <?php else: ?>
       <?= self::form('user.' . (Is::user() ? 'exit' : 'enter')); ?>
+      <?php endif; ?>
     </div>
   </body>
 </html>
