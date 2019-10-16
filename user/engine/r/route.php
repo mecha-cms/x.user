@@ -13,7 +13,7 @@ namespace _\lot\x\user {
             (new \File(USER . DS . $name . DS . 'try.data'))->let();
             \Cookie::let(['user.key', 'user.pass', 'user.token']);
             \Session::let(['user.key', 'user.pass', 'user.token']);
-            \Alert::success('user-exit');
+            \Alert::success('Logged out.');
             // Trigger the hook!
             \Hook::fire('on.user.exit', [new \File($user->path), null], $user);
             // Redirect to the log in page by default!
@@ -27,7 +27,7 @@ namespace _\lot\x\user {
             \USER . \DS . $name . '.archive'
         ])) {
             \State::set('is.error', 404);
-            $GLOBALS['t'][] = $language->isError;
+            $GLOBALS['t'][] = \i('Error');
             $this->status(404);
             $this->content('404/' . $path . '/' . $name);
         }
@@ -49,7 +49,7 @@ namespace _\lot\x\user {
 namespace _\lot\x\user\route {
     function enter($lot, $type) {
         extract($GLOBALS, \EXTR_SKIP);
-        $GLOBALS['t'][] = $language->{'do' . (\Is::user() ? 'Exit' : 'Enter')};
+        $GLOBALS['t'][] = \i(\Is::user() ? 'Exit' : 'Enter');
         $state = \State::get('x.user', true);
         $path = \trim($state['path'] ?? "", '/');
         $secret = \trim($state['guard']['path'] ?? $path, '/');
@@ -79,15 +79,15 @@ namespace _\lot\x\user\route {
             $error = $lot['_error'] ?? 0;
             // Check token…
             if (\Is::void($token) || !\Guard::check($token, 'user')) {
-                \Alert::error('token');
+                \Alert::error('Invalid token.');
                 ++$error;
             // Check user key…
             } else if (\Is::void($key)) {
-                \Alert::error('void-field', $language->user, true);
+                \Alert::error('Please fill out the %s field.', 'User');
                 ++$error;
             // Check user pass…
             } else if (\Is::void($pass)) {
-                \Alert::error('void-field', $language->pass, true);
+                \Alert::error('Please fill out the %s field.', 'Pass');
                 ++$error;
             // No error(s), go to the next step(s)…
             } else {
@@ -97,7 +97,7 @@ namespace _\lot\x\user\route {
                     if (!\is_file($f = \Path::F($u) . \DS . 'pass.data')) {
                         $file = new \File($f);
                         $file->set(\P . \password_hash($pass . '@' . $key, \PASSWORD_DEFAULT))->save(0600);
-                        \Alert::info('is', [$language->pass, '<em>' . $pass . '</em>']);
+                        \Alert::info('Your %s is %s.', ['pass', '<em>' . $pass . '</em>']);
                     }
                     // Validate password hash!
                     if (\strpos($h = \content($f), \P) === 0) {
@@ -116,7 +116,7 @@ namespace _\lot\x\user\route {
                         // Remove try again message
                         \Alert::let();
                         // Show success message!
-                        \Alert::success('user-enter');
+                        \Alert::success('Logged in.');
                         // Trigger the hook!
                         \Hook::fire('on.user.enter', [new \File($u), null], $user);
                         // Remove log-in attempt log
@@ -124,11 +124,11 @@ namespace _\lot\x\user\route {
                         // Redirect to the home page by default!
                         \Guard::kick(($lot['kick'] ?? "") . $url->query('&', ['kick' => false]) . $url->hash);
                     } else {
-                        \Alert::error('user-or-pass');
+                        \Alert::error('Invalid user or pass.');
                         ++$error;
                     }
                 } else {
-                    \Alert::error('user-or-pass');
+                    \Alert::error('Invalid user or pass.');
                     ++$error;
                 }
             }
@@ -138,11 +138,11 @@ namespace _\lot\x\user\route {
                 \Session::set('form', $lot);
                 // Check for log-in attempt quota
                 if ($try_data[$ip] > $max - 1) {
-                    \Guard::abort('Please delete the <code>' . \str_replace(\ROOT, '.', \Path::D($try, 2)) . \DS . $key[0] . \str_repeat('&#x2022;', \strlen($key) - 1) . \DS . 'try.data</code> file to enter.');
+                    \Guard::abort(\i('Please delete the %s file to enter.', '<code>' . \str_replace(\ROOT, '.', \Path::D($try, 2)) . \DS . $key[0] . \str_repeat('&#x2022;', \strlen($key) - 1) . \DS . 'try.data</code>'));
                 }
                 if (\is_file($u)) {
                     // Show remaining log-in attempt quota
-                    \Alert::info('user-enter-try', $max - $try_data[$ip]);
+                    \Alert::info('Try again for %d more times.', $max - $try_data[$ip]);
                     // Record log-in attempt
                     $file = new \File($try);
                     $file->set(\json_encode($try_data))->save(0600);

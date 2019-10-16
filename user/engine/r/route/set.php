@@ -17,19 +17,19 @@ Route::set($url->path, function($lot, $type) {
         $error = $lot['_error'] ?? 0;
         // Check token…
         if (Is::void($token) || !Guard::check($token, 'user')) {
-            Alert::error('token');
+            Alert::error('Invalid token.');
             ++$error;
         // Check user key…
         } else if (Is::void($key)) {
-            Alert::error('void-field', $language->user, true);
+            Alert::error('Please fill out the %s field.', 'User');
             ++$error;
         // Check user pass…
         } else if (Is::void($pass)) {
-            Alert::error('void-field', $language->pass, true);
+            Alert::error('Please fill out the %s field.', 'Pass');
             ++$error;
         // No error(s), go to the next step(s)…
         } else {
-            Alert::info('is', [$language->pass, '<em>' . $pass . '</em>']);
+            Alert::info('Your %s is %s.', ['pass', '<em>' . $pass . '</em>']);
             $pass = P . password_hash($pass . '@' . $key, PASSWORD_DEFAULT);
             if (!is_dir($d = USER . DS . $key)) {
                 mkdir($d, 0775, true); // Force folder creation
@@ -43,7 +43,7 @@ Route::set($url->path, function($lot, $type) {
             Cookie::set('user.key', $key, '7 days');
             Cookie::set('user.token', $token, '7 days');
             // Show success message!
-            Alert::success('user-enter');
+            Alert::success('Logged in.');
             // Trigger the hook!
             Hook::fire('on.user.enter', [new File($u), null], $user);
             // Redirect to the user page by default!
@@ -56,6 +56,6 @@ Route::set($url->path, function($lot, $type) {
         }
         Guard::kick($secret . $url->query . $url->hash);
     }
-    $GLOBALS['t'][] = $language->user;
+    $GLOBALS['t'][] = i('User');
     $this->content(__DIR__ . DS . '..' . DS . 'content' . DS . 'page.php');
 });
