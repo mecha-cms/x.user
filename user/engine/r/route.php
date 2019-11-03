@@ -1,14 +1,13 @@
 <?php
 
 namespace _\lot\x\user {
-    function route($lot, $type) {
+    function route($name) {
         extract($GLOBALS, \EXTR_SKIP);
-        $name = $this->name;
         $state = \State::get('x.user', true);
         $path = \trim($state['path'] ?? "", '/');
         $secret = \trim($state['guard']['path'] ?? $path, '/');
         // Force log out with `http://127.0.0.1/user/name?exit=b4d455`
-        if ($type === 'Get' && !empty($lot['exit']) && $lot['exit'] === $user['token']) {
+        if (\Request::is('Get') && \Get::get('exit') === $user['token']) {
             (new \File(USER . DS . $name . DS . 'token.data'))->let();
             (new \File(USER . DS . $name . DS . 'try.data'))->let();
             \Cookie::let(['user.key', 'user.pass', 'user.token']);
@@ -17,7 +16,7 @@ namespace _\lot\x\user {
             // Trigger the hook!
             \Hook::fire('on.user.exit', [new \File($user->path), null], $user);
             // Redirect to the log in page by default!
-            \Guard::kick(($lot['kick'] ?? $secret) . $url->query('&', [
+            \Guard::kick((\Get::get('kick') ?? $secret) . $url->query('&', [
                 'exit' => false,
                 'kick' => false
             ]) . $url->hash);
@@ -29,7 +28,7 @@ namespace _\lot\x\user {
             \State::set('is.error', 404);
             $GLOBALS['t'][] = \i('Error');
             $this->status(404);
-            $this->content('404/' . $path . '/' . $name);
+            $this->view('404/' . $path . '/' . $name);
         }
         $user = new \User($f);
         $GLOBALS['t'][] = $user->user . ' (' . ($user->title = $user . "") . ')';
@@ -41,29 +40,29 @@ namespace _\lot\x\user {
             'pages' => false,
             'user' => true
         ]);
-        $this->content('page/' . $path . '/' . $name);
+        $this->view('page/' . $path . '/' . $name);
     }
     \Route::set(\trim(\State::get('x.user.path'), '/') . '/:name', 200, __NAMESPACE__ . "\\route");
 }
 
 namespace _\lot\x\user\route {
-    function enter($lot, $type) {
+    function enter() {
         extract($GLOBALS, \EXTR_SKIP);
         $GLOBALS['t'][] = \i(\Is::user() ? 'Exit' : 'Enter');
         $state = \State::get('x.user', true);
         $path = \trim($state['path'] ?? "", '/');
         $secret = \trim($state['guard']['path'] ?? $path, '/');
-        if ($type === 'Post') {
-            $key = $lot['user'] ?? null;
-            $pass = $lot['pass'] ?? null;
-            $token = $lot['token'] ?? null;
+        if (\Request::is('Post')) {
+            $key = \Post::get('user');
+            $pass = \Post::get('pass');
+            $token = \Post::get('token');
             // Has only 1 user!
-            if (isset($users) && \count($users) === 1) {
+            if (isset($users) && 1 === \count($users)) {
                 // Set the `key` value to that user automatically
                 $key = $users[0]->name;
             }
             // Remove the `@` prefix!
-            if (\strpos($key, '@') === 0) {
+            if (0 === \strpos($key, '@')) {
                 $key = \substr($key, 1);
             }
             $u = \USER . \DS . $key . '.page';
@@ -76,7 +75,7 @@ namespace _\lot\x\user\route {
             } else {
                 ++$try_data[$ip];
             }
-            $error = $lot['_error'] ?? 0;
+            $error = \Post::get('_error') ?? 0;
             // Check token…
             if (\Is::void($token) || !\Guard::check($token, 'user')) {
                 \Alert::error('Invalid token.');
@@ -100,7 +99,7 @@ namespace _\lot\x\user\route {
                         \Alert::info('Your %s is %s.', ['pass', '<em>' . $pass . '</em>']);
                     }
                     // Validate password hash!
-                    if (\strpos($h = \content($f), \P) === 0) {
+                    if (0 === \strpos($h = \content($f), \P)) {
                         $enter = \password_verify($pass . '@' . $key, \substr($h, 1));
                     // Validate password text!
                     } else {
@@ -122,7 +121,7 @@ namespace _\lot\x\user\route {
                         // Remove log-in attempt log
                         (new \File($try))->let();
                         // Redirect to the home page by default!
-                        \Guard::kick(($lot['kick'] ?? "") . $url->query('&', ['kick' => false]) . $url->hash);
+                        \Guard::kick((\Post::get('kick') ?? "") . $url->query('&', ['kick' => false]) . $url->hash);
                     } else {
                         \Alert::error('Invalid user or pass.');
                         ++$error;
@@ -134,7 +133,8 @@ namespace _\lot\x\user\route {
             }
             if ($error > 0) {
                 // Store form data to session but `pass`
-                unset($lot['pass']);
+                $lot = \Post::get();
+                unset($lot['pass'], $lot['token']);
                 \Session::set('form', $lot);
                 // Check for log-in attempt quota
                 if ($try_data[$ip] > $max - 1) {
@@ -155,7 +155,7 @@ namespace _\lot\x\user\route {
             'page' => true,
             'user' => true
         ]);
-        $this->content(__DIR__ . \DS . 'content' . \DS . 'page.php');
+        $this->view(__DIR__ . \DS . 'layout' . \DS . 'page.php');
     }
     $state = \State::get('x.user', true);
     \Route::set(\trim($state['guard']['path'] ?? $state['path'], '/'), 200, __NAMESPACE__ . "\\enter");

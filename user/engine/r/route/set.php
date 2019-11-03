@@ -1,20 +1,21 @@
 <?php
 
-Route::set($url->path, function($lot, $type) {
+Route::set($url->path, function() {
     extract($GLOBALS, EXTR_SKIP);
     $state = State::get('x.user', true);
     $path = trim($state['path'] ?? "", '/');
     $secret = trim($state['guard']['path'] ?? $path, '/');
-    if ($type === 'Post') {
+    if (\Request::is('Post')) {
+        $lot = \Post::get();
         $token = $lot['token'] ?? null;
         $key = $lot['user'] ?? null;
         $pass = $lot['pass'] ?? null;
         // Remove the `@` prefix!
-        if (strpos($key, '@') === 0) {
+        if (0 === strpos($key, '@')) {
             $key = substr($key, 1);
         }
         $key = To::kebab($key); // Force user name format
-        $error = $lot['_error'] ?? 0;
+        $error = 0;
         // Check token…
         if (Is::void($token) || !Guard::check($token, 'user')) {
             Alert::error('Invalid token.');
@@ -57,5 +58,5 @@ Route::set($url->path, function($lot, $type) {
         Guard::kick($secret . $url->query . $url->hash);
     }
     $GLOBALS['t'][] = i('User');
-    $this->content(__DIR__ . DS . '..' . DS . 'content' . DS . 'page.php');
+    $this->view(__DIR__ . DS . '..' . DS . 'layout' . DS . 'page.php');
 });

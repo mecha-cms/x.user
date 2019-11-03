@@ -1,14 +1,14 @@
 <?php namespace _\lot\x\user;
 
 function a($a) {
-    if ($a && \is_string($a) && \strpos($a, '@') !== false) {
+    if ($a && \is_string($a) && false !== \strpos($a, '@')) {
         $out = "";
         $parts = \preg_split('/(<pre(?:\s[^>]*)?>[\s\S]*?<\/pre>|<code(?:\s[^>]*)?>[\s\S]*?<\/code>|<kbd(?:\s[^>]*)?>[\s\S]*?<\/kbd>|<script(?:\s[^>]*)?>[\s\S]*?<\/script>|<style(?:\s[^>]*)?>[\s\S]*?<\/style>|<textarea(?:\s[^>]*)?>[\s\S]*?<\/textarea>|<[^>]+>)/i', $a, null, \PREG_SPLIT_DELIM_CAPTURE | \PREG_SPLIT_NO_EMPTY);
         foreach ($parts as $v) {
-            if (\strpos($v, '<') === 0 && \substr($v, -1) === '>') {
+            if (0 === \strpos($v, '<') && '>' === \substr($v, -1)) {
                 $out .= $v; // Is a HTML tag
             } else {
-                $out .= \strpos($v, '@') !== false ? \preg_replace_callback('/@[a-z\d-]+/', function($m) {
+                $out .= false !== \strpos($v, '@') ? \preg_replace_callback('/@[a-z\d-]+/', function($m) {
                     if (\is_file($f = \USER . \DS . \substr($m[0], 1) . '.page')) {
                         $f = new \User($f);
                         return '<a href="' . $f->url . '" target="_blank" title="' . $f->user . '">' . $f . '</a>';
@@ -23,7 +23,7 @@ function a($a) {
 }
 
 function author($author = "") {
-    if ($author && \is_string($author) && \strpos($author, '@') === 0) {
+    if ($author && \is_string($author) && 0 === \strpos($author, '@')) {
         return new \User(\USER . \DS . \substr($author, 1) . '.page');
     }
     return $author;

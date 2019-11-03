@@ -8,7 +8,7 @@ $user = $a && $b && $a === $b ? '@' . $key : false;
 
 Is::_('user', function(string $key = null) use($user) {
     if ($key) {
-        return $user && (strpos($key, '@') === 0 ? $key === $user : '@' . $key === $user) ? $user : false;
+        return $user && (0 === strpos($key, '@') ? $key === $user : '@' . $key === $user) ? $user : false;
     }
-    return $user !== false ? $user : false;
+    return false !== $user ? $user : false;
 });
