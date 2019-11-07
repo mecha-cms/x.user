@@ -68,7 +68,7 @@ namespace _\lot\x\user\route {
             $u = \USER . \DS . $key . '.page';
             $try = \USER . \DS . $key . \DS . 'try.data';
             $try_data = (array) \e(\content($try));
-            $ip = \Get::IP();
+            $ip = \Client::IP();
             $max = $state['guard']['try'] ?? 5;
             if (!isset($try_data[$ip])) {
                 $try_data[$ip] = 1;
