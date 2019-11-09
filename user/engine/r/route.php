@@ -75,7 +75,7 @@ namespace _\lot\x\user\route {
             } else {
                 ++$try_data[$ip];
             }
-            $error = \Post::get('_error') ?? 0;
+            $error = 0;
             // Check token…
             if (\Is::void($token) || !\Guard::check($token, 'user')) {
                 \Alert::error('Invalid token.');
