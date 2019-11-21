@@ -42,7 +42,8 @@ namespace _\lot\x\user {
         ]);
         $this->view('page/' . $path . '/' . $name);
     }
-    \Route::set(\trim(\State::get('x.user.path'), '/') . '/:name', 200, __NAMESPACE__ . "\\route");
+    $state = \State::get('x.user', true);
+    \Route::set(\trim($state['guard']['path'] ?? $state['path'], '/') . '/:name', 200, __NAMESPACE__ . "\\route");
 }
 
 namespace _\lot\x\user\route {
