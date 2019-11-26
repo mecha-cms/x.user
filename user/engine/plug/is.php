@@ -2,7 +2,7 @@
 
 $key = Cookie::get('user.key');
 $a = Cookie::get('user.token');
-$b = content(USER . DS . $key . DS . 'token.data');
+$b = content(LOT . DS . 'user' . DS . $key . DS . 'token.data');
 
 $user = $a && $b && $a === $b ? '@' . $key : false;
 

@@ -8,8 +8,8 @@ namespace _\lot\x\user {
         $secret = \trim($state['guard']['path'] ?? $path, '/');
         // Force log out with `http://127.0.0.1/user/name?exit=b4d455`
         if (\Request::is('Get') && \Get::get('exit') === $user['token']) {
-            (new \File(USER . DS . $name . DS . 'token.data'))->let();
-            (new \File(USER . DS . $name . DS . 'try.data'))->let();
+            (new \File(LOT . DS . 'user' . DS . $name . DS . 'token.data'))->let();
+            (new \File(LOT . DS . 'user' . DS . $name . DS . 'try.data'))->let();
             \Cookie::let(['user.key', 'user.pass', 'user.token']);
             \Session::let(['user.key', 'user.pass', 'user.token']);
             \Alert::success('Logged out.');
@@ -22,8 +22,8 @@ namespace _\lot\x\user {
             ]) . $url->hash);
         }
         if (!$f = \File::exist([
-            \USER . \DS . $name . '.page',
-            \USER . \DS . $name . '.archive'
+            \LOT . \DS . 'user' . \DS . $name . '.page',
+            \LOT . \DS . 'user' . \DS . $name . '.archive'
         ])) {
             \State::set('is.error', 404);
             $GLOBALS['t'][] = \i('Error');
@@ -66,8 +66,8 @@ namespace _\lot\x\user\route {
             if (0 === \strpos($key, '@')) {
                 $key = \substr($key, 1);
             }
-            $u = \USER . \DS . $key . '.page';
-            $try = \USER . \DS . $key . \DS . 'try.data';
+            $u = \LOT . \DS . 'user' . \DS . $key . '.page';
+            $try = \LOT . \DS . 'user' . \DS . $key . \DS . 'try.data';
             $try_data = (array) \e(\content($try));
             $ip = \Client::IP();
             $max = $state['guard']['try'] ?? 5;

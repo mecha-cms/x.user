@@ -32,7 +32,7 @@ Route::set($url->path, function() {
         } else {
             Alert::info('Your %s is %s.', ['pass', '<em>' . $pass . '</em>']);
             $pass = P . password_hash($pass . '@' . $key, PASSWORD_DEFAULT);
-            if (!is_dir($d = USER . DS . $key)) {
+            if (!is_dir($d = LOT . DS . 'user' . DS . $key)) {
                 mkdir($d, 0775, true); // Force folder creation
             }
             ($user = new User($u = $d . '.page'))->set([

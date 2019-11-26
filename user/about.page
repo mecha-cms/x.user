@@ -3,7 +3,7 @@ title: User
 description: Rich user data.
 author: Taufik Nurrohman
 type: Markdown
-version: 1.11.1
+version: 1.11.2
 
 use:
   '.\lot\x\alert': 1
