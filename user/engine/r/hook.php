@@ -35,8 +35,8 @@ function avatar($avatar, array $lot = []) {
     }
     $w = $lot[0] ?? 72;
     $h = $lot[1] ?? $w;
-    $d = $lot[2] ?? 'monsterid';
-    return $GLOBALS['url']->protocol . 'www.gravatar.com/avatar/' . \md5($this['email']) . '?s=' . $w . '&d=' . $d;
+    $d = $lot[2] ?? 'mp';
+    return $GLOBALS['url']->protocol . 'www.gravatar.com/avatar/' . \md5($this['email']) . '.jpg?s=' . $w . '&d=' . $d;
 }
 
 \Hook::set([
