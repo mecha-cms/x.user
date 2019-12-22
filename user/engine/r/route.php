@@ -14,7 +14,7 @@ namespace _\lot\x\user {
             \Session::let(['user.key', 'user.pass', 'user.token']);
             \Alert::success('Logged out.');
             // Trigger the hook!
-            \Hook::fire('on.user.exit', [new \File($user->path), null], $user);
+            \Hook::fire('on.user.exit', [$user->path]);
             // Redirect to the log in page by default!
             \Guard::kick((\Get::get('kick') ?? $secret) . $url->query('&', [
                 'exit' => false,
@@ -118,7 +118,7 @@ namespace _\lot\x\user\route {
                         // Show success message!
                         \Alert::success('Logged in.');
                         // Trigger the hook!
-                        \Hook::fire('on.user.enter', [new \File($u), null], $user);
+                        \Hook::fire('on.user.enter', [$u]);
                         // Remove log-in attempt log
                         (new \File($try))->let();
                         // Redirect to the home page by default!

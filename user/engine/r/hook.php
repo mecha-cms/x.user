@@ -22,7 +22,7 @@ function a($a) {
     return $a;
 }
 
-function author($author = "") {
+function author($author) {
     if ($author && \is_string($author) && 0 === \strpos($author, '@')) {
         return new \User(\LOT . \DS . 'user' . \DS . \substr($author, 1) . '.page');
     }
