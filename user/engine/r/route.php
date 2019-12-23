@@ -16,7 +16,7 @@ namespace _\lot\x\user {
             // Trigger the hook!
             \Hook::fire('on.user.exit', [$user->path]);
             // Redirect to the log in page by default!
-            \Guard::kick((\Get::get('kick') ?? $secret) . $url->query('&', [
+            \Guard::kick(\Get::get('kick') ?? $secret . $url->query('&', [
                 'exit' => false,
                 'kick' => false
             ]) . $url->hash);
@@ -122,7 +122,7 @@ namespace _\lot\x\user\route {
                         // Remove log-in attempt log
                         (new \File($try))->let();
                         // Redirect to the home page by default!
-                        \Guard::kick((\Post::get('kick') ?? "") . $url->query('&', ['kick' => false]) . $url->hash);
+                        \Guard::kick(\Post::get('kick') ?? $url->query('&', ['kick' => false]) . $url->hash);
                     } else {
                         \Alert::error('Invalid user or pass.');
                         ++$error;
