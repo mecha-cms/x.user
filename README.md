@@ -4,6 +4,10 @@ User Extension for Mecha
 Release Notes
 -------------
 
+### 1.11.3
+
+ - Fix broken user profile page that always redirect to the log-in page.
+
 ### 1.11.2
 
  - Default log-in and log-out system is now enabled by this extension.

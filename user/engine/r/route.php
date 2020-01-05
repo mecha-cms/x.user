@@ -6,8 +6,10 @@ namespace _\lot\x\user {
         $state = \State::get('x.user', true);
         $path = \trim($state['path'] ?? "", '/');
         $secret = \trim($state['guard']['path'] ?? $path, '/');
+        $exit = \Get::get('exit');
+        $token = $user['token'];
         // Force log out with `http://127.0.0.1/user/name?exit=b4d455`
-        if (\Request::is('Get') && \Get::get('exit') === $user['token']) {
+        if (\Request::is('Get') && $exit && $token && $exit === $token) {
             (new \File(LOT . DS . 'user' . DS . $name . DS . 'token.data'))->let();
             (new \File(LOT . DS . 'user' . DS . $name . DS . 'try.data'))->let();
             \Cookie::let(['user.key', 'user.pass', 'user.token']);
