@@ -4,6 +4,10 @@ User Extension for Mecha
 Release Notes
 -------------
 
+### 1.11.4
+
+ - Added `target` attribute to the log-in form.
+
 ### 1.11.3
 
  - Fix broken user profile page that always redirect to the log-in page.

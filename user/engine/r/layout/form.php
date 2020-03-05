@@ -4,7 +4,7 @@ $_state = State::get('x.user', true);
 $_path = $_state['guard']['path'] ?? $_state['path'];
 
 ?>
-<form action="<?= $url . $_path . $url->query('&amp;'); ?>" class="form-user form-user:<?= ($_enter = Is::user()) ? 'exit' : 'enter'; ?>" method="post" name="user">
+<form action="<?= $url . $_path . $url->query('&amp;'); ?>" class="form-user form-user:<?= ($_enter = Is::user()) ? 'exit' : 'enter'; ?>" method="post" name="user" target="_top">
   <?= $alert; ?>
   <?php if ($some = $users->count() > 1): ?>
   <p title="<?= i('User'); ?>">

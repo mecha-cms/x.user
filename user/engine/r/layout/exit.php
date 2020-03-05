@@ -3,7 +3,7 @@
 $_state = State::get('x.user', true);
 
 ?>
-<form class="form-user form-user:exit">
+<form class="form-user form-user:exit" target="_top">
   <?= $alert; ?>
   <p style="
     text-align: center;
