@@ -29,8 +29,7 @@ namespace _\lot\x\user {
         ])) {
             \State::set('is.error', 404);
             $GLOBALS['t'][] = \i('Error');
-            $this->status(404);
-            $this->view('404/' . $path . '/' . $name);
+            $this->layout('404/' . $path . '/' . $name);
         }
         $user = new \User($f);
         $GLOBALS['t'][] = $user->user . ' (' . ($user->title = $user . "") . ')';
@@ -42,10 +41,10 @@ namespace _\lot\x\user {
             'pages' => false,
             'user' => true
         ]);
-        $this->view('page/' . $path . '/' . $name);
+        $this->layout('page/' . $path . '/' . $name);
     }
     $state = \State::get('x.user', true);
-    \Route::set(\trim($state['guard']['path'] ?? $state['path'], '/') . '/:name', 200, __NAMESPACE__ . "\\route");
+    \Route::set(\trim(\State::get('x.user.path') ?? 'user', '/') . '/:name', 200, __NAMESPACE__ . "\\route");
 }
 
 namespace _\lot\x\user\route {
@@ -158,8 +157,8 @@ namespace _\lot\x\user\route {
             'page' => true,
             'user' => true
         ]);
-        $this->view(__DIR__ . \DS . 'layout' . \DS . 'page.php');
+        $this->layout(__DIR__ . \DS . 'layout' . \DS . 'page.php');
     }
     $state = \State::get('x.user', true);
-    \Route::set(\trim($state['guard']['path'] ?? $state['path'], '/'), 200, __NAMESPACE__ . "\\enter");
+    \Route::set(\trim($state['guard']['path'] ?? $state['path'] ?? 'user', '/'), 200, __NAMESPACE__ . "\\enter");
 }

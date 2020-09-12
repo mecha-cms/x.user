@@ -58,5 +58,5 @@ Route::set($url->path, function() {
         Guard::kick($secret . $url->query . $url->hash);
     }
     $GLOBALS['t'][] = i('User');
-    $this->view(__DIR__ . DS . '..' . DS . 'layout' . DS . 'page.php');
+    $this->layout(__DIR__ . DS . '..' . DS . 'layout' . DS . 'page.php');
 });

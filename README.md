@@ -4,6 +4,10 @@ User Extension for Mecha
 Release Notes
 -------------
 
+### master
+
+ - Updated for Mecha 2.5.0.
+
 ### 1.11.4
 
  - Added `target` attribute to the log-in form.
