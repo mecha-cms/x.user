@@ -4,7 +4,7 @@ User Extension for Mecha
 Release Notes
 -------------
 
-### master
+### 1.12.0
 
  - Updated for Mecha 2.5.0.
 
