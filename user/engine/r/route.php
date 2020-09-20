@@ -109,9 +109,15 @@ namespace _\lot\x\user\route {
                     }
                     // Is valid, then…
                     if (!empty($enter)) {
-                        // Save the token!
-                        $file = new \File(\Path::F($u) . \DS . 'token.data');
-                        $file->set($token)->save(0600);
+                        // Use the stored token value from another device if any
+                        // e.g. the user has not decided to log out on that device
+                        if (\is_file($t = \Path::F($u) . \DS . 'token.data')) {
+                            $token = \file_get_contents($t);
+                        // Create the token file!
+                        } else {
+                            $file = new \File($t);
+                            $file->set($token)->save(0600);
+                        }
                         \Cookie::set('user.key', $key, '7 days');
                         \Cookie::set('user.token', $token, '7 days');
                         // Remove try again message
