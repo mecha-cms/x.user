@@ -9,5 +9,12 @@
   ],
   "require": {
     "composer/installers": "~1.0"
+  },
+  "scripts": {
+    "post-package-install": [
+      "php -r \"unlink('../composer.json')\"",
+      "php -r \"unlink('../LICENSE')\"",
+      "php -r \"unlink('../README.md')\""
+    ]
   }
 }
