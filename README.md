@@ -4,6 +4,10 @@ User Extension for Mecha
 Release Notes
 -------------
 
+### 1.12.2
+
+ - TODO
+
 ### 1.12.1
 
  - Improved the log-in system to allow the same user to be logged-in on multiple devices at once.

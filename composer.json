@@ -1,0 +1,13 @@
+{
+  "name": "mecha-cms/x--user",
+  "description": "Rich user data.",
+  "type": "mecha-extension",
+  "keywords": [
+    "extension",
+    "mecha",
+    "user"
+  ],
+  "require": {
+    "composer/installers": "~1.0"
+  }
+}
