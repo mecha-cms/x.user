@@ -1,4 +1,4 @@
-<?php namespace _\lot\x\user;
+<?php namespace x\user;
 
 function a($a) {
     if ($a && \is_string($a) && false !== \strpos($a, '@')) {

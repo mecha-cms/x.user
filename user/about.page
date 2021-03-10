@@ -3,7 +3,7 @@ title: User
 description: Rich user data.
 author: Taufik Nurrohman
 type: Markdown
-version: 1.12.2
+version: 1.13.0
 
 use:
   '.\lot\x\alert': 1
@@ -90,7 +90,7 @@ Page content.
 
 To get the author data:
 
-~~~ .html
+~~~ .html.php
 <a href="<?= $page->author->link; ?>">
   <?= $page->author; ?>
 </a>

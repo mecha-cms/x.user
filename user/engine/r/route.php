@@ -1,6 +1,6 @@
 <?php
 
-namespace _\lot\x\user {
+namespace x\user {
     function route($name) {
         extract($GLOBALS, \EXTR_SKIP);
         $state = \State::get('x.user', true);
@@ -47,7 +47,7 @@ namespace _\lot\x\user {
     \Route::set(\trim(\State::get('x.user.path') ?? 'user', '/') . '/:name', 200, __NAMESPACE__ . "\\route");
 }
 
-namespace _\lot\x\user\route {
+namespace x\user\route {
     function enter() {
         extract($GLOBALS, \EXTR_SKIP);
         $GLOBALS['t'][] = \i(\Is::user() ? 'Exit' : 'Enter');

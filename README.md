@@ -4,6 +4,10 @@ User Extension for Mecha
 Release Notes
 -------------
 
+### main
+
+ - [x] [@mecha-cms/mecha#96](https://github.com/mecha-cms/mecha/issues/96)
+
 ### 1.12.1
 
  - Improved the log-in system to allow the same user to be logged-in on multiple devices at once.
