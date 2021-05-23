@@ -1,0 +1,30 @@
+:root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-contents: center;
+  align-items: center;
+}
+
+body > div {
+  flex: 1;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 15em;
+}
+
+.form-user\:exit {
+  text-align: center;
+}
+

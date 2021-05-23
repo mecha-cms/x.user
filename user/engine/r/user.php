@@ -5,5 +5,5 @@ function user(...$v) {
 }
 
 function users(...$v) {
-    return Get::users(...$v);
+    return Users::from(...$v);
 }

@@ -3,9 +3,8 @@
 namespace x\user {
     function route($name) {
         extract($GLOBALS, \EXTR_SKIP);
-        $state = \State::get('x.user', true);
-        $path = \trim($state['path'] ?? "", '/');
-        $secret = \trim($state['guard']['path'] ?? $path, '/');
+        $path = \trim($state->x->user->path ?? '/user', '/');
+        $secret = \trim($state->x->user->guard->path ?? $path, '/');
         $exit = \Get::get('exit');
         $token = $user['token'];
         // Force log out with `http://127.0.0.1/user/name?exit=b4d455`
@@ -43,17 +42,15 @@ namespace x\user {
         ]);
         $this->layout('page/' . $path . '/' . $name);
     }
-    $state = \State::get('x.user', true);
-    \Route::set(\trim(\State::get('x.user.path') ?? 'user', '/') . '/:name', 200, __NAMESPACE__ . "\\route");
+    \Route::set(\trim($state->x->user->path ?? '/user', '/') . '/:user', 200, __NAMESPACE__ . "\\route");
 }
 
 namespace x\user\route {
     function enter() {
         extract($GLOBALS, \EXTR_SKIP);
         $GLOBALS['t'][] = \i(\Is::user() ? 'Exit' : 'Enter');
-        $state = \State::get('x.user', true);
-        $path = \trim($state['path'] ?? "", '/');
-        $secret = \trim($state['guard']['path'] ?? $path, '/');
+        $path = \trim($state->x->user->path ?? '/user', '/');
+        $secret = \trim($state->x->user->guard->path ?? $path, '/');
         if (\Request::is('Post')) {
             $key = \Post::get('user');
             $pass = \Post::get('pass');
@@ -71,7 +68,7 @@ namespace x\user\route {
             $try = \LOT . \DS . 'user' . \DS . $key . \DS . 'try.data';
             $try_data = (array) \e(\content($try));
             $ip = \Client::IP();
-            $max = $state['guard']['try'] ?? 5;
+            $max = $state->x->user->guard->try ?? 5;
             if (!isset($try_data[$ip])) {
                 $try_data[$ip] = 1;
             } else {
@@ -163,8 +160,9 @@ namespace x\user\route {
             'page' => true,
             'user' => true
         ]);
+        $z = \defined("\\DEBUG") && \DEBUG ? '.' : '.min.';
+        \Asset::set(__DIR__ . \DS . '..' . \DS . '..' . \DS . 'lot' . \DS . 'asset' . \DS . 'css' . \DS . 'index' . $z . 'css', 10);
         $this->layout(__DIR__ . \DS . 'layout' . \DS . 'page.php');
     }
-    $state = \State::get('x.user', true);
-    \Route::set(\trim($state['guard']['path'] ?? $state['path'] ?? 'user', '/'), 200, __NAMESPACE__ . "\\enter");
+    \Route::set(\trim($state->x->user->guard->path ?? $state->x->user->path ?? '/user', '/'), 200, __NAMESPACE__ . "\\enter");
 }

@@ -6,6 +6,8 @@ Release Notes
 
 ### main
 
+ - [ ] Added hooks for user form.
+ - [x] Added external CSS file to center the user form.
  - [x] [@mecha-cms/mecha#96](https://github.com/mecha-cms/mecha/issues/96)
 
 ### 1.12.1
@@ -26,7 +28,7 @@ Release Notes
 
 ### 1.11.2
 
- - Default log-in and log-out system is now enabled by this extension.
  - Added log-in attempts counter.
  - Added routes to the user profile page.
  - Changed `$` property to `author` to store the human-friendly user name.
+ - Default log-in and log-out system is now enabled by this extension.

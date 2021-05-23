@@ -16,8 +16,9 @@ class User extends Page {
     }
 
     public function URL(...$lot) {
+        extract($GLOBALS, EXTR_SKIP);
         $n = $this->exist ? parent::name() : null;
-        return $n ? $GLOBALS['url'] . State::get('x.user.path') . '/' . $n : null;
+        return $n ? $url . ($state->x->user->path ?? '/user') . '/' . $n : null;
     }
 
     public function user() {
