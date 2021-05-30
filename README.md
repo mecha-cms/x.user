@@ -6,7 +6,7 @@ Release Notes
 
 ### main
 
- - [ ] Added hooks for user form.
+ - [x] Added `user-form` and `user-form-tasks` hooks.
  - [x] Added external CSS file to center the user form.
  - [x] [@mecha-cms/mecha#96](https://github.com/mecha-cms/mecha/issues/96)
 

@@ -24,7 +24,6 @@ body > div {
   max-width: 15em;
 }
 
-.form-user\:exit {
+.form-user\:exit p:not([class]) {
   text-align: center;
 }
-

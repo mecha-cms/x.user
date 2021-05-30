@@ -5,11 +5,12 @@ Route::set($url->path, function() {
     $state = State::get('x.user', true);
     $path = trim($state['path'] ?? "", '/');
     $secret = trim($state['guard']['path'] ?? $path, '/');
-    if (\Request::is('Post')) {
-        $lot = \Post::get();
-        $token = $lot['token'] ?? null;
-        $key = $lot['user'] ?? null;
-        $pass = $lot['pass'] ?? null;
+    if (Request::is('Post')) {
+        extract(array_replace([
+            'key' => null,
+            'pass' => null,
+            'token' => null
+        ], (array) Post::get('user')), EXTR_SKIP);
         // Remove the `@` prefix!
         if (0 === strpos($key, '@')) {
             $key = substr($key, 1);
@@ -48,15 +49,18 @@ Route::set($url->path, function() {
             // Trigger the hook!
             Hook::fire('on.user.enter', [new File($u), null], $user);
             // Redirect to the user page by default!
-            Guard::kick(($lot['kick'] ?? $secret) . $url->query('&', ['kick' => false]) . $url->hash);
+            Guard::kick(($kick ?? $secret) . $url->query('&', ['kick' => false]) . $url->hash);
         }
         if ($error > 0) {
             // Store form data to session but `pass`
-            unset($lot['pass']);
-            Session::set('form', $lot);
+            $lot = (array) Post::get('user');
+            unset($lot['pass'], $lot['token']);
+            Session::set('form', ['user' => $lot]);
         }
         Guard::kick($secret . $url->query . $url->hash);
     }
     $GLOBALS['t'][] = i('User');
+    $z = defined('DEBUG') && DEBUG ? '.' : '.min.';
+    Asset::set(__DIR__ . DS . '..' . DS . '..' . DS . '..' . DS . 'lot' . DS . 'asset' . DS . 'css' . DS . 'index' . $z . 'css', 10);
     $this->layout(__DIR__ . DS . '..' . DS . 'layout' . DS . 'page.php');
 });

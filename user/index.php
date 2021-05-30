@@ -7,6 +7,8 @@ require __DIR__ . DS . 'engine' . DS . 'r' . DS . 'layout.php';
 require __DIR__ . DS . 'engine' . DS . 'r' . DS . 'state.php';
 require __DIR__ . DS . 'engine' . DS . 'r' . DS . 'user.php';
 
+require __DIR__ . DS . 'engine' . DS . 'r.php';
+
 // Apply route(s) only if we have at least one user
 if (q(g(LOT . DS . 'user', 'page')) > 0) {
     require __DIR__ . DS . 'engine' . DS . 'r' . DS . 'route.php';

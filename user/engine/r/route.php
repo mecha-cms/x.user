@@ -9,8 +9,8 @@ namespace x\user {
         $token = $user['token'];
         // Force log out with `http://127.0.0.1/user/name?exit=b4d455`
         if (\Request::is('Get') && $exit && $token && $exit === $token) {
-            (new \File(LOT . DS . 'user' . DS . $name . DS . 'token.data'))->let();
-            (new \File(LOT . DS . 'user' . DS . $name . DS . 'try.data'))->let();
+            \unlink(\LOT . \DS . 'user' . \DS . $name . \DS . 'token.data');
+            \unlink(\LOT . \DS . 'user' . \DS . $name . \DS . 'try.data');
             \Cookie::let(['user.key', 'user.pass', 'user.token']);
             \Session::let(['user.key', 'user.pass', 'user.token']);
             \Alert::success('Logged out.');
@@ -23,8 +23,8 @@ namespace x\user {
             ]) . $url->hash);
         }
         if (!$f = \File::exist([
-            \LOT . \DS . 'user' . \DS . $name . '.page',
-            \LOT . \DS . 'user' . \DS . $name . '.archive'
+            \LOT . \DS . 'user' . \DS . $name . '.archive',
+            \LOT . \DS . 'user' . \DS . $name . '.page'
         ])) {
             \State::set('is.error', 404);
             $GLOBALS['t'][] = \i('Error');
@@ -52,9 +52,7 @@ namespace x\user\route {
         $path = \trim($state->x->user->path ?? '/user', '/');
         $secret = \trim($state->x->user->guard->path ?? $path, '/');
         if (\Request::is('Post')) {
-            $key = \Post::get('user');
-            $pass = \Post::get('pass');
-            $token = \Post::get('token');
+            extract((array) \Post::get('user'), \EXTR_SKIP);
             // Has only 1 user!
             if (isset($users) && 1 === \count($users)) {
                 // Set the `key` value to that user automatically
@@ -66,7 +64,7 @@ namespace x\user\route {
             }
             $u = \LOT . \DS . 'user' . \DS . $key . '.page';
             $try = \LOT . \DS . 'user' . \DS . $key . \DS . 'try.data';
-            $try_data = (array) \e(\content($try));
+            $try_data = (array) \e(\file_get_contents($try));
             $ip = \Client::IP();
             $max = $state->x->user->guard->try ?? 5;
             if (!isset($try_data[$ip])) {
@@ -93,8 +91,8 @@ namespace x\user\route {
                 if (\is_file($u)) {
                     // Reset password by deleting `pass.data` manually, then log in!
                     if (!\is_file($f = \Path::F($u) . \DS . 'pass.data')) {
-                        $file = new \File($f);
-                        $file->set(\P . \password_hash($pass . '@' . $key, \PASSWORD_DEFAULT))->save(0600);
+                        \file_put_contents($f, \P . \password_hash($pass . '@' . $key, \PASSWORD_DEFAULT));
+                        \chmod($f, 0600);
                         \Alert::info('Your %s is %s.', ['pass', '<em>' . $pass . '</em>']);
                     }
                     // Validate password hash!
@@ -112,8 +110,8 @@ namespace x\user\route {
                             $token = \file_get_contents($t);
                         // Create the token file!
                         } else {
-                            $file = new \File($t);
-                            $file->set($token)->save(0600);
+                            \file_put_contents($t, $token);
+                            \chmod($t, 0600);
                         }
                         \Cookie::set('user.key', $key, '7 days');
                         \Cookie::set('user.token', $token, '7 days');
@@ -124,9 +122,9 @@ namespace x\user\route {
                         // Trigger the hook!
                         \Hook::fire('on.user.enter', [$u]);
                         // Remove log-in attempt log
-                        (new \File($try))->let();
+                        \unlink($try);
                         // Redirect to the home page by default!
-                        \Guard::kick(\Post::get('kick') ?? $url->query('&', ['kick' => false]) . $url->hash);
+                        \Guard::kick($kick ?? $url->query('&', ['kick' => false]) . $url->hash);
                     } else {
                         \Alert::error('Invalid user or pass.');
                         ++$error;
@@ -138,9 +136,9 @@ namespace x\user\route {
             }
             if ($error > 0) {
                 // Store form data to session but `pass`
-                $lot = \Post::get();
+                $lot = (array) \Post::get('user');
                 unset($lot['pass'], $lot['token']);
-                \Session::set('form', $lot);
+                \Session::set('form', ['user' => $lot]);
                 // Check for log-in attempt quota
                 if ($try_data[$ip] > $max - 1) {
                     \Guard::abort(\i('Please delete the %s file to enter.', '<code>' . \str_replace(\ROOT, '.', \Path::D($try, 2)) . \DS . $key[0] . \str_repeat('&#x2022;', \strlen($key) - 1) . \DS . 'try.data</code>'));
@@ -149,8 +147,8 @@ namespace x\user\route {
                     // Show remaining log-in attempt quota
                     \Alert::info('Try again for %d more times.', $max - $try_data[$ip]);
                     // Record log-in attempt
-                    $file = new \File($try);
-                    $file->set(\json_encode($try_data))->save(0600);
+                    \file_put_contents($try, \json_encode($try_data));
+                    \chmod($try, 0600);
                 }
             }
             \Guard::kick($secret . $url->query . $url->hash);
