@@ -1,5 +1,5 @@
-User Extension for Mecha
-========================
+User Extension for [Mecha](https://github.com/mecha-cms/mecha)
+==============================================================
 
 Release Notes
 -------------
