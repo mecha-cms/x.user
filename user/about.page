@@ -10,6 +10,8 @@ use:
   '.\lot\x\page': 1
 ...
 
+![User](https://user-images.githubusercontent.com/1669261/120207098-33627a80-c256-11eb-8806-485022b77b53.png)
+
 ### File
 
 All you have to do after installing this extension is to create a page file in the `.\lot\user` folder. Name the page according to the user name you want. For example, here I will create user data with the name `@‌ta-tau-taufik`:

@@ -61,6 +61,6 @@ Route::set($url->path, function() {
     }
     $GLOBALS['t'][] = i('User');
     $z = defined('DEBUG') && DEBUG ? '.' : '.min.';
-    Asset::set(__DIR__ . DS . '..' . DS . '..' . DS . '..' . DS . 'lot' . DS . 'asset' . DS . 'css' . DS . 'index' . $z . 'css', 10);
+    Asset::set(__DIR__ . DS . '..' . DS . '..' . DS . '..' . DS . 'lot' . DS . 'asset' . DS . 'css' . DS . 'index' . $z . 'css', 20.1);
     $this->layout(__DIR__ . DS . '..' . DS . 'layout' . DS . 'page.php');
 });

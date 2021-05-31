@@ -1,14 +1,16 @@
 User Extension for [Mecha](https://github.com/mecha-cms/mecha)
 ==============================================================
 
+![User](https://user-images.githubusercontent.com/1669261/120207098-33627a80-c256-11eb-8806-485022b77b53.png)
+
 Release Notes
 -------------
 
-### main
+### 1.13.0
 
- - [x] Added `user-form` and `user-form-tasks` hooks.
- - [x] Added external CSS file to center the user form.
- - [x] [@mecha-cms/mecha#96](https://github.com/mecha-cms/mecha/issues/96)
+ - Added `user-form` and `user-form-tasks` hooks.
+ - Added external CSS file to center the user form.
+ - [@mecha-cms/mecha#96](https://github.com/mecha-cms/mecha/issues/96)
 
 ### 1.12.1
 
