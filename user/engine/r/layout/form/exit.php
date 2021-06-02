@@ -23,6 +23,7 @@
                       'href' => $url . ($state->x->user->path ?? '/user') . '/' . $user->name . $url->query('&', [
                           'exit' => $user->token
                       ]),
+                      'target' => '_top',
                       'title' => $user->user
                   ]
               ]

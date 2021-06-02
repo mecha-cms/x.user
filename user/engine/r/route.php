@@ -6,6 +6,7 @@ namespace x\user {
         $path = \trim($state->x->user->path ?? '/user', '/');
         $secret = \trim($state->x->user->guard->path ?? $path, '/');
         $exit = \Get::get('exit');
+        $kick = \Get::get('kick');
         $token = $user['token'];
         // Force log out with `http://127.0.0.1/user/name?exit=b4d455`
         if (\Request::is('Get') && $exit && $token && $exit === $token) {
@@ -17,10 +18,10 @@ namespace x\user {
             // Trigger the hook!
             \Hook::fire('on.user.exit', [$user->path]);
             // Redirect to the log in page by default!
-            \Guard::kick(\Get::get('kick') ?? $secret . $url->query('&', [
+            \Guard::kick($kick ?? ($secret . $url->query('&', [
                 'exit' => false,
                 'kick' => false
-            ]) . $url->hash);
+            ]) . $url->hash));
         }
         if (!$f = \File::exist([
             \LOT . \DS . 'user' . \DS . $name . '.archive',
