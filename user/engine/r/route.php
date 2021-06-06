@@ -18,7 +18,7 @@ namespace x\user {
             // Trigger the hook!
             \Hook::fire('on.user.exit', [$user->path]);
             // Redirect to the log in page by default!
-            \Guard::kick($kick ?? ($secret . $url->query('&', [
+            \Guard::kick($kick ?? ($url . '/' . $secret . $url->query('&', [
                 'exit' => false,
                 'kick' => false
             ]) . $url->hash));
