@@ -10,8 +10,8 @@ namespace x\user {
         $token = $user['token'];
         // Force log out with `http://127.0.0.1/user/name?exit=b4d455`
         if (\Request::is('Get') && $exit && $token && $exit === $token) {
-            \unlink(\LOT . \DS . 'user' . \DS . $name . \DS . 'token.data');
-            \unlink(\LOT . \DS . 'user' . \DS . $name . \DS . 'try.data');
+            \is_file($f = \LOT . \DS . 'user' . \DS . $name . \DS . 'token.data') && \unlink($f);
+            \is_file($f = \LOT . \DS . 'user' . \DS . $name . \DS . 'try.data') && \unlink($f);
             \Cookie::let(['user.key', 'user.pass', 'user.token']);
             \Session::let(['user.key', 'user.pass', 'user.token']);
             \Alert::success('Logged out.');
@@ -63,9 +63,9 @@ namespace x\user\route {
             if (0 === \strpos($key, '@')) {
                 $key = \substr($key, 1);
             }
-            $u = \LOT . \DS . 'user' . \DS . $key . '.page';
+            $file = \LOT . \DS . 'user' . \DS . $key . '.page';
             $try = \LOT . \DS . 'user' . \DS . $key . \DS . 'try.data';
-            $try_data = (array) \e(\file_get_contents($try));
+            $try_data = (array) \e(\is_file($try) ? \file_get_contents($try) : []);
             $ip = \Client::IP();
             $max = $state->x->user->guard->try ?? 5;
             if (!isset($try_data[$ip])) {
@@ -89,9 +89,9 @@ namespace x\user\route {
             // No error(s), go to the next step(s)…
             } else {
                 // Check if user already registered…
-                if (\is_file($u)) {
+                if (\is_file($file)) {
                     // Reset password by deleting `pass.data` manually, then log in!
-                    if (!\is_file($f = \Path::F($u) . \DS . 'pass.data')) {
+                    if (!\is_file($f = \Path::F($file) . \DS . 'pass.data')) {
                         \file_put_contents($f, \P . \password_hash($pass . '@' . $key, \PASSWORD_DEFAULT));
                         \chmod($f, 0600);
                         \Alert::info('Your %s is %s.', ['pass', '<em>' . $pass . '</em>']);
@@ -105,14 +105,14 @@ namespace x\user\route {
                     }
                     // Is valid, then…
                     if (!empty($enter)) {
-                        // Use the stored token value from another device if any
-                        // e.g. the user has not decided to log out on that device
-                        if (\is_file($t = \Path::F($u) . \DS . 'token.data')) {
-                            $token = \file_get_contents($t);
+                        // Use the stored token value from another device if exists
+                        // e.g. the user has not decided to log out on that device yet
+                        if (\is_file($f = \Path::F($file) . \DS . 'token.data')) {
+                            $token = \file_get_contents($f);
                         // Create the token file!
                         } else {
-                            \file_put_contents($t, $token);
-                            \chmod($t, 0600);
+                            \file_put_contents($f, $token);
+                            \chmod($f, 0600);
                         }
                         \Cookie::set('user.key', $key, '7 days');
                         \Cookie::set('user.token', $token, '7 days');
@@ -121,9 +121,9 @@ namespace x\user\route {
                         // Show success message!
                         \Alert::success('Logged in.');
                         // Trigger the hook!
-                        \Hook::fire('on.user.enter', [$u]);
+                        \Hook::fire('on.user.enter', [$file]);
                         // Remove log-in attempt log
-                        \unlink($try);
+                        \is_file($try) && \unlink($try);
                         // Redirect to the home page by default!
                         \Guard::kick($kick ?? $url->query('&', ['kick' => false]) . $url->hash);
                     } else {
@@ -144,7 +144,7 @@ namespace x\user\route {
                 if ($try_data[$ip] > $max - 1) {
                     \Guard::abort(\i('Please delete the %s file to enter.', '<code>' . \str_replace(\ROOT, '.', \Path::D($try, 2)) . \DS . $key[0] . \str_repeat('&#x2022;', \strlen($key) - 1) . \DS . 'try.data</code>'));
                 }
-                if (\is_file($u)) {
+                if (\is_file($file)) {
                     // Show remaining log-in attempt quota
                     \Alert::info('Try again for %d more times.', $max - $try_data[$ip]);
                     // Record log-in attempt
@@ -152,7 +152,7 @@ namespace x\user\route {
                     \chmod($try, 0600);
                 }
             }
-            \Guard::kick($secret . $url->query . $url->hash);
+            \Guard::kick($url . '/' . $secret . $url->query . $url->hash);
         }
         \State::set('is', [
             'error' => false,
