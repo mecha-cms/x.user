@@ -125,7 +125,9 @@ namespace x\user\route {
                         // Remove log-in attempt log
                         \is_file($try) && \unlink($try);
                         // Redirect to the home page by default!
-                        \Guard::kick($kick ?? $url->query('&', ['kick' => false]) . $url->hash);
+                        \Guard::kick($kick ?? $url->query('&', [
+                            'kick' => false
+                        ]) . $url->hash);
                     } else {
                         \Alert::error('Invalid user or pass.');
                         ++$error;

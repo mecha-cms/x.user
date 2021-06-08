@@ -49,7 +49,9 @@ Route::set($url->path, function() {
             // Trigger the hook!
             Hook::fire('on.user.enter', [new File($u), null], $user);
             // Redirect to the user page by default!
-            Guard::kick(($kick ?? $secret) . $url->query('&', ['kick' => false]) . $url->hash);
+            Guard::kick($kick ?? ($url . '/' . $secret . $url->query('&', [
+                'kick' => false
+            ]) . $url->hash));
         }
         if ($error > 0) {
             // Store form data to session but `pass`
@@ -57,7 +59,7 @@ Route::set($url->path, function() {
             unset($lot['pass'], $lot['token']);
             Session::set('form', ['user' => $lot]);
         }
-        Guard::kick($secret . $url->query . $url->hash);
+        Guard::kick($url . '/' . $secret . $url->query . $url->hash);
     }
     $GLOBALS['t'][] = i('User');
     $z = defined('DEBUG') && DEBUG ? '.' : '.min.';
