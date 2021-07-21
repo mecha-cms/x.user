@@ -27,7 +27,7 @@
               0 => 'input',
               1 => false,
               2 => [
-                  'autofocus' => $some ? true : null,
+                  'autofocus' => $some ? null : true,
                   'class' => 'input width',
                   'name' => 'user[pass]',
                   'placeholder' => i('Pass'),
