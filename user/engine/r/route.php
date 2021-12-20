@@ -6,7 +6,7 @@ namespace x\user {
         $route = \trim($state->x->user->route ?? 'user', '/');
         $secret = \trim($state->x->user->guard->route ?? $route, '/');
         $exit = $_GET['exit'] ?? null;
-        $kick = i$_GET['kick'] ?? null;
+        $kick = $_GET['kick'] ?? null;
         $token = $user->token;
         // Force log out with `http://127.0.0.1/user/name?exit=b4d455`
         if ('GET' === $_SERVER['REQUEST_METHOD'] && $exit && $token && $exit === $token) {
