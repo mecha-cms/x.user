@@ -28,9 +28,9 @@ namespace x\user {
             \LOT . \D . 'user' . \D . $name . '.archive',
             \LOT . \D . 'user' . \D . $name . '.page'
         ], 1)) {
-            \status(404);
             \State::set('is', ['error' => 404]);
             $GLOBALS['t'][] = \i('Error');
+            \status(404);
             \Hook::fire('layout', ['error/' . $route . '/' . $name]);
         }
         $user = new \User($file);
@@ -43,6 +43,7 @@ namespace x\user {
             'pages' => false,
             'user' => true
         ]);
+        \status(200);
         \Hook::fire('layout', ['page/' . $route . '/' . $name]);
     }
     $route = \trim($state->x->user->route ?? 'user', '/');
@@ -176,6 +177,7 @@ namespace x\user\route {
         ]);
         $z = \defined("\\TEST") && \TEST ? '.' : '.min.';
         \Asset::set(__DIR__ . \D . '..' . \D . '..' . \D . 'lot' . \D . 'asset' . \D . 'css' . \D . 'index' . $z . 'css', 20.1);
+        \status(200);
         \Hook::fire('layout', ['user']);
     }
     \Hook::set('route', __NAMESPACE__ . "\\enter", 10);
