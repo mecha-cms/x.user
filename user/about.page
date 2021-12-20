@@ -1,17 +1,16 @@
 ---
 title: User
 description: Rich user data.
+image: 'https://user-images.githubusercontent.com/1669261/120207098-33627a80-c256-11eb-8806-485022b77b53.png'
 author: Taufik Nurrohman
 type: Markdown
-version: 1.13.0
+version: 2.0.0
 
 use:
   '.\lot\x\alert': 1
   '.\lot\x\asset': 1
   '.\lot\x\page': 1
 ...
-
-![User](https://user-images.githubusercontent.com/1669261/120207098-33627a80-c256-11eb-8806-485022b77b53.png)
 
 ### File
 

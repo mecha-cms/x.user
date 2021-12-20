@@ -6,6 +6,10 @@ User Extension for [Mecha](https://github.com/mecha-cms/mecha)
 Release Notes
 -------------
 
+### 2.0.0
+
+ - [ ] Updated for Mecha 3.0.0.
+
 ### 1.13.0
 
  - Added `user-form` and `user-form-tasks` hooks.

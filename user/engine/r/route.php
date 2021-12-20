@@ -3,37 +3,39 @@
 namespace x\user {
     function route($name) {
         extract($GLOBALS, \EXTR_SKIP);
-        $path = \trim($state->x->user->path ?? '/user', '/');
-        $secret = \trim($state->x->user->guard->path ?? $path, '/');
-        $exit = \Get::get('exit');
-        $kick = \Get::get('kick');
-        $token = $user['token'];
+        $route = \trim($state->x->user->route ?? 'user', '/');
+        $secret = \trim($state->x->user->guard->route ?? $route, '/');
+        $exit = $_GET['exit'] ?? null;
+        $kick = i$_GET['kick'] ?? null;
+        $token = $user->token;
         // Force log out with `http://127.0.0.1/user/name?exit=b4d455`
-        if (\Request::is('Get') && $exit && $token && $exit === $token) {
-            \is_file($f = \LOT . \DS . 'user' . \DS . $name . \DS . 'token.data') && \unlink($f);
-            \is_file($f = \LOT . \DS . 'user' . \DS . $name . \DS . 'try.data') && \unlink($f);
-            \Cookie::let(['user.key', 'user.pass', 'user.token']);
-            \Session::let(['user.key', 'user.pass', 'user.token']);
+        if ('GET' === $_SERVER['REQUEST_METHOD'] && $exit && $token && $exit === $token) {
+            \delete(\LOT . \D. 'user' . \D . $name . \D . 'token.data');
+            \delete(\LOT . \D . 'user' . \D . $name . \D . 'try.data');
+            \cookie('user.key', null);
+            \cookie('user.pass', null);
+            \cookie('user.token', null);
             \Alert::success('Logged out.');
             // Trigger the hook!
             \Hook::fire('on.user.exit', [$user->path]);
-            // Redirect to the log in page by default!
-            \Guard::kick($kick ?? ($url . '/' . $secret . $url->query('&', [
+            // Redirect to the log-in page by default!
+            \kick($kick ?? ('/' . $secret . $url->query([
                 'exit' => false,
                 'kick' => false
             ]) . $url->hash));
         }
-        if (!$f = \File::exist([
-            \LOT . \DS . 'user' . \DS . $name . '.archive',
-            \LOT . \DS . 'user' . \DS . $name . '.page'
-        ])) {
-            \State::set('is.error', 404);
+        if (!$file = \exist([
+            \LOT . \D . 'user' . \D . $name . '.archive',
+            \LOT . \D . 'user' . \D . $name . '.page'
+        ], 1)) {
+            \status(404);
+            \State::set('is', ['error' => 404]);
             $GLOBALS['t'][] = \i('Error');
-            $this->layout('404/' . $path . '/' . $name);
+            \Hook::fire('layout', ['error/' . $route . '/' . $name]);
         }
-        $user = new \User($f);
-        $GLOBALS['t'][] = $user->user . ' (' . ($user->title = $user . "") . ')';
+        $user = new \User($file);
         $GLOBALS['page'] = $user;
+        $GLOBALS['t'][] = $user->user . ' (' . ($user->title = $user . "") . ')';
         \State::set('is', [
             'active' => !!\Is::user($user->user),
             'error' => false,
@@ -41,19 +43,30 @@ namespace x\user {
             'pages' => false,
             'user' => true
         ]);
-        $this->layout('page/' . $path . '/' . $name);
+        \Hook::fire('layout', ['page/' . $route . '/' . $name]);
     }
-    \Route::set(\trim($state->x->user->path ?? '/user', '/') . '/:user', 200, __NAMESPACE__ . "\\route");
+    $route = \trim($state->x->user->route ?? 'user', '/');
+    if (0 === \strpos($url->path ?? "", '/' . $route . '/')) {
+        \Hook::set('route', function($path, $query, $hash) {
+            $chops = \explode('/', $path);
+            \Hook::fire('route.user', [\array_pop($chops), \implode('/', $path), $query, $hash]);
+        }, 10);
+        \Hook::set('route.user', __NAMESPACE__ . "\\route", 20);
+    }
 }
 
 namespace x\user\route {
-    function enter() {
+    function enter($path) {
         extract($GLOBALS, \EXTR_SKIP);
         $GLOBALS['t'][] = \i(\Is::user() ? 'Exit' : 'Enter');
-        $path = \trim($state->x->user->path ?? '/user', '/');
-        $secret = \trim($state->x->user->guard->path ?? $path, '/');
-        if (\Request::is('Post')) {
-            extract((array) \Post::get('user'), \EXTR_SKIP);
+        $path = \trim($path ?? "", '/');
+        $route = \trim($state->x->user->path ?? 'route', '/');
+        $secret = \trim($state->x->user->guard->path ?? $route, '/');
+        if ($path !== $secret) {
+            return;
+        }
+        if ('POST' === $_SERVER['REQUEST_METHOD']) {
+            extract((array) ($_POST['user'] ?? []), \EXTR_SKIP);
             // Has only 1 user!
             if (isset($users) && 1 === \count($users)) {
                 // Set the `key` value to that user automatically
@@ -63,10 +76,10 @@ namespace x\user\route {
             if (0 === \strpos($key, '@')) {
                 $key = \substr($key, 1);
             }
-            $file = \LOT . \DS . 'user' . \DS . $key . '.page';
-            $try = \LOT . \DS . 'user' . \DS . $key . \DS . 'try.data';
-            $try_data = (array) \e(\is_file($try) ? \file_get_contents($try) : []);
-            $ip = \Client::IP();
+            $file = \LOT . \D . 'user' . \D . $key . '.page';
+            $try = \LOT . \D . 'user' . \D . $key . \D . 'try.data';
+            $try_data = \json_decode(\is_file($try) ? \file_get_contents($try) : '[]', true);
+            $ip = \getenv('HTTP_CLIENT_IP') ?: \getenv('HTTP_X_FORWARDED_FOR') ?: \getenv('HTTP_X_FORWARDED') ?: \getenv('HTTP_FORWARDED_FOR') ?: \getenv('HTTP_FORWARDED') ?: \getenv('REMOTE_ADDR');
             $max = $state->x->user->guard->try ?? 5;
             if (!isset($try_data[$ip])) {
                 $try_data[$ip] = 1;
@@ -75,7 +88,7 @@ namespace x\user\route {
             }
             $error = 0;
             // Check token…
-            if (\Is::void($token) || !\Guard::check($token, 'user')) {
+            if (\Is::void($token) || !\check($token, 'user')) {
                 \Alert::error('Invalid token.');
                 ++$error;
             // Check user key…
@@ -91,13 +104,13 @@ namespace x\user\route {
                 // Check if user already registered…
                 if (\is_file($file)) {
                     // Reset password by deleting `pass.data` manually, then log in!
-                    if (!\is_file($f = \Path::F($file) . \DS . 'pass.data')) {
+                    if (!\is_file($f = \dirname($file) . \D . \pathinfo($file, \PATHINFO_FILENAME) . \D . 'pass.data')) {
                         \file_put_contents($f, \P . \password_hash($pass . '@' . $key, \PASSWORD_DEFAULT));
                         \chmod($f, 0600);
                         \Alert::info('Your %s is %s.', ['pass', '<em>' . $pass . '</em>']);
                     }
                     // Validate password hash!
-                    if (0 === \strpos($h = \content($f), \P)) {
+                    if (0 === \strpos($h = \file_get_contents($f), \P)) {
                         $enter = \password_verify($pass . '@' . $key, \substr($h, 1));
                     // Validate password text!
                     } else {
@@ -107,15 +120,15 @@ namespace x\user\route {
                     if (!empty($enter)) {
                         // Use the stored token value from another device if exists
                         // e.g. the user has not decided to log out on that device yet
-                        if (\is_file($f = \Path::F($file) . \DS . 'token.data')) {
+                        if (\is_file($f = \dirname($file) . \D . \pathinfo($file, \PATHINFO_FILENAME) . \D . 'token.data')) {
                             $token = \file_get_contents($f);
                         // Create the token file!
                         } else {
                             \file_put_contents($f, $token);
                             \chmod($f, 0600);
                         }
-                        \Cookie::set('user.key', $key, '7 days');
-                        \Cookie::set('user.token', $token, '7 days');
+                        \cookie('user.key', $key, '7 days');
+                        \cookie('user.token', $token, '7 days');
                         // Remove try again message
                         \Alert::let();
                         // Show success message!
@@ -123,9 +136,9 @@ namespace x\user\route {
                         // Trigger the hook!
                         \Hook::fire('on.user.enter', [$file]);
                         // Remove log-in attempt log
-                        \is_file($try) && \unlink($try);
+                        \delete($try);
                         // Redirect to the home page by default!
-                        \Guard::kick($kick ?? $url->query('&', [
+                        \kick($kick ?? '/' . $url->query([
                             'kick' => false
                         ]) . $url->hash);
                     } else {
@@ -138,13 +151,13 @@ namespace x\user\route {
                 }
             }
             if ($error > 0) {
-                // Store form data to session but `pass`
-                $lot = (array) \Post::get('user');
+                // Store form data to session but `pass` and `token`
+                $lot = (array) ($_POST['user'] ?? []);
                 unset($lot['pass'], $lot['token']);
-                \Session::set('form', ['user' => $lot]);
+                $_SESSION['form']['user'] = $lot;
                 // Check for log-in attempt quota
                 if ($try_data[$ip] > $max - 1) {
-                    \Guard::abort(\i('Please delete the %s file to enter.', '<code>' . \str_replace(\ROOT, '.', \Path::D($try, 2)) . \DS . $key[0] . \str_repeat('&#x2022;', \strlen($key) - 1) . \DS . 'try.data</code>'));
+                    \abort(\i('Please delete the %s file to enter.', '<code>' . \str_replace(\ROOT, '.', \dirname($try, 2)) . \D . $key[0] . \str_repeat('&#x2022;', \strlen($key) - 1) . \D . 'try.data</code>'));
                 }
                 if (\is_file($file)) {
                     // Show remaining log-in attempt quota
@@ -154,16 +167,16 @@ namespace x\user\route {
                     \chmod($try, 0600);
                 }
             }
-            \Guard::kick($url . '/' . $secret . $url->query . $url->hash);
+            \kick('/' . $secret . $url->query . $url->hash);
         }
         \State::set('is', [
             'error' => false,
             'page' => true,
             'user' => true
         ]);
-        $z = \defined("\\DEBUG") && \DEBUG ? '.' : '.min.';
-        \Asset::set(__DIR__ . \DS . '..' . \DS . '..' . \DS . 'lot' . \DS . 'asset' . \DS . 'css' . \DS . 'index' . $z . 'css', 20.1);
-        $this->layout(__DIR__ . \DS . 'layout' . \DS . 'page.php');
+        $z = \defined("\\TEST") && \TEST ? '.' : '.min.';
+        \Asset::set(__DIR__ . \D . '..' . \D . '..' . \D . 'lot' . \D . 'asset' . \D . 'css' . \D . 'index' . $z . 'css', 20.1);
+        \Hook::fire('layout', ['user']);
     }
-    \Route::set(\trim($state->x->user->guard->path ?? $state->x->user->path ?? '/user', '/'), 200, __NAMESPACE__ . "\\enter");
+    \Hook::set('route', __NAMESPACE__ . "\\enter", 10);
 }

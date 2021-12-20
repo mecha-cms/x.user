@@ -9,7 +9,7 @@ namespace x\user {
     function tasks(array $in, array $lot = []) {
         $out = [];
         foreach ($in as $k => $v) {
-            if (null === $v || false === $v) {
+            if (false === $v || null === $v) {
                 continue;
             }
             if (\is_array($v)) {
