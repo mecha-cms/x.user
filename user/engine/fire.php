@@ -1,12 +1,6 @@
 <?php
 
 namespace {
-    function user(...$v) {
-        return \User::from(...$v);
-    }
-    function users(...$v) {
-        return \Users::from(...$v);
-    }
     $key = \cookie('user.key');
     $a = \cookie('user.token');
     $b = \content(\LOT . \D . 'user' . \D . $key . \D . 'token.data');
@@ -28,15 +22,39 @@ namespace {
     $GLOBALS['user'] = $user = \User::from($user ? $folder . \D . \substr($user, 1) . '.page' : null);
     $GLOBALS['users'] = $users = \Users::from($folder);
     if (!\is_file(\LOT . \D . 'layout' . \D . 'user.php')) {
-        \Layout::set('user', __DIR__ . \D . 'lot' . \D . 'layout' . \D . 'user.php');
+        \Layout::set('user', __DIR__ . \D . '..' . \D . 'lot' . \D . 'layout' . \D . 'user.php');
     }
     if (!\is_file(\LOT . \D . 'layout' . \D . 'form' . \D . 'user.php')) {
-        \Layout::set('form/user', __DIR__ . \D . 'lot' . \D . 'layout' . \D . 'form' . \D . 'user.php');
+        \Layout::set('form/user', __DIR__ . \D . '..' . \D . 'lot' . \D . 'layout' . \D . 'form' . \D . 'user.php');
+    }
+}
+
+namespace x\user {
+    function hook($id, array $lot = [], $join = "") {
+        $tasks = \Hook::fire($id, $lot);
+        \array_shift($lot); // Remove the raw task(s)
+        return \implode($join, \x\user\tasks($tasks, $lot));
+    }
+    function tasks(array $in, array $lot = []) {
+        $out = [];
+        foreach ($in as $k => $v) {
+            if (false === $v || null === $v) {
+                continue;
+            }
+            if (\is_array($v)) {
+                $out[$k] = new \HTML(\array_replace([false, "", []], $v));
+            } else if (\is_callable($v)) {
+                $out[$k] = \fire($v, $lot);
+            } else {
+                $out[$k] = $v;
+            }
+        }
+        return $out;
     }
 }
 
 namespace x\user\hook {
-    require __DIR__ . \D . 'engine' . \D . 'use.php';
+    require __DIR__ . \D . 'engine' . \D . 'fire.php';
     function author($author) {
         if ($author && \is_string($author) && 0 === \strpos($author, '@')) {
             return new \User(\LOT . \D . 'user' . \D . \substr($author, 1) . '.page');
@@ -80,15 +98,4 @@ namespace x\user\hook {
         'page.description',
         'page.title'
     ], __NAMESPACE__ . "\\content", 2);
-}
-
-// Must come after everything else!
-namespace {
-    // Apply route(s) only if we have at least one user
-    if (\q(\g(\LOT . \D . 'user', 'page')) > 0) {
-        require __DIR__ . \D . 'engine' . \D . 'r' . \D . 'route.php';
-    // Else, prompt author to create an user account
-    } else {
-        require __DIR__ . \D . 'engine' . \D . 'r' . \D . 'route' . \D . 'set.php';
-    }
 }
