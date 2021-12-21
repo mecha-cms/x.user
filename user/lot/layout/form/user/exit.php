@@ -2,7 +2,7 @@
   <?php
 
   $tasks = [
-      'alert' => $alert,
+      'alert' => self::alert(),
       'tasks' => [
           0 => 'p',
           1 => x\user\hook('user-form-tasks', [[
@@ -11,7 +11,7 @@
                   1 => i('Profile'),
                   2 => [
                       'class' => 'button',
-                      'href' => $url . ($state->x->user->path ?? '/user') . '/' . $user->name,
+                      'href' => $url . '/' . trim($state->x->user->route ?? 'user', '/') . '/' . $user->name,
                       'target' => '_top'
                   ]
               ],
@@ -20,7 +20,7 @@
                   1 => i('Exit'),
                   2 => [
                       'class' => 'button',
-                      'href' => $url . ($state->x->user->path ?? '/user') . '/' . $user->name . $url->query('&', [
+                      'href' => $url . '/' . trim($state->x->user->route ?? 'user', '/') . '/' . $user->name . $url->query([
                           'exit' => $user->token
                       ]),
                       'target' => '_top',
@@ -32,9 +32,9 @@
       ]
   ];
 
-  $tasks['token'] = '<input name="user[token]" type="hidden" value="' . Guard::token('user') . '">';
+  $tasks['token'] = '<input name="user[token]" type="hidden" value="' . token('user') . '">';
 
-  if ($kick = Get::get('kick')) {
+  if ($kick = $_GET['kick'] ?? null) {
       $tasks['kick'] = '<input name="user[kick]" type="hidden" value="' . htmlspecialchars($kick) . '">';
   }
 

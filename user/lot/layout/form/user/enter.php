@@ -1,9 +1,9 @@
-<form action="<?= $url . ($state->x->user->guard->path ?? $state->x->user->path ?? '/user') . $url->query('&amp;'); ?>" class="form-user form-user:enter" method="post" name="user" target="_top">
+<form action="<?= $url . '/' . trim($state->x->user->guard->route ?? $state->x->user->route ?? 'user', '/') . htmlspecialchars($url->query); ?>" class="form-user form-user:enter" method="post" name="user" target="_top">
   <?php
 
   $some = $users->count() > 1;
   $tasks = [
-      'alert' => $alert,
+      'alert' => self::alert(),
       'user' => $some ? [
           0 => 'p',
           1 => (new HTML([
@@ -57,9 +57,9 @@
       2 => []
   ];
 
-  $tasks['token'] = '<input name="user[token]" type="hidden" value="' . Guard::token('user') . '">';
+  $tasks['token'] = '<input name="user[token]" type="hidden" value="' . token('user') . '">';
 
-  if ($kick = Get::get('kick')) {
+  if ($kick = $_GET['kick'] ?? null) {
       $tasks['kick'] = '<input name="user[kick]" type="hidden" value="' . htmlspecialchars($kick) . '">';
   }
 

@@ -7,7 +7,7 @@ class Users extends Pages {
     }
 
     public static function from(...$lot) {
-        $lot[0] = $lot[0] ?? LOT . DS . 'user';
+        $lot[0] = $lot[0] ?? LOT . D . 'user';
         return parent::from(...$lot);
     }
 
