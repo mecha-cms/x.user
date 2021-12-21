@@ -11,15 +11,19 @@ namespace x\user {
         $token = $user->token;
         $x_alert = isset($state->x->alert);
         // Force log out with `http://127.0.0.1/user/name?exit=b4d455`
-        if ('GET' === $_SERVER['REQUEST_METHOD'] && $exit && $token && $exit === $token) {
-            \is_file($f = $folder . \D . 'token.data') && \unlink($f);
-            \is_file($f = $folder . \D . 'try.data') && \unlink($f);
-            \cookie('user.key', "", -1);
-            \cookie('user.pass', "", -1);
-            \cookie('user.token', "", -1);
-            $x_alert && \Alert::success('Logged out.');
-            // Trigger the hook!
-            \Hook::fire('on.user.exit', [$user->path]);
+        if ('GET' === $_SERVER['REQUEST_METHOD'] && $exit) {
+            if ($token && $exit === $token) {
+                \is_file($f = $folder . \D . 'token.data') && \unlink($f);
+                \is_file($f = $folder . \D . 'try.data') && \unlink($f);
+                \cookie('user.key', "", -1);
+                \cookie('user.pass', "", -1);
+                \cookie('user.token', "", -1);
+                $x_alert && \Alert::success('Logged out.');
+                // Trigger the hook!
+                \Hook::fire('on.user.exit', [$user->path]);
+            } else {
+                $x_alert && \Alert::error('Invalid token.');
+            }
             // Redirect to the log-in page by default!
             \kick($kick ?? ('/' . $route_secret . $url->query([
                 'exit' => false,
@@ -52,7 +56,7 @@ namespace x\user {
     if (0 === \strpos($url->path ?? "", '/' . $route . '/')) {
         \Hook::set('route', function($path, $query, $hash) {
             $chops = \explode('/', $path);
-            \Hook::fire('route.user', [\array_pop($chops), \implode('/', $path), $query, $hash]);
+            \Hook::fire('route.user', [\array_pop($chops), \implode('/', $chops), $query, $hash]);
         }, 10);
         \Hook::set('route.user', __NAMESPACE__ . "\\route", 20);
     }

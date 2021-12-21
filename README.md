@@ -9,6 +9,7 @@ Release Notes
 ### 2.0.0
 
  - [ ] Updated for Mecha 3.0.0.
+ - [x] Allowed integer value for `Is::user()` to check if current user has specific status (#2)
 
 ### 1.13.0
 
