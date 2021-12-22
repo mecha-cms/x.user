@@ -1,7 +1,7 @@
 User Extension for [Mecha](https://github.com/mecha-cms/mecha)
 ==============================================================
 
-![User](https://user-images.githubusercontent.com/1669261/120207098-33627a80-c256-11eb-8806-485022b77b53.png)
+![User](/user/lot/asset/index.png)
 
 Release Notes
 -------------
@@ -9,7 +9,7 @@ Release Notes
 ### 2.0.0
 
  - [ ] Updated for Mecha 3.0.0.
- - [x] Allowed integer value for `Is::user()` to check if current user has specific status (#2)
+ - [x] Allowed integer value for `Is::user()` to check if current user has a specific status (#2)
 
 ### 1.13.0
 
