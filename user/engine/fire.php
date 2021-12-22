@@ -170,6 +170,7 @@ namespace x\user\route {
         $GLOBALS['t'][] = \i(\Is::user() ? 'Exit' : 'Enter');
         if ('POST' === $_SERVER['REQUEST_METHOD']) {
             $key = $_POST['user']['key'] ?? null;
+            $kick = $_POST['user']['kick'] ?? null;
             $pass = $_POST['user']['pass'] ?? null;
             $token = $_POST['user']['token'] ?? null;
             // Has only 1 user!
@@ -287,6 +288,7 @@ namespace x\user\route {
         $route_secret = \trim($state->x->user->guard->route ?? $route, '/');
         if ('POST' === $_SERVER['REQUEST_METHOD']) {
             $key = $_POST['user']['key'] ?? null;
+            $kick = $_POST['user']['kick'] ?? null;
             $pass = $_POST['user']['pass'] ?? null;
             $token = $_POST['user']['token'] ?? null;
             // Remove the `@` prefix!
