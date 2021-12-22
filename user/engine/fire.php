@@ -101,13 +101,14 @@ namespace x\user {
         }
         return $out;
     }
+    $path = \trim($url->path ?? "", '/');
     $route = \trim($state->x->user->route ?? 'user', '/');
-    if (0 === \strpos($url->path ?? "", '/' . $route . '/')) {
+    if (0 === \strpos($path, $route . '/')) {
         \Hook::set('route', function($path, $query, $hash) {
             $chops = \explode('/', $path);
             \Hook::fire('route.user', [\array_pop($chops), \implode('/', $chops), $query, $hash]);
-        }, 10);
-        \Hook::set('route.user', __NAMESPACE__ . "\\route", 20);
+        }, 90);
+        \Hook::set('route.user', __NAMESPACE__ . "\\route", 100);
     }
 }
 
