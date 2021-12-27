@@ -3,6 +3,10 @@ User Extension for [Mecha](https://github.com/mecha-cms/mecha)
 
 ![User](/user/lot/asset/index.png)
 
+![User](/user/lot/asset/index/1.png)
+
+![User](/user/lot/asset/index/2.png)
+
 Release Notes
 -------------
 

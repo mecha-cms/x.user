@@ -1,4 +1,4 @@
-<form action="<?= $url . '/' . trim($state->x->user->guard->route ?? $state->x->user->route ?? 'user', '/') . htmlspecialchars($url->query); ?>" class="form-user form-user:start" method="post" name="user" target="_top">
+<form action="<?= $url . '/' . trim($state->x->user->guard->route ?? $state->x->user->route ?? 'user', '/') . htmlspecialchars($url->query); ?>" method="post" name="user" target="_top">
   <?php
 
   $tasks = [
@@ -6,53 +6,63 @@
       'user' => [
           0 => 'p',
           1 => (new HTML([
+              0 => 'label',
+              1 => i('Key'),
+              2 => [
+                  'for' => $id = 'f:' . substr(uniqid(), 6)
+              ]
+          ])) . '<br><span>' . (new HTML([
               0 => 'input',
               1 => false,
               2 => [
                   'autofocus' => true,
-                  'class' => 'input width',
+                  'id' => $id,
                   'name' => 'user[key]',
-                  'placeholder' => i('New %s', ['user']),
+                  'placeholder' => i('New user %s', ['key']),
                   'type' => 'text'
               ]
-          ])),
-          2 => [
-              'title' => i('User')
-          ]
+          ])) . '</span>'
       ],
       'pass' => [
           0 => 'p',
           1 => (new HTML([
+              0 => 'label',
+              1 => i('Pass'),
+              2 => [
+                  'for' => $id = 'f:' . substr(uniqid(), 6)
+              ]
+          ])) . '<br><span>' . (new HTML([
               0 => 'input',
               1 => false,
               2 => [
-                  'class' => 'input width',
+                  'id' => $id,
                   'name' => 'user[pass]',
-                  'placeholder' => i('New %s', ['pass']),
+                  'placeholder' => i('New user %s', ['pass']),
                   'type' => 'password'
               ]
-          ])),
-          2 => [
-              'title' => i('Pass')
-          ]
+          ])) . '</span>'
       ]
   ];
 
   $tasks['tasks'] = [
       0 => 'p',
-      1 => x\user\hook('user-form-tasks', [[
+      1 => (new HTML([
+          0 => 'label',
+          1 => i('Actions'),
+          2 => [
+              'for' => $id = 'f:' . substr(uniqid(), 6)
+          ]
+      ])) . '<br><span role="group">' . x\user\hook('user-form-tasks', [[
           'enter' => [
               0 => 'button',
               1 => i('Create'),
               2 => [
-                  'class' => 'button',
-                  'name' => 'user[v]',
+                  'name' => 'user[task]',
                   'type' => 'submit',
-                  'value' => 1
+                  'value' => 'start'
               ]
           ]
-      ]], ' '),
-      2 => []
+      ]], ' ') . '</span>'
   ];
 
   $tasks['token'] = '<input name="user[token]" type="hidden" value="' . token('user') . '">';

@@ -1,7 +1,11 @@
 ---
 title: User
 description: Rich user data.
-image: '/lot/x/user/lot/asset/index.png'
+image: /lot/x/user/lot/asset/index.png
+images:
+- /lot/x/user/lot/asset/index.png
+- /lot/x/user/lot/asset/index/1.png
+- /lot/x/user/lot/asset/index/2.png
 author: Taufik Nurrohman
 type: Markdown
 version: 2.0.0

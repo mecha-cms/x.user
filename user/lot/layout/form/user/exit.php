@@ -1,17 +1,20 @@
-<form class="form-user form-user:exit" target="_top">
+<form action="<?= $url . '/' . trim($state->x->user->guard->route ?? $state->x->user->route ?? 'user', '/') . htmlspecialchars($url->query); ?>" name="user" method="post" target="_top">
   <?php
 
   $tasks = [
       'alert' => self::alert(),
       'tasks' => [
           0 => 'p',
-          1 => x\user\hook('user-form-tasks', [[
+          1 => (new HTML([
+              0 => 'label',
+              1 => "" // Intentionally left blank as a selector to center the action button(s)
+          ])) . '<br><span role="group">' . x\user\hook('user-form-tasks', [[
               'profile' => [
                   0 => 'a',
                   1 => i('Profile'),
                   2 => [
-                      'class' => 'button',
                       'href' => $url . '/' . trim($state->x->user->route ?? 'user', '/') . '/' . $user->name,
+                      'role' => 'button',
                       'target' => '_top'
                   ]
               ],
@@ -19,16 +22,15 @@
                   0 => 'a',
                   1 => i('Exit'),
                   2 => [
-                      'class' => 'button',
                       'href' => $url . '/' . trim($state->x->user->route ?? 'user', '/') . '/' . $user->name . $url->query([
                           'exit' => $user->token
                       ]),
+                      'role' => 'button',
                       'target' => '_top',
                       'title' => $user->user
                   ]
               ]
-          ]], ' '),
-          2 => []
+          ]], ' ') . '</span>'
       ]
   ];
 
