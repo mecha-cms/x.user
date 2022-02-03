@@ -35,8 +35,12 @@ namespace x\user {
         \array_shift($lot); // Remove the task(s) input. Function `x\user\tasks()` don’t need that!
         return \implode($join, \x\user\tasks($tasks, $lot));
     }
-    function route($name) {
+    function route($data) {
+        if (isset($data['content']) || isset($data['kick'])) {
+            return $data;
+        }
         \extract($GLOBALS, \EXTR_SKIP);
+        $name = $data['name'];
         $folder = \LOT . \D. 'user' . \D . $name;
         $route = \trim($state->x->user->route ?? 'user', '/');
         $route_secret = \trim($state->x->user->guard->route ?? $route, '/');
@@ -58,10 +62,11 @@ namespace x\user {
                 \Alert::error('Invalid token.');
             }
             // Redirect to the log-in page by default!
-            \kick($kick ?? ('/' . $route_secret . $url->query([
+            $data['kick'] = $kick ?? ('/' . $route_secret . $url->query([
                 'exit' => false,
                 'kick' => false
-            ]) . $url->hash));
+            ]) . $url->hash);
+            return $data;
         }
         if (!$file = \exist([
             $folder . '.archive',
@@ -69,8 +74,9 @@ namespace x\user {
         ], 1)) {
             \State::set('is', ['error' => 404]);
             $GLOBALS['t'][] = \i('Error');
-            \status(404);
-            \Hook::fire('layout', ['error/' . $route . '/' . $name]);
+            $data['content'] = \Hook::fire('layout', ['error/' . $route . '/' . $name]);
+            $data['status'] = 404;
+            return $data;
         }
         $user = new \User($file);
         $GLOBALS['page'] = $user;
@@ -82,8 +88,9 @@ namespace x\user {
             'pages' => false,
             'user' => true
         ]);
-        \status(200);
-        \Hook::fire('layout', ['page/' . $route . '/' . $name]);
+        $data['content'] = \Hook::fire('layout', ['page/' . $route . '/' . $name]);
+        $data['status'] = 200;
+        return $data;
     }
     function tasks(array $tasks, array $lot = []) {
         $out = [];
@@ -104,9 +111,10 @@ namespace x\user {
     $path = \trim($url->path ?? "", '/');
     $route = \trim($state->x->user->route ?? 'user', '/');
     if (0 === \strpos($path, $route . '/')) {
-        \Hook::set('route', function($path, $query, $hash) {
+        \Hook::set('route', function($data, $path, $query, $hash) {
             $chops = \explode('/', $path);
-            \Hook::fire('route.user', [\array_pop($chops), \implode('/', $chops), $query, $hash]);
+            $data['name'] = \array_pop($chops);
+            return \Hook::fire('route.user', [$data, \implode('/', $chops), $query, $hash]);
         }, 90);
         \Hook::set('route.user', __NAMESPACE__ . "\\route", 100);
     }
@@ -159,7 +167,7 @@ namespace x\user\hook {
 }
 
 namespace x\user\route {
-    function enter($path) {
+    function enter($data, $path) {
         \extract($GLOBALS, \EXTR_SKIP);
         $path = \trim($path ?? "", '/');
         $route = \trim($state->x->user->path ?? 'user', '/');
@@ -241,23 +249,20 @@ namespace x\user\route {
                         // Remove log-in attempt log
                         \is_file($try) && \unlink($try);
                         // Redirect to the home page by default!
-                        \kick($kick ?? '/' . $url->query([
+                        $data['kick'] = $kick ?? '/' . $url->query([
                             'kick' => false
-                        ]) . $url->hash);
-                    } else {
-                        \Alert::error('Invalid user or pass.');
-                        ++$error;
+                        ]) . $url->hash;
+                        return $data;
                     }
-                } else {
-                    \Alert::error('Invalid user or pass.');
-                    ++$error;
                 }
+                \Alert::error('Invalid user or pass.');
+                ++$error;
             }
             if ($error > 0) {
                 // Store form data to session but `pass` and `token`
-                $data = (array) ($_POST['user'] ?? []);
-                unset($data['pass'], $data['token']);
-                $_SESSION['form']['user'] = $data;
+                $form = (array) ($_POST['user'] ?? []);
+                unset($form['pass'], $form['token']);
+                $_SESSION['form']['user'] = $form;
                 // Check for log-in attempt quota
                 if ($try_data[$try_user] > $try_limit - 1) {
                     \abort(\i('Please delete the %s file to enter.', '<code>' . \str_replace(\PATH, '.', \dirname($try, 2)) . \D . $key[0] . \str_repeat('&#x2022;', \strlen($key) - 1) . \D . 'try.data</code>'));
@@ -270,7 +275,8 @@ namespace x\user\route {
                     \chmod($try, 0600);
                 }
             }
-            \kick('/' . $route_secret . $url->query . $url->hash);
+            $data['kick'] = '/' . $route_secret . $url->query . $url->hash;
+            return $data;
         }
         \State::set('is', [
             'error' => false,
@@ -278,11 +284,15 @@ namespace x\user\route {
             'user' => true
         ]);
         $z = \defined("\\TEST") && \TEST ? '.' : '.min.';
-        \status(200);
         \Asset::set(__DIR__ . \D . '..' . \D . 'lot' . \D . 'asset' . \D . 'index' . $z . 'css', 20.1);
-        \Hook::fire('layout', ['user']);
+        $data['content'] = \Hook::fire('layout', ['user']);
+        $data['status'] = 200;
+        return $data;
     }
-    function start($path) {
+    function start($data, $path) {
+        if (isset($data['content']) || isset($data['kick'])) {
+            return $data;
+        }
         \extract($GLOBALS, EXTR_SKIP);
         $route = \trim($state->x->user->route ?? "", '/');
         $route_secret = \trim($state->x->user->guard->route ?? $route, '/');
@@ -331,24 +341,27 @@ namespace x\user\route {
                 // Trigger the hook!
                 \Hook::fire('on.user.enter', [new \File($file), null], new \User($file));
                 // Redirect to the user page by default!
-                \kick($kick ?? ('/' . $route_secret . $url->query([
+                $data['kick'] = $kick ?? ('/' . $route_secret . $url->query([
                     'kick' => false
-                ]) . $url->hash));
+                ]) . $url->hash);
+                return $data;
             }
             if ($error > 0) {
                 // Store form data to session but `pass` and `token`
-                $data = (array) ($_POST['user'] ?? []);
-                unset($data['pass'], $data['token']);
-                $_SESSION['form']['user'] = $data;
+                $form = (array) ($_POST['user'] ?? []);
+                unset($form['pass'], $form['token']);
+                $_SESSION['form']['user'] = $form;
             }
-            \kick('/' . $route_secret . $url->query . $url->hash);
+            $data['kick'] = '/' . $route_secret . $url->query . $url->hash;
+            return $data;
         }
         $GLOBALS['t'][] = i('User');
         $z = \defined("\\TEST") && \TEST ? '.' : '.min.';
-        \status(200);
         \Asset::set(__DIR__ . \D . '..' . \D . 'lot' . \D . 'asset' . \D . 'index' . $z . 'css', 20.1);
-        \Hook::fire('layout', ['user']);
+        $data['content'] = \Hook::fire('layout', ['user']);
+        $data['status'] = 200;
+        return $data;
     }
     $has_users = q(g(LOT . D . 'user', 'page')) > 0;
-    \Hook::set('route', __NAMESPACE__ . "\\" . ($has_users ? 'enter' : 'start'), 10);
+    \Hook::set('route', __NAMESPACE__ . "\\" . ($has_users ? 'enter' : 'start'), 90);
 }
