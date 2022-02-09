@@ -1,4 +1,4 @@
-<form action="<?= $url . '/' . trim($state->x->user->guard->route ?? $state->x->user->route ?? 'user', '/') . htmlspecialchars($url->query); ?>" method="post" name="user" target="_top">
+<form action="<?= $url . '/' . trim($state->x->user->guard->route ?? $state->x->user->route ?? 'user', '/') . htmlspecialchars($url->query ?? ""); ?>" method="post" name="user" target="_top">
   <?php
 
   $some = $users->count() > 1;

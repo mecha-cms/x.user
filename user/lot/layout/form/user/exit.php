@@ -1,4 +1,4 @@
-<form action="<?= $url . '/' . trim($state->x->user->guard->route ?? $state->x->user->route ?? 'user', '/') . htmlspecialchars($url->query); ?>" name="user" method="post" target="_top">
+<form action="<?= $url . '/' . trim($state->x->user->guard->route ?? $state->x->user->route ?? 'user', '/') . htmlspecialchars($url->query ?? ""); ?>" name="user" method="post" target="_top">
   <?php
 
   $tasks = [
