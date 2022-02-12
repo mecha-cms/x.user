@@ -36,7 +36,7 @@ namespace x\user {
         return \implode($join, \x\user\tasks($tasks, $lot));
     }
     function route($r) {
-        if (isset($r['content']) || isset($r['kick'])) {
+        if (isset($r['content']) || isset($r['kick']) || isset($r['layout']) || isset($r['path'])) {
             return $r;
         }
         \extract($GLOBALS, \EXTR_SKIP);
@@ -74,7 +74,7 @@ namespace x\user {
         ], 1)) {
             \State::set('is', ['error' => 404]);
             $GLOBALS['t'][] = \i('Error');
-            $r['content'] = \Hook::fire('layout', ['error/' . $route . '/' . $name]);
+            $r['layout'] = 'error/' . $route . '/' . $name;
             $r['status'] = 404;
             return $r;
         }
@@ -88,7 +88,7 @@ namespace x\user {
             'pages' => false,
             'user' => true
         ]);
-        $r['content'] = \Hook::fire('layout', ['page/' . $route . '/' . $name]);
+        $r['layout'] = 'page/' . $route . '/' . $name;
         $r['status'] = 200;
         return $r;
     }
@@ -285,12 +285,12 @@ namespace x\user\route {
         ]);
         $z = \defined("\\TEST") && \TEST ? '.' : '.min.';
         \Asset::set(__DIR__ . \D . '..' . \D . 'lot' . \D . 'asset' . \D . 'index' . $z . 'css', 20.1);
-        $r['content'] = \Hook::fire('layout', ['user']);
+        $r['layout'] = 'user';
         $r['status'] = 200;
         return $r;
     }
     function start($r, $path) {
-        if (isset($r['content']) || isset($r['kick'])) {
+        if (isset($r['content']) || isset($r['kick']) || isset($r['layout']) || isset($r['path'])) {
             return $r;
         }
         \extract($GLOBALS, EXTR_SKIP);
@@ -358,7 +358,7 @@ namespace x\user\route {
         $GLOBALS['t'][] = i('User');
         $z = \defined("\\TEST") && \TEST ? '.' : '.min.';
         \Asset::set(__DIR__ . \D . '..' . \D . 'lot' . \D . 'asset' . \D . 'index' . $z . 'css', 20.1);
-        $r['content'] = \Hook::fire('layout', ['user']);
+        $r['layout'] = 'user';
         $r['status'] = 200;
         return $r;
     }
