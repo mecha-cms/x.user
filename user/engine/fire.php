@@ -40,6 +40,7 @@ namespace x\user {
             return $content;
         }
         \extract($GLOBALS, \EXTR_SKIP);
+        \choke($state->x->user->guard->choke ?? 10, 'user');
         $name = $r['name'];
         $folder = \LOT . \D. 'user' . \D . $name;
         $route = \trim($state->x->user->route ?? 'user', '/');
@@ -164,6 +165,7 @@ namespace x\user\hook {
 namespace x\user\route {
     function enter($r, $path) {
         \extract($GLOBALS, \EXTR_SKIP);
+        \choke($state->x->user->guard->choke ?? 10, 'user');
         $path = \trim($path ?? "", '/');
         $route = \trim($state->x->user->path ?? 'user', '/');
         $route_secret = \trim($state->x->user->guard->path ?? $route, '/');
@@ -285,6 +287,7 @@ namespace x\user\route {
             return $content;
         }
         \extract($GLOBALS, EXTR_SKIP);
+        \choke($state->x->user->guard->choke ?? 10, 'user');
         $route = \trim($state->x->user->route ?? "", '/');
         $route_secret = \trim($state->x->user->guard->route ?? $route, '/');
         if ('POST' === $_SERVER['REQUEST_METHOD']) {

@@ -9,6 +9,7 @@ Release Notes
 ### 2.0.0
 
  - [ ] Updated for Mecha 3.0.0.
+ - [x] Added `choke` option to throttle user requests to the log-in/out page.
  - [x] Allowed integer value for `Is::user()` to check if current user has a specific status (#2)
 
 ### 1.13.0
