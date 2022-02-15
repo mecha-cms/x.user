@@ -129,7 +129,7 @@ namespace x\user\hook {
         $w = $lot[0] ?? 72;
         $h = $lot[1] ?? $w;
         \extract($GLOBALS, \EXTR_SKIP);
-        return \sprintf($state->x->user->avatar ?? "", \md5($this['email']), $w, $h);
+        return \sprintf($state->x->user->avatar ?? "", \md5($this['email'] ?? ""), $w, $h);
     }
     function content($content) {
         if ($content && \is_string($content) && false !== \strpos($content, '@')) {
