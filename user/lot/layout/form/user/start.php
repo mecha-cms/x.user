@@ -67,7 +67,7 @@
 
   $tasks['token'] = '<input name="user[token]" type="hidden" value="' . token('user') . '">';
 
-  if ($kick = $_GET['kick'] ?? null) {
+  if (!empty($kick)) {
       $tasks['kick'] = '<input name="user[kick]" type="hidden" value="' . htmlspecialchars($kick) . '">';
   }
 

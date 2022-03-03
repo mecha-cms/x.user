@@ -48,7 +48,7 @@ namespace x\user {
         $kick = $_GET['kick'] ?? null;
         $token = $user->token;
         // Force log out with `http://127.0.0.1/user/name?exit=b4d455`
-        if ('GET' === $_SERVER['REQUEST_METHOD'] && $exit) {
+        if ('GET' === $_SERVER['REQUEST_METHOD'] && $exit && 0 === \strpos(\trim($path, '/') . '/', $route_secret . '/')) {
             if ($token && $exit === $token) {
                 \is_file($f = $folder . \D . 'token.data') && \unlink($f);
                 \is_file($f = $folder . \D . 'try.data') && \unlink($f);
@@ -105,7 +105,8 @@ namespace x\user {
     }
     $path = \trim($url->path ?? "", '/');
     $route = \trim($state->x->user->route ?? 'user', '/');
-    if (0 === \strpos($path, $route . '/')) {
+    $route_secret = \trim($state->x->user->guard->route ?? $route, '/');
+    if (0 === \strpos($path, $route_secret . '/') || 0 === \strpos($path, $route . '/')) {
         \Hook::set('route', function($content, $path, $query, $hash) {
             $chops = \explode('/', $path);
             $r['name'] = \array_pop($chops);
@@ -162,11 +163,11 @@ namespace x\user\hook {
 }
 
 namespace x\user\route {
-    function enter($r, $path) {
+    function enter($content, $path) {
         \extract($GLOBALS, \EXTR_SKIP);
         $path = \trim($path ?? "", '/');
-        $route = \trim($state->x->user->path ?? 'user', '/');
-        $route_secret = \trim($state->x->user->guard->path ?? $route, '/');
+        $route = \trim($state->x->user->route ?? 'user', '/');
+        $route_secret = \trim($state->x->user->guard->route ?? $route, '/');
         if ($path !== $route_secret) {
             return;
         }
@@ -349,6 +350,6 @@ namespace x\user\route {
         \Asset::set(__DIR__ . \D . '..' . \D . 'lot' . \D . 'asset' . \D . 'index' . $z . 'css', 20.1);
         return \Layout::user([], 200);
     }
-    $has_users = q(g(LOT . D . 'user', 'page')) > 0;
+    $has_users = \q(\g(\LOT . \D . 'user', 'page')) > 0;
     \Hook::set('route', __NAMESPACE__ . "\\" . ($has_users ? 'enter' : 'start'), 90);
 }

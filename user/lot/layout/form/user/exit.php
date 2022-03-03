@@ -1,4 +1,10 @@
-<form action="<?= $url . '/' . trim($state->x->user->guard->route ?? $state->x->user->route ?? 'user', '/') . htmlspecialchars($url->query ?? ""); ?>" name="user" method="post" target="_top">
+<?php
+
+$route = trim($state->x->user->route ?? 'user', '/');
+$route_secret = trim($state->x->user->guard->route ?? $route, '/');
+
+?>
+<form action="<?= $url . '/' . $route_secret . htmlspecialchars($url->query ?? ""); ?>" name="user" method="post" target="_top">
   <?php
 
   $tasks = [
@@ -13,7 +19,7 @@
                   0 => 'a',
                   1 => i('Profile'),
                   2 => [
-                      'href' => $url . '/' . trim($state->x->user->route ?? 'user', '/') . '/' . $user->name,
+                      'href' => $url . '/' . $route . '/' . $user->name,
                       'role' => 'button',
                       'target' => '_top'
                   ]
@@ -22,7 +28,7 @@
                   0 => 'a',
                   1 => i('Exit'),
                   2 => [
-                      'href' => $url . '/' . trim($state->x->user->route ?? 'user', '/') . '/' . $user->name . $url->query([
+                      'href' => $url . '/' . $route_secret . '/' . $user->name . $url->query([
                           'exit' => $user->token
                       ]),
                       'role' => 'button',
@@ -36,7 +42,7 @@
 
   $tasks['token'] = '<input name="user[token]" type="hidden" value="' . token('user') . '">';
 
-  if ($kick = $_GET['kick'] ?? null) {
+  if (!empty($kick)) {
       $tasks['kick'] = '<input name="user[kick]" type="hidden" value="' . htmlspecialchars($kick) . '">';
   }
 
