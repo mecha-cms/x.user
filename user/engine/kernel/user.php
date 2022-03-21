@@ -2,6 +2,10 @@
 
 class User extends Page {
 
+    public function __construct(...$lot) {
+        parent::__construct(...$lot);
+    }
+
     public function __toString() {
         if (is_string($v = parent::author())) {
             return $v;
