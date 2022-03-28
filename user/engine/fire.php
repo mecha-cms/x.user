@@ -21,12 +21,8 @@ namespace {
     \State::set('is.enter', $user = \Is::user());
     $GLOBALS['user'] = $user = \User::from($user ? $folder . \D . $key . '.page' : null);
     $GLOBALS['users'] = $users = \Users::from($folder);
-    if (!\is_file(\LOT . \D . 'layout' . \D . 'user.php')) {
-        \Layout::set('user', __DIR__ . \D . '..' . \D . 'lot' . \D . 'layout' . \D . 'user.php');
-    }
-    if (!\is_file(\LOT . \D . 'layout' . \D . 'form' . \D . 'user.php')) {
-        \Layout::set('form/user', __DIR__ . \D . '..' . \D . 'lot' . \D . 'layout' . \D . 'form' . \D . 'user.php');
-    }
+    !\Y::path('form/user') && \Y::set('form/user', __DIR__ . \D . '..' . \D . 'lot' . \D . 'y' . \D . 'form' . \D . 'user.php');
+    !\Y::path('user') && \Y::set('user', __DIR__ . \D . '..' . \D . 'lot' . \D . 'y' . \D . 'user.php');
 }
 
 namespace x\user {
@@ -73,7 +69,7 @@ namespace x\user {
         ], 1)) {
             \State::set('is', ['error' => 404]);
             $GLOBALS['t'][] = \i('Error');
-            return \Layout::error($route . '/' . $name, [], 404);
+            return \Y::error($route . '/' . $name, [], 404);
         }
         $user = new \User($file);
         $GLOBALS['page'] = $user;
@@ -85,7 +81,7 @@ namespace x\user {
             'pages' => false,
             'user' => true
         ]);
-        return \Layout::page($route . '/' . $name, [], 200);
+        return \Y::page($route . '/' . $name, [], 200);
     }
     function tasks(array $tasks, array $lot = []) {
         $out = [];
@@ -279,7 +275,7 @@ namespace x\user\route {
         ]);
         $z = \defined("\\TEST") && \TEST ? '.' : '.min.';
         \Asset::set(__DIR__ . \D . '..' . \D . 'lot' . \D . 'asset' . \D . 'index' . $z . 'css', 20.1);
-        return \Layout::user([], 200);
+        return \Y::user([], 200);
     }
     function start($content, $path) {
         if (null !== $content) {
@@ -348,7 +344,7 @@ namespace x\user\route {
         $GLOBALS['t'][] = i('User');
         $z = \defined("\\TEST") && \TEST ? '.' : '.min.';
         \Asset::set(__DIR__ . \D . '..' . \D . 'lot' . \D . 'asset' . \D . 'index' . $z . 'css', 20.1);
-        return \Layout::user([], 200);
+        return \Y::user([], 200);
     }
     $has_users = \q(\g(\LOT . \D . 'user', 'page')) > 0;
     \Hook::set('route', __NAMESPACE__ . "\\" . ($has_users ? 'enter' : 'start'), 90);
