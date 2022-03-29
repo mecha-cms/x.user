@@ -21,8 +21,8 @@ namespace {
     \State::set('is.enter', $user = \Is::user());
     $GLOBALS['user'] = $user = \User::from($user ? $folder . \D . $key . '.page' : null);
     $GLOBALS['users'] = $users = \Users::from($folder);
-    !\Y::path('form/user') && \Y::set('form/user', __DIR__ . \D . '..' . \D . 'lot' . \D . 'y' . \D . 'form' . \D . 'user.php');
-    !\Y::path('user') && \Y::set('user', __DIR__ . \D . '..' . \D . 'lot' . \D . 'y' . \D . 'user.php');
+    !\Y::path('form/user') && \Y::set('form/user', __DIR__ . \D . 'y' . \D . 'form' . \D . 'user.php');
+    !\Y::path('user') && \Y::set('user', __DIR__ . \D . 'y' . \D . 'user.php');
 }
 
 namespace x\user {
@@ -274,7 +274,7 @@ namespace x\user\route {
             'user' => true
         ]);
         $z = \defined("\\TEST") && \TEST ? '.' : '.min.';
-        \Asset::set(__DIR__ . \D . '..' . \D . 'lot' . \D . 'asset' . \D . 'index' . $z . 'css', 20.1);
+        \Asset::set(__DIR__ . \D . '..' . \D . 'index' . $z . 'css', 20.1);
         return \Y::user([], 200);
     }
     function start($content, $path) {
@@ -343,7 +343,7 @@ namespace x\user\route {
         }
         $GLOBALS['t'][] = i('User');
         $z = \defined("\\TEST") && \TEST ? '.' : '.min.';
-        \Asset::set(__DIR__ . \D . '..' . \D . 'lot' . \D . 'asset' . \D . 'index' . $z . 'css', 20.1);
+        \Asset::set(__DIR__ . \D . '..' . \D . 'index' . $z . 'css', 20.1);
         return \Y::user([], 200);
     }
     $has_users = \q(\g(\LOT . \D . 'user', 'page')) > 0;

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html class dir="<?= $site->direction; ?>">
+<html class dir="ltr" lang="<?= $site->language; ?>">
   <head>
-    <meta charset="<?= $site->charset; ?>">
+    <meta charset="utf-8">
     <meta content="width=device-width" name="viewport">
     <meta content="noindex" name="robots">
     <title>
