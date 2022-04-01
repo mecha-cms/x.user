@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class dir="ltr" lang="<?= $site->language; ?>">
+<html class lang="<?= $site->language; ?>">
   <head>
     <meta charset="utf-8">
     <meta content="width=device-width" name="viewport">

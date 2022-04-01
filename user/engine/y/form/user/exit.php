@@ -4,7 +4,7 @@ $route = trim($state->x->user->route ?? 'user', '/');
 $route_secret = trim($state->x->user->guard->route ?? $route, '/');
 
 ?>
-<form action="<?= $url . '/' . $route_secret . htmlspecialchars($url->query ?? ""); ?>" name="user" method="post" target="_top">
+<form action="<?= $url . '/' . $route_secret . From::HTML($url->query ?? ""); ?>" name="user" method="post" target="_top">
   <?php
 
   $tasks = [
