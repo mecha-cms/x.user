@@ -21,8 +21,8 @@ namespace {
     \State::set('is.enter', $user = \Is::user());
     $GLOBALS['user'] = $user = \User::from($user ? $folder . \D . $key . '.page' : null);
     $GLOBALS['users'] = $users = \Users::from($folder);
-    !\Y::path('form/user') && \Y::set('form/user', __DIR__ . \D . 'y' . \D . 'form' . \D . 'user.php');
-    !\Y::path('user') && \Y::set('user', __DIR__ . \D . 'y' . \D . 'user.php');
+    !\Layout::path('form/user') && \Layout::set('form/user', __DIR__ . \D . 'y' . \D . 'form' . \D . 'user.php');
+    !\Layout::path('user') && \Layout::set('user', __DIR__ . \D . 'y' . \D . 'user.php');
 }
 
 namespace x\user {
@@ -69,7 +69,7 @@ namespace x\user {
         ], 1)) {
             \State::set('is', ['error' => 404]);
             $GLOBALS['t'][] = \i('Error');
-            return \Y::error($route . '/' . $name, [], 404);
+            return ['error', [], 404];
         }
         $user = new \User($file);
         $GLOBALS['page'] = $user;
@@ -81,7 +81,7 @@ namespace x\user {
             'pages' => false,
             'user' => true
         ]);
-        return \Y::page($route . '/' . $name, [], 200);
+        return ['pege', [], 200];
     }
     function tasks(array $tasks, array $lot = []) {
         $out = [];
@@ -275,7 +275,7 @@ namespace x\user\route {
         ]);
         $z = \defined("\\TEST") && \TEST ? '.' : '.min.';
         \Asset::set(__DIR__ . \D . '..' . \D . 'index' . $z . 'css', 20.1);
-        return \Y::user([], 200);
+        return ['user', [], 200];
     }
     function start($content, $path) {
         if (null !== $content) {
@@ -344,7 +344,7 @@ namespace x\user\route {
         $GLOBALS['t'][] = i('User');
         $z = \defined("\\TEST") && \TEST ? '.' : '.min.';
         \Asset::set(__DIR__ . \D . '..' . \D . 'index' . $z . 'css', 20.1);
-        return \Y::user([], 200);
+        return ['user', [], 200];
     }
     $has_users = \q(\g(\LOT . \D . 'user', 'page')) > 0;
     \Hook::set('route', __NAMESPACE__ . "\\" . ($has_users ? 'enter' : 'start'), 90);
