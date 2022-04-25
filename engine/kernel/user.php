@@ -20,7 +20,7 @@ class User extends Page {
     }
 
     public function user() {
-        return $this->exist ? '@' . parent::name() : null;
+        return $this->exist() ? '@' . parent::name() : null;
     }
 
 }
