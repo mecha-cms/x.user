@@ -83,7 +83,7 @@ namespace x\user {
             'pages' => false,
             'user' => true
         ]);
-        return ['pege', [], 200];
+        return ['page', [], 200];
     }
     function tasks(array $tasks, array $lot = []) {
         $out = [];
