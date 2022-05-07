@@ -121,15 +121,6 @@ namespace x\user\hook {
         }
         return $author;
     }
-    function avatar($avatar, array $lot = []) {
-        if ($avatar) {
-            return $avatar;
-        }
-        $w = $lot[0] ?? 72;
-        $h = $lot[1] ?? $w;
-        \extract($GLOBALS, \EXTR_SKIP);
-        return \sprintf($state->x->user->avatar ?? "", \md5($this['email'] ?? ""), $w, $h);
-    }
     function content($content) {
         if ($content && \is_string($content) && false !== \strpos($content, '@')) {
             $out = "";
@@ -152,7 +143,6 @@ namespace x\user\hook {
         return $content;
     }
     \Hook::set('page.author', __NAMESPACE__ . "\\author", 2);
-    \Hook::set('user.avatar', __NAMESPACE__ . "\\avatar", 0);
     \Hook::set([
         'page.content',
         'page.description',
