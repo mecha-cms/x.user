@@ -53,11 +53,11 @@ namespace x\user {
                 \cookie('user.key', "", -1);
                 \cookie('user.pass', "", -1);
                 \cookie('user.token', "", -1);
-                \Alert::success('Logged out.');
+                \class_exists("\\Alert") && \Alert::success('Logged out.');
                 // Trigger the hook!
                 \Hook::fire('on.user.exit', [$user->path]);
             } else {
-                \Alert::error('Invalid token.');
+                \class_exists("\\Alert") && \Alert::error('Invalid token.');
             }
             // Redirect to the log-in page by default!
             \kick($kick ?? ('/' . $route_secret . $url->query([
@@ -184,15 +184,15 @@ namespace x\user\route {
             $error = 0;
             // Check token…
             if (\Is::void($token) || !\check($token, 'user')) {
-                \Alert::error('Invalid token.');
+                \class_exists("\\Alert") && \Alert::error('Invalid token.');
                 ++$error;
             // Check user key…
             } else if (\Is::void($key)) {
-                \Alert::error('Please fill out the %s field.', 'User');
+                \class_exists("\\Alert") && \Alert::error('Please fill out the %s field.', 'User');
                 ++$error;
             // Check user pass…
             } else if (\Is::void($pass)) {
-                \Alert::error('Please fill out the %s field.', 'Pass');
+                \class_exists("\\Alert") && \Alert::error('Please fill out the %s field.', 'Pass');
                 ++$error;
             // No error(s), go to the next step(s)…
             } else {
@@ -202,7 +202,7 @@ namespace x\user\route {
                     if (!\is_file($f = \dirname($file) . \D . \pathinfo($file, \PATHINFO_FILENAME) . \D . 'pass.data')) {
                         \file_put_contents($f, \P . \password_hash($pass . '@' . $key, \PASSWORD_DEFAULT));
                         \chmod($f, 0600);
-                        \Alert::info('Your %s is %s.', ['pass', '<em>' . $pass . '</em>']);
+                        \class_exists("\\Alert") && \Alert::info('Your %s is %s.', ['pass', '<em>' . $pass . '</em>']);
                     }
                     // Validate password hash!
                     if (0 === \strpos($h = \file_get_contents($f), \P)) {
@@ -225,9 +225,9 @@ namespace x\user\route {
                         \cookie('user.key', $key, '7 days');
                         \cookie('user.token', $token, '7 days');
                         // Remove try again message
-                        \Alert::let();
+                        \class_exists("\\Alert") && \Alert::let();
                         // Show success message!
-                        \Alert::success('Logged in.');
+                        \class_exists("\\Alert") && \Alert::success('Logged in.');
                         // Trigger the hook!
                         \Hook::fire('on.user.enter', [$file]);
                         // Remove log-in attempt log
@@ -238,7 +238,7 @@ namespace x\user\route {
                         ]) . $url->hash);
                     }
                 }
-                \Alert::error('Invalid user or pass.');
+                \class_exists("\\Alert") && \Alert::error('Invalid user or pass.');
                 ++$error;
             }
             if ($error > 0) {
@@ -252,7 +252,7 @@ namespace x\user\route {
                 }
                 if (\is_file($file)) {
                     // Show remaining log-in attempt quota
-                    \Alert::info('Try again for %d more times.', $try_limit - $try_data[$try_user]);
+                    \class_exists("\\Alert") && \Alert::info('Try again for %d more times.', $try_limit - $try_data[$try_user]);
                     // Record log-in attempt
                     \file_put_contents($try, \json_encode($try_data));
                     \chmod($try, 0600);
@@ -266,7 +266,7 @@ namespace x\user\route {
             'user' => true
         ]);
         $z = \defined("\\TEST") && \TEST ? '.' : '.min.';
-        \Asset::set(__DIR__ . \D . 'index' . $z . 'css', 20.1);
+        \class_exists("\\Asset") && \Asset::set(__DIR__ . \D . 'index' . $z . 'css', 20.1);
         return ['user', [], 200];
     }
     function start($content, $path) {
@@ -289,19 +289,19 @@ namespace x\user\route {
             $error = 0;
             // Check token…
             if (\Is::void($token) || !\check($token, 'user')) {
-                \alert::error('invalid token.');
+                \class_exists("\\Alert") && \Alert::error('invalid token.');
                 ++$error;
             // Check user key…
             } else if (\Is::void($key)) {
-                \Alert::error('Please fill out the %s field.', 'User');
+                \class_exists("\\Alert") && \Alert::error('Please fill out the %s field.', 'User');
                 ++$error;
             // Check user pass…
             } else if (\Is::void($pass)) {
-                \Alert::error('Please fill out the %s field.', 'Pass');
+                \class_exists("\\Alert") && \Alert::error('Please fill out the %s field.', 'Pass');
                 ++$error;
             // No error(s), go to the next step(s)…
             } else {
-                \Alert::info('Your %s is %s.', ['pass', '<em>' . $pass . '</em>']);
+                \class_exists("\\Alert") && \Alert::info('Your %s is %s.', ['pass', '<em>' . $pass . '</em>']);
                 $pass = \P . \password_hash($pass . '@' . $key, \PASSWORD_DEFAULT);
                 if (!\is_dir($folder = \LOT . \D . 'user' . \D . $key)) {
                     \mkdir($folder, 0775, true);
@@ -317,7 +317,7 @@ namespace x\user\route {
                 \cookie('user.key', $key, '7 days');
                 \cookie('user.token', $token, '7 days');
                 // Show success message!
-                \Alert::success('Logged in.');
+                \class_exists("\\Alert") && \Alert::success('Logged in.');
                 // Trigger the hook!
                 \Hook::fire('on.user.enter', [new \File($file), null], new \User($file));
                 // Redirect to the user page by default!
@@ -335,7 +335,7 @@ namespace x\user\route {
         }
         $GLOBALS['t'][] = i('User');
         $z = \defined("\\TEST") && \TEST ? '.' : '.min.';
-        \Asset::set(__DIR__ . \D . 'index' . $z . 'css', 20.1);
+        \class_exists("\\Asset") && \Asset::set(__DIR__ . \D . 'index' . $z . 'css', 20.1);
         return ['user', [], 200];
     }
     $has_users = \q(\g(\LOT . \D . 'user', 'page')) > 0;

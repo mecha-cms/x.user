@@ -43,7 +43,7 @@ $route_secret = trim($state->x->user->guard->route ?? $route, '/');
   $tasks['token'] = '<input name="user[token]" type="hidden" value="' . token('user') . '">';
 
   if (!empty($kick)) {
-      $tasks['kick'] = '<input name="user[kick]" type="hidden" value="' . htmlspecialchars($kick) . '">';
+      $tasks['kick'] = '<input name="user[kick]" type="hidden" value="' . From::HTML($kick) . '">';
   }
 
   ?>
