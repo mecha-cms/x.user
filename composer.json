@@ -6,7 +6,6 @@
     "mecha-cms/x.page": "^2.0.0"
   },
   "suggest": {
-    "ext-zip": "Make sure this extension is available to work with ZIP files.",
     "mecha-cms/x.alert": "Install this extension to be able to display status messages properly.",
     "mecha-cms/x.asset": "Install this extension to be able to load asset files automatically. This extension should have been installed automatically when you first created the project.",
     "mecha-cms/x.avatar": "Install this extension to enable user profile photo.",
