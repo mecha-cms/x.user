@@ -48,10 +48,7 @@
       0 => 'p',
       1 => (new HTML([
           0 => 'label',
-          1 => i('Actions'),
-          2 => [
-              'for' => $id = 'f:' . substr(uniqid(), 6)
-          ]
+          1 => i('Tasks')
       ])) . '<br><span role="group">' . x\user\hook('user-form-tasks', [[
           'enter' => [
               0 => 'button',
