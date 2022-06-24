@@ -333,7 +333,7 @@ namespace x\user\route {
             }
             \kick('/' . $route_secret . $url->query . $url->hash);
         }
-        $GLOBALS['t'][] = i('User');
+        $GLOBALS['t'][] = \i('User');
         $z = \defined("\\TEST") && \TEST ? '.' : '.min.';
         \class_exists("\\Asset") && \Asset::set(__DIR__ . \D . 'index' . $z . 'css', 20.1);
         return ['user', [], 200];
