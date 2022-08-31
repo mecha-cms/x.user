@@ -1,74 +1,126 @@
-<form action="<?= $url . '/' . trim($state->x->user->guard->route ?? $state->x->user->route ?? 'user', '/') . From::HTML($url->query ?? ""); ?>" method="post" name="user" target="_top">
-  <?php
+<?php
 
-  $some = $users->count() > 1;
-  $tasks = [
-      'alert' => self::alert(),
-      'user' => $some ? [
-          0 => 'p',
-          1 => (new HTML([
-              0 => 'label',
-              1 => i('Key'),
-              2 => [
-                  'for' => $id = 'f:' . substr(uniqid(), 6)
-              ]
-          ])) . '<br><span>' . (new HTML([
-              0 => 'input',
-              1 => false,
-              2 => [
-                  'autofocus' => true,
-                  'id' => $id,
-                  'name' => 'user[key]',
-                  'type' => 'text'
-              ]
-          ])) . '</span>'
-      ] : null,
-      'pass' => [
-          0 => 'p',
-          1 => (new HTML([
-              0 => 'label',
-              1 => i('Pass'),
-              2 => [
-                  'for' => $id = 'f:' . substr(uniqid(), 6)
-              ]
-          ])) . '<br><span>' . (new HTML([
-              0 => 'input',
-              1 => false,
-              2 => [
-                  'autofocus' => $some ? null : true,
-                  'id' => $id,
-                  'name' => 'user[pass]',
-                  'type' => 'password'
-              ]
-          ])) . '</span>'
-      ]
-  ];
+// Check if we have more than one user to hide the user key field if we have only one user!
+$has_users = q(g(LOT . D . 'user', 'page')) > 1;
 
-  $tasks['tasks'] = [
-      0 => 'p',
-      1 => (new HTML([
-          0 => 'label',
-          1 => i('Tasks')
-      ])) . '<br><span role="group">' . x\user\hook('user-form-tasks', [[
-          'enter' => [
-              0 => 'button',
-              1 => i('Enter'),
-              2 => [
-                  'id' => $id,
-                  'name' => 'user[task]',
-                  'type' => 'submit',
-                  'value' => 'enter'
-              ]
-          ]
-      ]], ' ') . '</span>'
-  ];
-
-  $tasks['token'] = '<input name="user[token]" type="hidden" value="' . token('user') . '">';
-
-  if (!empty($kick)) {
-      $tasks['kick'] = '<input name="user[kick]" type="hidden" value="' . From::HTML($kick) . '">';
-  }
-
-  ?>
-  <?= x\user\hook('user-form', [$tasks]); ?>
-</form>
+echo new HTML(Hook::fire('y.form.user', [[
+    0 => 'form',
+    1 => [
+        'alert' => self::alert(),
+        'user' => $has_users ? [
+            0 => 'p',
+            1 => [
+                0 => [
+                    0 => 'label',
+                    1 => i('Key'),
+                    2 => [
+                        'for' =>  $id = 'f:' . substr(uniqid(), 6)
+                    ]
+                ],
+                1 => [
+                    0 => 'br',
+                    1 => false
+                ],
+                2 => [
+                    0 => 'span',
+                    1 => [
+                        0 => [
+                            0 => 'input',
+                            1 => false,
+                            2 => [
+                                'autofocus' => true,
+                                'id' => $id,
+                                'name' => 'user[key]',
+                                'type' => 'text'
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ] : null,
+        'pass' => [
+            0 => 'p',
+            1 => [
+                0 => [
+                    0 => 'label',
+                    1 => i('Pass'),
+                    2 => [
+                        'for' =>  $id = 'f:' . substr(uniqid(), 6)
+                    ]
+                ],
+                1 => [
+                    0 => 'br',
+                    1 => false
+                ],
+                2 => [
+                    0 => 'span',
+                    1 => [
+                        0 => [
+                            0 => 'input',
+                            1 => false,
+                            2 => [
+                                'autofocus' => $has_users ? null : true,
+                                'id' => $id,
+                                'name' => 'user[pass]',
+                                'type' => 'password'
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ],
+        'tasks' => [
+            0 => 'p',
+            1 => [
+                0 => [
+                    0 => 'label',
+                    1 => i('Tasks')
+                ],
+                1 => [
+                    0 => 'br',
+                    1 => false
+                ],
+                2 => [
+                    0 => 'span',
+                    1 => [
+                        'enter' => [
+                            0 => 'button',
+                            1 => i('Enter'),
+                            2 => [
+                                'name' => 'user[task]',
+                                'type' => 'submit',
+                                'value' => 'enter'
+                            ]
+                        ]
+                    ],
+                    2 => [
+                        'role' => 'group'
+                    ]
+                ]
+            ]
+        ],
+        'token' => [
+            0 => 'input',
+            1 => false,
+            2 => [
+                'name' => 'user[token]',
+                'type' => 'hidden',
+                'value' => token('user')
+            ]
+        ],
+        'kick' => [
+            0 => 'input',
+            1 => false,
+            2 => [
+                'name' => 'user[kick]',
+                'type' => 'hidden',
+                'value' => $kick ?? null
+            ]
+        ]
+    ],
+    2 => [
+        'action' => $url . '/' . trim($state->x->user->guard->route ?? $state->x->user->route ?? 'user', '/') . $url->query,
+        'method' => 'post',
+        'name' => 'user'
+    ]
+]], $page), true);

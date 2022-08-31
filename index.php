@@ -20,7 +20,6 @@ namespace {
     });
     \State::set('is.enter', $user = \Is::user());
     $GLOBALS['user'] = $user = \User::from($user ? $folder . \D . $key . '.page' : null);
-    $GLOBALS['users'] = $users = \Users::from($folder);
     if (\class_exists("\\Layout")) {
         !\Layout::path('form/user') && \Layout::set('form/user', __DIR__ . \D . 'engine' . \D . 'y' . \D . 'form' . \D . 'user.php');
         !\Layout::path('user') && \Layout::set('user', __DIR__ . \D . 'engine' . \D . 'y' . \D . 'user.php');
@@ -161,14 +160,14 @@ namespace x\user\route {
         }
         $GLOBALS['t'][] = \i(\Is::user() ? 'Exit' : 'Enter');
         if ('POST' === $_SERVER['REQUEST_METHOD']) {
-            $key = $_POST['user']['key'] ?? null;
+            $key = $_POST['user']['key'] ?? "";
             $kick = $_POST['user']['kick'] ?? null;
-            $pass = $_POST['user']['pass'] ?? null;
+            $pass = $_POST['user']['pass'] ?? "";
             $token = $_POST['user']['token'] ?? null;
             // Has only 1 user!
-            if (isset($users) && 1 === \count($users)) {
+            if (1 === \q(\g(\LOT . \D . 'user', 'page'))) {
                 // Set the `key` value to that user automatically
-                $key = $users[0]->name;
+                $key = \basename(\g(\LOT . \D . 'user', 'page')->key(), '.page');
             }
             // Remove the `@` prefix!
             if (0 === \strpos($key, '@')) {
