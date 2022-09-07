@@ -6,7 +6,7 @@ namespace {
     $a = \cookie('user.token');
     $b = \content($folder . \D . $key . \D . 'token.data');
     $user = $a && $b && $a === $b ? '@' . $key : false;
-    \Is::_('user', function($key = null) use($folder, $user) {
+    \Is::_('user', function ($key = null) use ($folder, $user) {
         if (\is_string($key)) {
             $key = \ltrim($key, '@');
             return $user && '@' . $key === $user ? $user : false;
@@ -104,7 +104,7 @@ namespace x\user {
     $route = \trim($state->x->user->route ?? 'user', '/');
     $route_secret = \trim($state->x->user->guard->route ?? $route, '/');
     if (0 === \strpos($path, $route_secret . '/') || 0 === \strpos($path, $route . '/')) {
-        \Hook::set('route', function($content, $path, $query, $hash) {
+        \Hook::set('route', function ($content, $path, $query, $hash) {
             $chops = \explode('/', $path);
             $r['name'] = \array_pop($chops);
             return \Hook::fire('route.user', [$content, $path, $query, $hash, $r]);
@@ -128,7 +128,7 @@ namespace x\user\hook {
                 if (0 === \strpos($v, '<') && '>' === \substr($v, -1)) {
                     $out .= $v; // Is a HTML tag
                 } else {
-                    $out .= false !== \strpos($v, '@') ? \preg_replace_callback('/@[a-z\d-]+/', static function($m) {
+                    $out .= false !== \strpos($v, '@') ? \preg_replace_callback('/@[a-z\d-]+/', static function ($m) {
                         if (\is_file($file = \LOT . \D . 'user' . \D . \substr($m[0], 1) . '.page')) {
                             $user = new \User($file);
                             return '<a href="' . $user->url . '" target="_blank" title="' . $user->user . '">' . $user . '</a>';
