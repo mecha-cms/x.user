@@ -177,9 +177,8 @@ namespace x\user\route {
             $file = $folder . '.page';
             $try = $folder . \D . 'try.data';
             $try_data = \json_decode(\is_file($try) ? \file_get_contents($try) : '[]', true);
-            $try_limit = $state->x->user->guard->try ?? 5;
-            $try_user = \getenv('HTTP_CLIENT_IP') ?: \getenv('HTTP_X_FORWARDED_FOR') ?: \getenv('HTTP_X_FORWARDED') ?: \getenv('HTTP_FORWARDED_FOR') ?: \getenv('HTTP_FORWARDED') ?: \getenv('REMOTE_ADDR');
-            $try_data[$try_user] = ($try_data[$try_user] ?? 0) + 1;
+            $try_limit = ($state->x->user->guard->try ?? 5) + 1;
+            $try_data[$try_user = \ip()] = ($try_data[$try_user] ?? 0) + 1;
             $error = 0;
             // Check token…
             if (\Is::void($token) || !\check($token, 'user')) {
@@ -251,7 +250,8 @@ namespace x\user\route {
                 }
                 if (\is_file($file)) {
                     // Show remaining log-in attempt quota
-                    \class_exists("\\Alert") && \Alert::info('Try again for %d more times.', $try_limit - $try_data[$try_user]);
+                    $i = $try_limit - $try_data[$try_user];
+                    \class_exists("\\Alert") && \Alert::info('Try again for %d more time' . (1 === $i ? "" : 's') . '.', $i);
                     // Record log-in attempt
                     \file_put_contents($try, \json_encode($try_data));
                     \chmod($try, 0600);
