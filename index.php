@@ -54,7 +54,7 @@ namespace x\user {
                 \cookie('user.token', "", -1);
                 \class_exists("\\Alert") && \Alert::success('Logged out.');
                 // Trigger the hook!
-                \Hook::fire('on.user.exit', [$user->path]);
+                \Hook::fire('on.user.exit', [$user->path], $user);
             } else {
                 \class_exists("\\Alert") && \Alert::error('Invalid token.');
             }
@@ -227,7 +227,7 @@ namespace x\user\route {
                         // Show success message!
                         \class_exists("\\Alert") && \Alert::success('Logged in.');
                         // Trigger the hook!
-                        \Hook::fire('on.user.enter', [$file]);
+                        \Hook::fire('on.user.enter', [$file], new \User($file));
                         // Remove log-in attempt log
                         \is_file($try) && \unlink($try);
                         // Redirect to the home page by default!
@@ -318,7 +318,7 @@ namespace x\user\route {
                 // Show success message!
                 \class_exists("\\Alert") && \Alert::success('Logged in.');
                 // Trigger the hook!
-                \Hook::fire('on.user.enter', [new \File($file), null], new \User($file));
+                \Hook::fire('on.user.start', [$file], new \User($file));
                 // Redirect to the user page by default!
                 \kick($kick ?? ('/' . $route_secret . $url->query([
                     'kick' => false
