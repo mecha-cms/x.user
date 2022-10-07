@@ -14,7 +14,7 @@ namespace {
         if (\is_int($key) && false !== $user) {
             $user = \ltrim($user, '@');
             $user = new \User($folder . \D . $user . '.page');
-            return $user->exist && $key === $user->status;
+            return $user->_exist && $key === $user->status;
         }
         return false !== $user ? $user : false;
     });

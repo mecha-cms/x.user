@@ -15,12 +15,12 @@ class User extends Page {
 
     public function URL(...$lot) {
         extract($GLOBALS, EXTR_SKIP);
-        $n = $this->exist() ? parent::name() : null;
+        $n = $this->_exist() ? parent::name() : null;
         return $n ? $url . ($state->x->user->route ?? '/user') . '/' . $n : null;
     }
 
     public function user() {
-        return $this->exist() ? '@' . parent::name() : null;
+        return $this->_exist() ? '@' . parent::name() : null;
     }
 
 }
