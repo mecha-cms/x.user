@@ -27,11 +27,6 @@ namespace {
 }
 
 namespace x\user {
-    function hook($id, array $lot = [], $join = "") {
-        $tasks = \Hook::fire($id, $lot);
-        \array_shift($lot); // Remove the task(s) input. Function `x\user\tasks()` don’t need that!
-        return \implode($join, \x\user\tasks($tasks, $lot));
-    }
     function route($content, $path, $query, $hash, $r) {
         if (null !== $content) {
             return $content;
@@ -83,22 +78,6 @@ namespace x\user {
             'user' => true
         ]);
         return ['page', [], 200];
-    }
-    function tasks(array $tasks, array $lot = []) {
-        $out = [];
-        foreach ($tasks as $k => $v) {
-            if (false === $v || null === $v) {
-                continue;
-            }
-            if (\is_array($v)) {
-                $out[$k] = new \HTML(\array_replace([false, "", []], $v));
-            } else if (\is_callable($v)) {
-                $out[$k] = \fire($v, $lot);
-            } else {
-                $out[$k] = $v;
-            }
-        }
-        return $out;
     }
     $path = \trim($url->path ?? "", '/');
     $route = \trim($state->x->user->route ?? 'user', '/');
