@@ -199,8 +199,8 @@ namespace x\user\route {
                             \file_put_contents($f, $token);
                             \chmod($f, 0600);
                         }
-                        \cookie('user.key', $key, '7 days');
-                        \cookie('user.token', $token, '7 days');
+                        \cookie('user.key', $key, '+7 days');
+                        \cookie('user.token', $token, '+7 days');
                         // Remove try again message
                         \class_exists("\\Alert") && \Alert::let();
                         // Show success message!
@@ -292,8 +292,8 @@ namespace x\user\route {
                 \chmod($file, 0600);
                 \file_put_contents($file = $folder . '.page', \To::page(['status' => 1]));
                 \chmod($file, 0600);
-                \cookie('user.key', $key, '7 days');
-                \cookie('user.token', $token, '7 days');
+                \cookie('user.key', $key, '+7 days');
+                \cookie('user.token', $token, '+7 days');
                 // Show success message!
                 \class_exists("\\Alert") && \Alert::success('Logged in.');
                 // Trigger the hook!
