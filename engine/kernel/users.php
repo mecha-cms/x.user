@@ -2,8 +2,8 @@
 
 class Users extends Pages {
 
-    public function page(string $path = null, array $lot = []) {
-        return new User($path, $lot);
+    public function page(...$lot) {
+        return User::from(...$lot);
     }
 
     public static function from(...$lot) {
