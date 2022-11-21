@@ -3,7 +3,7 @@
   "license": "GPL-3.0-or-later",
   "name": "mecha-cms/x.user",
   "require": {
-    "mecha-cms/x.page": "^2.0.0"
+    "mecha-cms/x.page": "^3.0.0"
   },
   "suggest": {
     "mecha-cms/x.alert": "Install this extension to be able to display status messages properly.",
