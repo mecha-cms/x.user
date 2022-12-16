@@ -6,7 +6,7 @@
     "mecha-cms/x.page": "^3.0.0"
   },
   "suggest": {
-    "mecha-cms/x.alert": "Install this extension to be able to display status messages properly.",
+    "mecha-cms/x.alert": "Install this extension to be able to display flash messages.",
     "mecha-cms/x.asset": "Install this extension to be able to load asset files automatically. This extension should have been installed automatically when you first created the project.",
     "mecha-cms/x.avatar": "Install this extension to enable user profile photo.",
     "mecha-cms/x.gravatar": "Install this extension to enable user profile photo automatically based on the specified email address."
