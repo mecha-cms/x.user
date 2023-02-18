@@ -1,6 +1,12 @@
 <?php
 
 namespace {
+    function user(...$lot) {
+        return \User::from(...$lot);
+    }
+    function users(...$lot) {
+        return \Users::from(...$lot);
+    }
     $folder = \LOT . \D . 'user';
     $key = \cookie('user.key');
     $a = \cookie('user.token');
