@@ -24,7 +24,7 @@ namespace {
         }
         return false !== $user ? $user : false;
     });
-    \State::set('has.access', $user = \Is::user());
+    \State::set('has.grant', $user = \Is::user());
     $GLOBALS['user'] = $user = \User::from($user ? $folder . \D . $key . '.page' : null);
     if (\class_exists("\\Layout")) {
         !\Layout::path('form/user') && \Layout::set('form/user', __DIR__ . \D . 'engine' . \D . 'y' . \D . 'form' . \D . 'user.php');
