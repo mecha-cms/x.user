@@ -24,7 +24,7 @@ namespace {
         }
         return false !== $user ? $user : false;
     });
-    \State::set('has.grant', $user = \Is::user());
+    \State::set('has.grant', !!($user = \Is::user()));
     $GLOBALS['user'] = $user = \User::from($user ? $folder . \D . $key . '.page' : null);
     if (\class_exists("\\Layout")) {
         !\Layout::path('form/user') && \Layout::set('form/user', __DIR__ . \D . 'engine' . \D . 'y' . \D . 'form' . \D . 'user.php');
@@ -45,7 +45,7 @@ namespace x\user {
         $exit = $_GET['exit'] ?? null;
         $kick = $_GET['kick'] ?? null;
         $token = $user->token;
-        // Force log out with `http://127.0.0.1/user/name?exit=b4d455`
+        // Force to log-out with `http://127.0.0.1/user/name?exit=b4d455`
         if ('GET' === $_SERVER['REQUEST_METHOD'] && $exit && 0 === \strpos(\trim($path, '/') . '/', $route_secret . '/')) {
             if ($token && $exit === $token) {
                 \is_file($f = $folder . \D . 'token.data') && \unlink($f);
@@ -54,12 +54,12 @@ namespace x\user {
                 \cookie('user.pass', "", -1);
                 \cookie('user.token', "", -1);
                 \class_exists("\\Alert") && \Alert::success('Logged out.');
-                // Trigger the hook!
+                // Trigger the hook
                 \Hook::fire('on.user.exit', [$user->path], $user);
             } else {
                 \class_exists("\\Alert") && \Alert::error('Invalid token.');
             }
-            // Redirect to the log-in page by default!
+            // Redirect to the log-in page by default
             \kick($kick ?? ('/' . $route_secret . $url->query([
                 'exit' => false,
                 'kick' => false
@@ -123,12 +123,12 @@ namespace x\user\route {
             $kick = $_POST['user']['kick'] ?? null;
             $pass = $_POST['user']['pass'] ?? "";
             $token = $_POST['user']['token'] ?? null;
-            // Has only 1 user!
+            // Has only 1 user
             if (1 === \q(\g(\LOT . \D . 'user', 'page'))) {
                 // Set the `key` value to that user automatically
                 $key = \basename(\g(\LOT . \D . 'user', 'page')->key(), '.page');
             }
-            // Remove the `@` prefix!
+            // Remove the `@` prefix
             if (0 === \strpos($key, '@')) {
                 $key = \substr($key, 1);
             }
@@ -155,26 +155,26 @@ namespace x\user\route {
             } else {
                 // Check if user already registered…
                 if (\is_file($file)) {
-                    // Reset password by deleting `pass.data` manually, then log in!
+                    // Reset password by deleting `pass.data` manually, then log-in
                     if (!\is_file($f = \dirname($file) . \D . \pathinfo($file, \PATHINFO_FILENAME) . \D . 'pass.data')) {
                         \file_put_contents($f, \P . \password_hash($pass . '@' . $key, \PASSWORD_DEFAULT));
                         \chmod($f, 0600);
                         \class_exists("\\Alert") && \Alert::info('Your %s is %s.', ['pass', '<em>' . $pass . '</em>']);
                     }
-                    // Validate password hash!
+                    // Validate password hash
                     if (0 === \strpos($h = \file_get_contents($f), \P)) {
                         $enter = \password_verify($pass . '@' . $key, \substr($h, 1));
-                    // Validate password text!
+                    // Validate password text
                     } else {
                         $enter = $pass === $h;
                     }
                     // Is valid, then…
                     if (!empty($enter)) {
                         // Use the stored token value from another device if exists
-                        // e.g. the user has not decided to log out on that device yet
+                        // e.g. the user has not decided to log-out on that device yet
                         if (\is_file($f = \dirname($file) . \D . \pathinfo($file, \PATHINFO_FILENAME) . \D . 'token.data')) {
                             $token = \file_get_contents($f);
-                        // Create the token file!
+                        // Create the token file
                         } else {
                             \file_put_contents($f, $token);
                             \chmod($f, 0600);
@@ -183,13 +183,13 @@ namespace x\user\route {
                         \cookie('user.token', $token, '+7 days');
                         // Remove try again message
                         \class_exists("\\Alert") && \Alert::let();
-                        // Show success message!
+                        // Show success message
                         \class_exists("\\Alert") && \Alert::success('Logged in.');
-                        // Trigger the hook!
+                        // Trigger the hook
                         \Hook::fire('on.user.enter', [$file], new \User($file));
                         // Remove log-in attempt log
                         \is_file($try) && \unlink($try);
-                        // Redirect to the home page by default!
+                        // Redirect to the home page by default
                         \kick($kick ?? '/' . $url->query([
                             'kick' => false
                         ]) . $url->hash);
@@ -205,7 +205,14 @@ namespace x\user\route {
                 $_SESSION['form']['user'] = $data;
                 // Check for log-in attempt quota
                 if ($try_data[$try_user] > $try_limit - 1) {
-                    \abort(\i('Please delete the %s file to enter.', '<code>' . \str_replace(\PATH, '.', \dirname($try, 2)) . \D . $key[0] . \str_repeat('&#x2022;', \strlen($key) - 1) . \D . 'try.data</code>'));
+                    if (\defined("\\TEST") && \TEST) {
+                        \abort(\i('Please delete the %s file to enter.', '<code>' . \str_replace(\PATH, '.', \dirname($try, 2)) . \D . $key[0] . \str_repeat('&#x2022;', \strlen($key) - 1) . \D . 'try.data</code>'));
+                    }
+                    if (\class_exists("\\Alert")) {
+                        \Alert::let(); // Clear all previous alert(s)
+                        \Alert::error('Too many failed attempts.');
+                    }
+                    \kick('/' . $route_secret . $url->query . $url->hash);
                 }
                 if (\is_file($file)) {
                     // Show remaining log-in attempt quota
@@ -274,11 +281,11 @@ namespace x\user\route {
                 \chmod($file, 0600);
                 \cookie('user.key', $key, '+7 days');
                 \cookie('user.token', $token, '+7 days');
-                // Show success message!
+                // Show success message
                 \class_exists("\\Alert") && \Alert::success('Logged in.');
-                // Trigger the hook!
+                // Trigger the hook
                 \Hook::fire('on.user.start', [$file], new \User($file));
-                // Redirect to the user page by default!
+                // Redirect to the user page by default
                 \kick($kick ?? ('/' . $route_secret . $url->query([
                     'kick' => false
                 ]) . $url->hash));

@@ -28,7 +28,7 @@ echo new HTML(Hook::fire('y.form.user', [[
                             0 => 'input',
                             1 => false,
                             2 => [
-                                'autofocus' => true,
+                                'autofocus' => $first = empty($_SESSION['form']['user']['key']),
                                 'id' => $id,
                                 'name' => 'user[key]',
                                 'type' => 'text'
@@ -59,7 +59,7 @@ echo new HTML(Hook::fire('y.form.user', [[
                             0 => 'input',
                             1 => false,
                             2 => [
-                                'autofocus' => $has_users ? null : true,
+                                'autofocus' => $has_users && $first ? null : true,
                                 'id' => $id,
                                 'name' => 'user[pass]',
                                 'type' => 'password'
