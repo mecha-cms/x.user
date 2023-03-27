@@ -15,7 +15,8 @@ version: 2.0.0
 
 ### File
 
-All you have to do after installing this extension is to create a page file in the `.\lot\user` folder. Name the page according to the user name you want. For example, here I will create user data with the name `@‌ta-tau-taufik`:
+All you have to do after installing this extension is to create a page file in the `.\lot\user` folder. Name the page
+according to the user name you want. For example, here I will create user data with the name `@‌ta-tau-taufik`:
 
 ~~~ .txt
 .\
@@ -38,13 +39,15 @@ I am the main author of [this site](http://127.0.0.1).
 
 ### Page
 
-User profile page can be accessed via the `http://127.0.0.1/user/ta-tau-taufik` link. To go to the log in page, remove the user name from the link:
+User profile page can be accessed via the `http://127.0.0.1/user/ta-tau-taufik` link. To go to the log in page, remove
+the user name from the link:
 
 ~~~ .txt
 http://127.0.0.1/user
 ~~~
 
-> **Note:** If `.\lot\user\ta-tau-taufik\pass.data` file does not exist, then the password field will function as a password generator. You can type any password in it and `pass.data` file will be created automatically.
+**Note:** If `.\lot\user\ta-tau-taufik\pass.data` file does not exist, then the password field will function as a
+password generator. You can type any password in it and `pass.data` file will be created automatically.
 
 ### Result
 
