@@ -6,7 +6,7 @@ class User extends Page {
         parent::__construct(...$lot);
     }
 
-    public function __toString() {
+    public function __toString(): string {
         if (is_string($v = parent::author())) {
             return $v;
         }
