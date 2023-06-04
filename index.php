@@ -1,104 +1,6 @@
 <?php
 
-namespace {
-    function user(...$lot) {
-        return \User::from(...$lot);
-    }
-    function users(...$lot) {
-        return \Users::from(...$lot);
-    }
-    $folder = \LOT . \D . 'user';
-    $key = \cookie('user.key');
-    $a = \cookie('user.token');
-    $b = \content($folder . \D . $key . \D . 'token.data');
-    $user = $a && $b && $a === $b ? '@' . $key : false;
-    \Is::_('user', function ($key = null) use ($folder, $user) {
-        if (\is_string($key)) {
-            $key = \ltrim($key, '@');
-            return $user && '@' . $key === $user ? $user : false;
-        }
-        if (\is_int($key) && false !== $user) {
-            $user = \ltrim($user, '@');
-            $user = new \User($folder . \D . $user . '.page');
-            return $user->_exist && $key === $user->status;
-        }
-        return false !== $user ? $user : false;
-    });
-    \State::set('has.user', !!($user = \Is::user()));
-    $GLOBALS['user'] = $user = \User::from($user ? $folder . \D . $key . '.page' : null);
-    if (\class_exists("\\Layout")) {
-        !\Layout::path('form/user') && \Layout::set('form/user', __DIR__ . \D . 'engine' . \D . 'y' . \D . 'form' . \D . 'user.php');
-        !\Layout::path('user') && \Layout::set('user', __DIR__ . \D . 'engine' . \D . 'y' . \D . 'user.php');
-    }
-}
-
-namespace x\user {
-    function route($content, $path, $query, $hash) {
-        if (null !== $content) {
-            return $content;
-        }
-        \extract($GLOBALS, \EXTR_SKIP);
-        $name = \From::query($query)['name'] ?? "";
-        $folder = \LOT . \D. 'user' . \D . $name;
-        $route = \trim($state->x->user->route ?? 'user', '/');
-        $route_secret = \trim($state->x->user->guard->route ?? $route, '/');
-        $exit = $_GET['exit'] ?? null;
-        $kick = $_GET['kick'] ?? null;
-        $token = $user->token;
-        // Force to log-out with `http://127.0.0.1/user/name?exit=b4d455`
-        if ('GET' === $_SERVER['REQUEST_METHOD'] && $exit && 0 === \strpos(\trim($path, '/') . '/', $route_secret . '/')) {
-            if ($token && $exit === $token) {
-                \is_file($f = $folder . \D . 'token.data') && \unlink($f);
-                \is_file($f = $folder . \D . 'try.data') && \unlink($f);
-                \cookie('user.key', "", -1);
-                \cookie('user.pass', "", -1);
-                \cookie('user.token', "", -1);
-                \class_exists("\\Alert") && \Alert::success('Logged out.');
-                // Trigger the hook
-                \Hook::fire('on.user.exit', [$user->path], $user);
-            } else {
-                \class_exists("\\Alert") && \Alert::error('Invalid token.');
-            }
-            // Redirect to the log-in page by default
-            \kick($kick ?? ('/' . $route_secret . $url->query([
-                'exit' => false,
-                'kick' => false
-            ]) . $url->hash));
-        }
-        if (!$file = \exist([
-            $folder . '.archive',
-            $folder . '.page'
-        ], 1)) {
-            \State::set('is', ['error' => 404]);
-            $GLOBALS['t'][] = \i('Error');
-            return ['page', [], 404];
-        }
-        $user = new \User($file);
-        $GLOBALS['page'] = $user;
-        $GLOBALS['t'][] = $user->user . ' (' . ($user->title = $user . "") . ')';
-        \State::set('is', [
-            'active' => !!\Is::user($user->user),
-            'error' => false,
-            'page' => true,
-            'pages' => false,
-            'user' => true
-        ]);
-        return ['page', [], 200];
-    }
-    $path = \trim($url->path ?? "", '/');
-    $route = \trim($state->x->user->route ?? 'user', '/');
-    $route_secret = \trim($state->x->user->guard->route ?? $route, '/');
-    if (0 === \strpos($path, $route_secret . '/') || 0 === \strpos($path, $route . '/')) {
-        \Hook::set('route', function ($content, $path, $query, $hash) {
-            $chops = \explode('/', $path);
-            $query = \To::query(\array_replace(\From::query($query), ['name' => \array_pop($chops)]));
-            return \Hook::fire('route.user', [$content, $path, $query, $hash]);
-        }, 90);
-        \Hook::set('route.user', __NAMESPACE__ . "\\route", 100);
-    }
-}
-
-namespace x\user\hook {
+namespace x\user\page {
     function author($author) {
         if ($author && \is_string($author) && 0 === \strpos($author, '@')) {
             return new \User(\LOT . \D . 'user' . \D . \substr($author, 1) . '.page');
@@ -308,4 +210,102 @@ namespace x\user\route {
     }
     $has_users = \q(\g(\LOT . \D . 'user', 'page')) > 0;
     \Hook::set('route', __NAMESPACE__ . "\\" . ($has_users ? 'enter' : 'start'), 90);
+}
+
+namespace x\user {
+    function route($content, $path, $query, $hash) {
+        if (null !== $content) {
+            return $content;
+        }
+        \extract($GLOBALS, \EXTR_SKIP);
+        $name = \From::query($query)['name'] ?? "";
+        $folder = \LOT . \D. 'user' . \D . $name;
+        $route = \trim($state->x->user->route ?? 'user', '/');
+        $route_secret = \trim($state->x->user->guard->route ?? $route, '/');
+        $exit = $_GET['exit'] ?? null;
+        $kick = $_GET['kick'] ?? null;
+        $token = $user->token;
+        // Force to log-out with `http://127.0.0.1/user/name?exit=b4d455`
+        if ('GET' === $_SERVER['REQUEST_METHOD'] && $exit && 0 === \strpos(\trim($path, '/') . '/', $route_secret . '/')) {
+            if ($token && $exit === $token) {
+                \is_file($f = $folder . \D . 'token.data') && \unlink($f);
+                \is_file($f = $folder . \D . 'try.data') && \unlink($f);
+                \cookie('user.key', "", -1);
+                \cookie('user.pass', "", -1);
+                \cookie('user.token', "", -1);
+                \class_exists("\\Alert") && \Alert::success('Logged out.');
+                // Trigger the hook
+                \Hook::fire('on.user.exit', [$user->path], $user);
+            } else {
+                \class_exists("\\Alert") && \Alert::error('Invalid token.');
+            }
+            // Redirect to the log-in page by default
+            \kick($kick ?? ('/' . $route_secret . $url->query([
+                'exit' => false,
+                'kick' => false
+            ]) . $url->hash));
+        }
+        if (!$file = \exist([
+            $folder . '.archive',
+            $folder . '.page'
+        ], 1)) {
+            \State::set('is', ['error' => 404]);
+            $GLOBALS['t'][] = \i('Error');
+            return ['page', [], 404];
+        }
+        $user = new \User($file);
+        $GLOBALS['page'] = $user;
+        $GLOBALS['t'][] = $user->user . ' (' . ($user->title = $user . "") . ')';
+        \State::set('is', [
+            'active' => !!\Is::user($user->user),
+            'error' => false,
+            'page' => true,
+            'pages' => false,
+            'user' => true
+        ]);
+        return ['page', [], 200];
+    }
+    $path = \trim($url->path ?? "", '/');
+    $route = \trim($state->x->user->route ?? 'user', '/');
+    $route_secret = \trim($state->x->user->guard->route ?? $route, '/');
+    if (0 === \strpos($path, $route_secret . '/') || 0 === \strpos($path, $route . '/')) {
+        \Hook::set('route', function ($content, $path, $query, $hash) {
+            $chops = \explode('/', $path);
+            $query = \To::query(\array_replace(\From::query($query), ['name' => \array_pop($chops)]));
+            return \Hook::fire('route.user', [$content, $path, $query, $hash]);
+        }, 90);
+        \Hook::set('route.user', __NAMESPACE__ . "\\route", 100);
+    }
+}
+
+namespace {
+    function user(...$lot) {
+        return \User::from(...$lot);
+    }
+    function users(...$lot) {
+        return \Users::from(...$lot);
+    }
+    $folder = \LOT . \D . 'user';
+    $key = \cookie('user.key');
+    $a = \cookie('user.token');
+    $b = \content($folder . \D . $key . \D . 'token.data');
+    $user = $a && $b && $a === $b ? '@' . $key : false;
+    \Is::_('user', function ($key = null) use ($folder, $user) {
+        if (\is_string($key)) {
+            $key = \ltrim($key, '@');
+            return $user && '@' . $key === $user ? $user : false;
+        }
+        if (\is_int($key) && false !== $user) {
+            $user = \ltrim($user, '@');
+            $user = new \User($folder . \D . $user . '.page');
+            return $user->_exist && $key === $user->status;
+        }
+        return false !== $user ? $user : false;
+    });
+    \State::set('has.user', !!($user = \Is::user()));
+    $GLOBALS['user'] = $user = \User::from($user ? $folder . \D . $key . '.page' : null);
+    if (\class_exists("\\Layout")) {
+        !\Layout::path('form/user') && \Layout::set('form/user', __DIR__ . \D . 'engine' . \D . 'y' . \D . 'form' . \D . 'user.php');
+        !\Layout::path('user') && \Layout::set('user', __DIR__ . \D . 'engine' . \D . 'y' . \D . 'user.php');
+    }
 }
