@@ -12,7 +12,7 @@ namespace {
     $a = \cookie('user.token');
     $b = \content($folder . \D . $key . \D . 'token.data');
     $user = $a && $b && $a === $b ? '@' . $key : false;
-    \Is::_('user', function ($key = null) use ($folder, $user) {
+    \Is::_('user', static function ($key = null) use ($folder, $user) {
         if (\is_string($key)) {
             $key = \ltrim($key, '@');
             return $user && '@' . $key === $user ? $user : false;
@@ -20,7 +20,7 @@ namespace {
         if (\is_int($key) && false !== $user) {
             $user = \ltrim($user, '@');
             $user = new \User($folder . \D . $user . '.page');
-            return $user->_exist && $key === $user->status;
+            return $user->exist && $key === $user->status;
         }
         return false !== $user ? $user : false;
     });
@@ -34,15 +34,15 @@ namespace {
 
 namespace x\user {
     function page__author($author) {
-        if ($author && \is_string($author) && 0 === \strpos($author, '@')) {
-            return new \User(\LOT . \D . 'user' . \D . \substr($author, 1) . '.page');
+        if ($author && \is_string($author) && 0 === \strpos($author, '@') && \is_file($file = \LOT . \D . 'user' . \D . \substr($author, 1) . '.page')) {
+            return new \User($file);
         }
         return $author;
     }
     \Hook::set('page.author', __NAMESPACE__ . "\\page__author", 2);
     function route($content, $path, $query, $hash) {
-        $chops = \explode('/', $path);
-        $query = \To::query(\array_replace(\From::query($query), ['name' => \array_pop($chops)]));
+        $any = \explode('/', $path);
+        $query = \To::query(\array_replace(\From::query($query), ['name' => \array_pop($any)]));
         return \Hook::fire('route.user', [$content, $path, $query, $hash]);
     }
     function route__user($content, $path, $query, $hash) {
@@ -50,6 +50,7 @@ namespace x\user {
             return $content;
         }
         \extract($GLOBALS, \EXTR_SKIP);
+        $can_alert = \class_exists("\\Alert");
         $name = \From::query($query)['name'] ?? "";
         $folder = \LOT . \D. 'user' . \D . $name;
         $route = \trim($state->x->user->route ?? 'user', '/');
@@ -57,7 +58,7 @@ namespace x\user {
         $exit = $_GET['exit'] ?? null;
         $kick = $_GET['kick'] ?? null;
         $token = $user->token;
-        // Force to log-out with `http://127.0.0.1/user/name?exit=b4d455`
+        // Force to log-out with `http://127.0.0.1/user/name?exit=asdf`
         if ('GET' === $_SERVER['REQUEST_METHOD'] && $exit && 0 === \strpos(\trim($path, '/') . '/', $route_secret . '/')) {
             if ($token && $exit === $token) {
                 \is_file($f = $folder . \D . 'token.data') && \unlink($f);
@@ -65,11 +66,11 @@ namespace x\user {
                 \cookie('user.key', "", -1);
                 \cookie('user.pass', "", -1);
                 \cookie('user.token', "", -1);
-                \class_exists("\\Alert") && \Alert::success('Logged out.');
+                $can_alert && \Alert::success('Logged out.');
                 // Trigger the hook
                 \Hook::fire('on.user.exit', [$user->path], $user);
             } else {
-                \class_exists("\\Alert") && \Alert::error('Invalid token.');
+                $can_alert && \Alert::error('Invalid token.');
             }
             // Redirect to the log-in page by default
             \kick($kick ?? ('/' . $route_secret . $url->query([
@@ -97,7 +98,7 @@ namespace x\user {
         ]);
         return ['page', [], 200];
     }
-    $path = \trim($url->path ?? "", '/');
+    $path = \trim($url->path ?? $state->route ?? 'index', '/');
     $route = \trim($state->x->user->route ?? 'user', '/');
     $route_secret = \trim($state->x->user->guard->route ?? $route, '/');
     if (0 === \strpos($path, $route_secret . '/') || 0 === \strpos($path, $route . '/')) {
@@ -109,7 +110,8 @@ namespace x\user {
 namespace x\user\route {
     function enter($content, $path) {
         \extract($GLOBALS, \EXTR_SKIP);
-        $path = \trim($path ?? "", '/');
+        $can_alert = \class_exists("\\Alert");
+        $path = \trim($path ?? $state->route ?? 'index', '/');
         $route = \trim($state->x->user->route ?? 'user', '/');
         $route_secret = \trim($state->x->user->guard->route ?? $route, '/');
         if ($path !== $route_secret) {
@@ -134,20 +136,20 @@ namespace x\user\route {
             $file = $folder . '.page';
             $try = $folder . \D . 'try.data';
             $try_data = \json_decode(\is_file($try) ? \file_get_contents($try) : '[]', true);
-            $try_limit = ($state->x->user->guard->try ?? 5) + 1;
             $try_data[$try_user = \ip()] = ($try_data[$try_user] ?? 0) + 1;
+            $try_limit = ($state->x->user->guard->try ?? 5) + 1;
             $error = 0;
             // Check token…
             if (\Is::void($token) || !\check($token, 'user')) {
-                \class_exists("\\Alert") && \Alert::error('Invalid token.');
+                $can_alert && \Alert::error('Invalid token.');
                 ++$error;
             // Check user key…
             } else if (\Is::void($key)) {
-                \class_exists("\\Alert") && \Alert::error('Please fill out the %s field.', 'User');
+                $can_alert && \Alert::error('Please fill out the %s field.', 'User');
                 ++$error;
             // Check user pass…
             } else if (\Is::void($pass)) {
-                \class_exists("\\Alert") && \Alert::error('Please fill out the %s field.', 'Pass');
+                $can_alert && \Alert::error('Please fill out the %s field.', 'Pass');
                 ++$error;
             // No error(s), go to the next step(s)…
             } else {
@@ -157,7 +159,7 @@ namespace x\user\route {
                     if (!\is_file($f = \dirname($file) . \D . \pathinfo($file, \PATHINFO_FILENAME) . \D . 'pass.data')) {
                         \file_put_contents($f, \P . \password_hash($pass . '@' . $key, \PASSWORD_DEFAULT));
                         \chmod($f, 0600);
-                        \class_exists("\\Alert") && \Alert::info('Your %s is %s.', ['pass', '<em>' . $pass . '</em>']);
+                        $can_alert && \Alert::info('Your %s is %s.', ['pass', '<em>' . $pass . '</em>']);
                     }
                     // Validate password hash
                     if (0 === \strpos($h = \file_get_contents($f), \P)) {
@@ -180,9 +182,9 @@ namespace x\user\route {
                         \cookie('user.key', $key, '+7 days');
                         \cookie('user.token', $token, '+7 days');
                         // Remove try again message
-                        \class_exists("\\Alert") && \Alert::let();
+                        $can_alert && \Alert::let();
                         // Show success message
-                        \class_exists("\\Alert") && \Alert::success('Logged in.');
+                        $can_alert && \Alert::success('Logged in.');
                         // Trigger the hook
                         \Hook::fire('on.user.enter', [$file], new \User($file));
                         // Remove log-in attempt log
@@ -193,7 +195,7 @@ namespace x\user\route {
                         ]) . $url->hash);
                     }
                 }
-                \class_exists("\\Alert") && \Alert::error('Invalid user or pass.');
+                $can_alert && \Alert::error('Invalid user or pass.');
                 ++$error;
             }
             if ($error > 0) {
@@ -206,7 +208,7 @@ namespace x\user\route {
                     if (\defined("\\TEST") && \TEST) {
                         \abort(\i('Please delete the %s file to enter.', '<code>' . \str_replace(\PATH, '.', \dirname($try, 2)) . \D . $key[0] . \str_repeat('&#x2022;', \strlen($key) - 1) . \D . 'try.data</code>'));
                     }
-                    if (\class_exists("\\Alert")) {
+                    if ($can_alert) {
                         \Alert::let(); // Clear all previous alert(s)
                         \Alert::error('Too many failed attempts.');
                     }
@@ -215,7 +217,7 @@ namespace x\user\route {
                 if (\is_file($file)) {
                     // Show remaining log-in attempt quota
                     $i = $try_limit - $try_data[$try_user];
-                    \class_exists("\\Alert") && \Alert::info('Try again for %d more time' . (1 === $i ? "" : 's') . '.', $i);
+                    $can_alert && \Alert::info('Try again for %d more time' . (1 === $i ? "" : 's') . '.', $i);
                     // Record log-in attempt
                     \file_put_contents($try, \json_encode($try_data));
                     \chmod($try, 0600);
@@ -237,7 +239,8 @@ namespace x\user\route {
             return $content;
         }
         \extract($GLOBALS, EXTR_SKIP);
-        $route = \trim($state->x->user->route ?? "", '/');
+        $can_alert = \class_exists("\\Alert");
+        $route = \trim($state->x->user->route ?? 'user', '/');
         $route_secret = \trim($state->x->user->guard->route ?? $route, '/');
         if ('POST' === $_SERVER['REQUEST_METHOD']) {
             $key = $_POST['user']['key'] ?? null;
@@ -252,19 +255,19 @@ namespace x\user\route {
             $error = 0;
             // Check token…
             if (\Is::void($token) || !\check($token, 'user')) {
-                \class_exists("\\Alert") && \Alert::error('invalid token.');
+                $can_alert && \Alert::error('invalid token.');
                 ++$error;
             // Check user key…
             } else if (\Is::void($key)) {
-                \class_exists("\\Alert") && \Alert::error('Please fill out the %s field.', 'User');
+                $can_alert && \Alert::error('Please fill out the %s field.', 'User');
                 ++$error;
             // Check user pass…
             } else if (\Is::void($pass)) {
-                \class_exists("\\Alert") && \Alert::error('Please fill out the %s field.', 'Pass');
+                $can_alert && \Alert::error('Please fill out the %s field.', 'Pass');
                 ++$error;
             // No error(s), go to the next step(s)…
             } else {
-                \class_exists("\\Alert") && \Alert::info('Your %s is %s.', ['pass', '<em>' . $pass . '</em>']);
+                $can_alert && \Alert::info('Your %s is %s.', ['pass', '<em>' . $pass . '</em>']);
                 $pass = \P . \password_hash($pass . '@' . $key, \PASSWORD_DEFAULT);
                 if (!\is_dir($folder = \LOT . \D . 'user' . \D . $key)) {
                     \mkdir($folder, 0775, true);
@@ -283,7 +286,7 @@ namespace x\user\route {
                 \cookie('user.key', $key, '+7 days');
                 \cookie('user.token', $token, '+7 days');
                 // Show success message
-                \class_exists("\\Alert") && \Alert::success('Logged in.');
+                $can_alert && \Alert::success('Logged in.');
                 // Trigger the hook
                 \Hook::fire('on.user.start', [$file], new \User($file));
                 // Redirect to the user page by default

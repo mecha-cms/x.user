@@ -3,6 +3,9 @@
 // Check if we have more than one user to hide the user key field if we have only one user!
 $has_users = q(g(LOT . D . 'user', 'page')) > 1;
 
+// First form submit, but fail?
+$first = empty($_SESSION['form']['user']['key']);
+
 echo new HTML(Hook::fire('y.form.user', [[
     0 => 'form',
     1 => [
@@ -28,7 +31,7 @@ echo new HTML(Hook::fire('y.form.user', [[
                             0 => 'input',
                             1 => false,
                             2 => [
-                                'autofocus' => $first = empty($_SESSION['form']['user']['key']),
+                                'autofocus' => $first || !isset($state->x->form),
                                 'id' => $id,
                                 'name' => 'user[key]',
                                 'type' => 'text'

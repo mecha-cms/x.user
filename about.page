@@ -15,21 +15,21 @@ version: 2.0.0
 
 ### File
 
-All you have to do after installing this extension is to create a page file in the `.\lot\user` folder. Name the page
-according to the user name you want. For example, here I will create user data with the name `@‌ta-tau-taufik`:
+All you need to do after installing this extension is to create a page file in the `.\lot\user` folder. Name the page
+after the user name you want. For example, here I will create a user with the name `@‌john-doe`:
 
 ~~~ .txt
 .\
 └── lot\
     └── user\
-        └── ta-tau-taufik.page ✔
+        └── john-doe.page ✔
 ~~~
 
-And the following is the content of the file:
+And this will be what it contains:
 
 ~~~ .yaml
 ---
-author: Taufik Nurrohman
+author: John Doe
 type: Markdown
 status: 1
 ...
@@ -39,15 +39,16 @@ I am the main author of [this site](http://127.0.0.1).
 
 ### Page
 
-User profile page can be accessed via the `http://127.0.0.1/user/ta-tau-taufik` link. To go to the log in page, remove
-the user name from the link:
+The user’s profile page can be accessed through the `http://127.0.0.1/user/john-doe` link. To go to the log-in page,
+remove the user name from the link:
 
 ~~~ .txt
 http://127.0.0.1/user
 ~~~
 
-**Note:** If `.\lot\user\ta-tau-taufik\pass.data` file does not exist, then the password field will function as a
-password generator. You can type any password in it and `pass.data` file will be created automatically.
+Please note that if the `.\lot\user\john-doe\pass.data` file does not exist, the password field will work as a password
+generator. You can enter any password and `pass.data` file will be created automatically. This is how you would reset a
+user password. Simply delete the `pass.data` file.
 
 ### Result
 
@@ -58,7 +59,7 @@ The page in `.\lot\page\lorem-ipsum.page`:
 ~~~ .yaml
 ---
 title: Page Title
-author: Taufik Nurrohman
+author: John Doe
 ...
 
 Page content.
@@ -77,17 +78,17 @@ The page in `.\lot\page\lorem-ipsum.page`:
 ~~~ .yaml
 ---
 title: Page Title
-author: '@‌ta-tau-taufik'
+author: '@‌john-doe'
 ...
 
 Page content.
 ~~~
 
-The user file in `.\lot\user\ta-tau-taufik.page`:
+The user file in `.\lot\user\john-doe.page`:
 
 ~~~ .yaml
 ---
-author: Taufik Nurrohman
+author: John Doe
 link: 'http://example.com'
 ...
 
