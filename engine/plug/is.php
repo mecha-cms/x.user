@@ -14,7 +14,7 @@ Is::_('user', static function ($of = null) use ($folder, $key) {
     if (is_int($of)) {
         $key = ltrim($key, '@');
         $user = new User($folder . D . $key . '.page');
-        return $user->exist && $key === $user->status ? '@' . $key : false;
+        return $user->exist && $of === $user->status ? '@' . $key : false;
     }
     if (is_string($of)) {
         $key = ltrim($key, '@');
