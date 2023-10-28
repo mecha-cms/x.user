@@ -7,25 +7,8 @@ namespace {
     function users(...$lot) {
         return \Users::from(...$lot);
     }
-    $folder = \LOT . \D . 'user';
-    $key = \cookie('user.key');
-    $a = \cookie('user.token');
-    $b = \content($folder . \D . $key . \D . 'token.data');
-    $user = $a && $b && $a === $b ? '@' . $key : false;
-    \Is::_('user', static function ($key = null) use ($folder, $user) {
-        if (\is_string($key)) {
-            $key = \ltrim($key, '@');
-            return $user && '@' . $key === $user ? $user : false;
-        }
-        if (\is_int($key) && false !== $user) {
-            $user = \ltrim($user, '@');
-            $user = new \User($folder . \D . $user . '.page');
-            return $user->exist && $key === $user->status;
-        }
-        return false !== $user ? $user : false;
-    });
-    \State::set('has.user', !!($user = \Is::user()));
-    $GLOBALS['user'] = $user = \User::from($user ? $folder . \D . $key . '.page' : null);
+    \State::set('has.user', !!($key = \Is::user()));
+    $GLOBALS['user'] = $key = \User::from($key ? \LOT . \D . 'user' . \D . \substr($key, 1) . '.page' : null);
     if (\class_exists("\\Layout")) {
         !\Layout::path('form/user') && \Layout::set('form/user', __DIR__ . \D . 'engine' . \D . 'y' . \D . 'form' . \D . 'user.php');
         !\Layout::path('user') && \Layout::set('user', __DIR__ . \D . 'engine' . \D . 'y' . \D . 'user.php');
@@ -63,7 +46,7 @@ namespace x\user {
             if ($token && $exit === $token) {
                 \is_file($f = $folder . \D . 'token.data') && \unlink($f);
                 \is_file($f = $folder . \D . 'try.data') && \unlink($f);
-                \cookie('user.key', "", -1);
+                \cookie('user.name', "", -1);
                 \cookie('user.pass', "", -1);
                 \cookie('user.token', "", -1);
                 $can_alert && \Alert::success('Logged out.');
@@ -128,10 +111,7 @@ namespace x\user\route {
                 // Set the `key` value to that user automatically
                 $key = \basename(\g(\LOT . \D . 'user', 'page')->key(), '.page');
             }
-            // Remove the `@` prefix
-            if (0 === \strpos($key, '@')) {
-                $key = \substr($key, 1);
-            }
+            $key = \ltrim($key, '@'); // Remove the `@` prefix
             $folder = \LOT . \D . 'user' . \D . $key;
             $file = $folder . '.page';
             $try = $folder . \D . 'try.data';
@@ -179,7 +159,7 @@ namespace x\user\route {
                             \file_put_contents($f, $token);
                             \chmod($f, 0600);
                         }
-                        \cookie('user.key', $key, '+7 days');
+                        \cookie('user.name', $key, '+7 days');
                         \cookie('user.token', $token, '+7 days');
                         // Remove try again message
                         $can_alert && \Alert::let();
@@ -247,10 +227,7 @@ namespace x\user\route {
             $kick = $_POST['user']['kick'] ?? null;
             $pass = $_POST['user']['pass'] ?? null;
             $token = $_POST['user']['token'] ?? null;
-            // Remove the `@` prefix!
-            if (0 === \strpos($key, '@')) {
-                $key = \substr($key, 1);
-            }
+            $key = \ltrim($key, '@'); // Remove the `@` prefix
             $key = \To::kebab($key); // Force `foo-bar-baz` format
             $error = 0;
             // Check token…
@@ -283,7 +260,7 @@ namespace x\user\route {
                     'status' => 1
                 ]));
                 \chmod($file, 0600);
-                \cookie('user.key', $key, '+7 days');
+                \cookie('user.name', $key, '+7 days');
                 \cookie('user.token', $token, '+7 days');
                 // Show success message
                 $can_alert && \Alert::success('Logged in.');
