@@ -7,12 +7,11 @@ namespace {
     function users(...$lot) {
         return \Users::from(...$lot);
     }
-    \State::set('has.user', !!($key = \Is::user()));
-    $GLOBALS['user'] = $key = \User::from($key ? \LOT . \D . 'user' . \D . \substr($key, 1) . '.page' : null);
     if (\class_exists("\\Layout")) {
         !\Layout::path('form/user') && \Layout::set('form/user', __DIR__ . \D . 'engine' . \D . 'y' . \D . 'form' . \D . 'user.php');
         !\Layout::path('user') && \Layout::set('user', __DIR__ . \D . 'engine' . \D . 'y' . \D . 'user.php');
     }
+    \State::set('has.user', !!\Is::user());
 }
 
 namespace x\user {
@@ -47,7 +46,6 @@ namespace x\user {
                 \is_file($f = $folder . \D . 'token.data') && \unlink($f);
                 \is_file($f = $folder . \D . 'try.data') && \unlink($f);
                 \cookie('user.name', "", -1);
-                \cookie('user.pass', "", -1);
                 \cookie('user.token', "", -1);
                 $can_alert && \Alert::success('Logged out.');
                 // Trigger the hook
