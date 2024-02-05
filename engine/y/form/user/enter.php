@@ -1,7 +1,7 @@
 <?php
 
 // Check if we have more than one user to hide the user key field if we have only one user!
-$has_users = q(g(LOT . D . 'user', 'page')) > 1;
+$has_users = State::get('[x].count.user') > 1;
 
 // First form submit, but fail?
 $first = empty($_SESSION['form']['user']['key']);

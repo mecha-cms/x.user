@@ -11,7 +11,8 @@ namespace {
         !\Layout::path('form/user') && \Layout::set('form/user', __DIR__ . \D . 'engine' . \D . 'y' . \D . 'form' . \D . 'user.php');
         !\Layout::path('user') && \Layout::set('user', __DIR__ . \D . 'engine' . \D . 'y' . \D . 'user.php');
     }
-    \State::set('has.user', !!\Is::user());
+    \State::set('[x].count.user', \State::get('[x].count.user') ?? \q(\g(\LOT . \D . 'user', 'page')));
+    \State::set('has.user', \State::get('has.user') ?? !!\Is::user());
 }
 
 namespace x\user {
@@ -282,6 +283,5 @@ namespace x\user\route {
         \class_exists("\\Asset") && \Asset::set(__DIR__ . \D . 'index' . $z . 'css', 20.1);
         return ['user', [], 200];
     }
-    $has_users = \q(\g(\LOT . \D . 'user', 'page')) > 0;
-    \Hook::set('route', __NAMESPACE__ . "\\" . ($has_users ? 'enter' : 'start'), 90);
+    \Hook::set('route', __NAMESPACE__ . "\\" . (\State::get('[x].count.user') > 0 ? 'enter' : 'start'), 90);
 }
