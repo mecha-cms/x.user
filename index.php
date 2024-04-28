@@ -124,7 +124,7 @@ namespace x\user\route {
                 ++$error;
             // Check user key…
             } else if (\Is::void($key)) {
-                $can_alert && \Alert::error('Please fill out the %s field.', 'User');
+                $can_alert && \Alert::error('Please fill out the %s field.', 'Key');
                 ++$error;
             // Check user pass…
             } else if (\Is::void($pass)) {
@@ -132,18 +132,18 @@ namespace x\user\route {
                 ++$error;
             // No error(s), go to the next step(s)…
             } else {
-                // Check if user already registered…
+                // Check if user already exists…
                 if (\is_file($file)) {
-                    // Reset password by deleting `pass.data` manually, then log-in
+                    // Reset pass by deleting `pass.data` manually, then log-in with new pass
                     if (!\is_file($f = \dirname($file) . \D . \pathinfo($file, \PATHINFO_FILENAME) . \D . 'pass.data')) {
                         \file_put_contents($f, \P . \password_hash($pass . '@' . $key, \PASSWORD_DEFAULT));
                         \chmod($f, 0600);
                         $can_alert && \Alert::info('Your %s is %s.', ['pass', '<em>' . $pass . '</em>']);
                     }
-                    // Validate password hash
+                    // Validate pass hash
                     if (0 === \strpos($h = \file_get_contents($f), \P)) {
                         $enter = \password_verify($pass . '@' . $key, \substr($h, 1));
-                    // Validate password text
+                    // Validate pass text
                     } else {
                         $enter = $pass === $h;
                     }

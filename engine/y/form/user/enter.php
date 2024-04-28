@@ -34,6 +34,7 @@ echo new HTML(Hook::fire('y.form.user', [[
                                 'autofocus' => $first || !isset($state->x->form),
                                 'id' => $id,
                                 'name' => 'user[key]',
+                                'pattern' => "[a-z\\d]+(-[a-z\\d]+)*",
                                 'type' => 'text'
                             ]
                         ]

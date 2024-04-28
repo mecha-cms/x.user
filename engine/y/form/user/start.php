@@ -28,6 +28,7 @@ echo new HTML(Hook::fire('y.form.user', [[
                                 'autofocus' => true,
                                 'id' => $id,
                                 'name' => 'user[key]',
+                                'pattern' => "[a-z\\d]+(-[a-z\\d]+)*",
                                 'placeholder' => i('New user %s', ['key']),
                                 'type' => 'text'
                             ]
