@@ -32,7 +32,7 @@ namespace x\user {
         if (null !== $content) {
             return $content;
         }
-        \extract($GLOBALS, \EXTR_SKIP);
+        \extract(\lot(), \EXTR_SKIP);
         $can_alert = \class_exists("\\Alert");
         $name = \From::query($query)['name'] ?? "";
         $folder = \LOT . \D. 'user' . \D . $name;
@@ -64,13 +64,12 @@ namespace x\user {
             $folder . '.archive',
             $folder . '.page'
         ], 1)) {
+            \lot('t')[] = \i('Error');
             \State::set('is', ['error' => 404]);
-            $GLOBALS['t'][] = \i('Error');
-            return ['page', [], 404];
+            return ['page/user', [], 404];
         }
-        $user = new \User($file);
-        $GLOBALS['page'] = $user;
-        $GLOBALS['t'][] = $user->user . ' (' . ($user->title = $user . "") . ')';
+        \lot('page', $user = new \User($file));
+        \lot('t')[] = $user->user . ' (' . ($user->title = $user . "") . ')';
         \State::set('is', [
             'active' => !!\Is::user($user->user),
             'error' => false,
@@ -78,7 +77,7 @@ namespace x\user {
             'pages' => false,
             'user' => true
         ]);
-        return ['page', [], 200];
+        return ['page/user/' . $user->name, [], 200];
     }
     $path = \trim($url->path ?? $state->route ?? 'index', '/');
     $route = \trim($state->x->user->route ?? 'user', '/');
@@ -91,7 +90,7 @@ namespace x\user {
 
 namespace x\user\route {
     function enter($content, $path) {
-        \extract($GLOBALS, \EXTR_SKIP);
+        \extract(\lot(), \EXTR_SKIP);
         $can_alert = \class_exists("\\Alert");
         $path = \trim($path ?? $state->route ?? 'index', '/');
         $route = \trim($state->x->user->route ?? 'user', '/');
@@ -99,7 +98,7 @@ namespace x\user\route {
         if ($path !== $route_secret) {
             return;
         }
-        $GLOBALS['t'][] = \i(\Is::user() ? 'Exit' : 'Enter');
+        \lot('t')[] = \i(\Is::user() ? 'Exit' : 'Enter');
         if ('POST' === $_SERVER['REQUEST_METHOD']) {
             $key = $_POST['user']['key'] ?? "";
             $kick = $_POST['user']['kick'] ?? null;
@@ -217,7 +216,7 @@ namespace x\user\route {
         if (null !== $content) {
             return $content;
         }
-        \extract($GLOBALS, EXTR_SKIP);
+        \extract(\lot(), EXTR_SKIP);
         $can_alert = \class_exists("\\Alert");
         $route = \trim($state->x->user->route ?? 'user', '/');
         $route_secret = \trim($state->x->user->guard->route ?? $route, '/');
@@ -278,7 +277,7 @@ namespace x\user\route {
             }
             \kick('/' . $route_secret . $url->query . $url->hash);
         }
-        $GLOBALS['t'][] = \i('User');
+        \lot('t')[] = \i('User');
         $z = \defined("\\TEST") && \TEST ? '.' : '.min.';
         \class_exists("\\Asset") && \Asset::set(__DIR__ . \D . 'index' . $z . 'css', 20.1);
         return ['user', [], 200];
