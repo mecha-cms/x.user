@@ -14,4 +14,10 @@
 // and plug file(s) from other extension(s) are loaded, so there will be more potential for unpredictable error(s) due
 // to declaring the `User` class too early.
 
-$GLOBALS['user'] = $user = new User(is_file($f = LOT . D . 'user' . D . (cookie('user.name') ?? P) . '.page') ? $f : null);
+$user = new User(is_file($f = LOT . D . 'user' . D . basename(cookie('user.name') ?? P) . '.page') ? $f : null);
+
+if (($user['token'] ?? 0) !== (cookie('user.token') ?? 1)) {
+    $user = new User; // Invalid token!
+}
+
+lot('user', $user);
