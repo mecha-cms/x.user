@@ -1,7 +1,7 @@
 <?php
 
 $folder = LOT . D . 'user';
-$name = cookie('user.name');
+$name = basename(cookie('user.name') ?? P);
 $token = cookie('user.token');
 
 $current = content($folder . D . $name . D . 'token.data');
