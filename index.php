@@ -184,7 +184,11 @@ namespace x\user\route {
                 // Check for log-in attempt quota
                 if ($try_data[$try_user] > $try_limit - 1) {
                     if (\defined("\\TEST") && \TEST) {
-                        \abort(\i('Please delete the %s file to enter.', '<code>' . \str_replace(\PATH, '.', \dirname($try, 2)) . \D . $key[0] . \str_repeat('&#x2022;', \strlen($key) - 1) . \D . 'try.data</code>'));
+                        $path = \strtr(\dirname($try, 2), [\PATH . \D => '.' . \D]) . \D . $key[0] . \str_repeat('&#x2022;', \strlen($key) - 1) . \D . 'try.data';
+                        if (\function_exists("\\abort")) {
+                            \abort(\i('Please delete the %s file to enter.', '<code>' . $path . '</code>'));
+                        }
+                        \kick('/');
                     }
                     if ($can_alert) {
                         \Alert::let(); // Clear all previous alert(s)
