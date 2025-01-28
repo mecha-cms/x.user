@@ -69,7 +69,8 @@ namespace x\user {
             return ['page/user', [], 404];
         }
         \lot('page', $user = new \User($file));
-        \lot('t')[] = $user->user . ' (' . ($user->title = $user . "") . ')';
+        \lot('t')[] = \i('User');
+        \lot('t')[] = $user->title = $user . "";
         \State::set('is', [
             'active' => !!\Is::user($user->user),
             'error' => false,
