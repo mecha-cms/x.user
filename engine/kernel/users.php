@@ -3,7 +3,7 @@
 class Users extends Pages {
 
     public function page(...$lot) {
-        return User::from(...$lot);
+        return new User(...$lot);
     }
 
     public static function from(...$lot) {
