@@ -4,7 +4,7 @@
 $has_users = State::get('[x].count.user') > 1;
 
 // First form submit, but fail?
-$first = empty($_SESSION['form']['user']['key']);
+$first = empty($_SESSION['form']['key']);
 
 echo new HTML(Hook::fire('y.form.user', [[
     0 => 'form',
@@ -33,7 +33,7 @@ echo new HTML(Hook::fire('y.form.user', [[
                             2 => [
                                 'autofocus' => $first || !isset($state->x->form),
                                 'id' => $id,
-                                'name' => 'user[key]',
+                                'name' => 'key',
                                 'pattern' => "[a-z\\d]+(-[a-z\\d]+)*",
                                 'type' => 'text'
                             ]
@@ -65,7 +65,7 @@ echo new HTML(Hook::fire('y.form.user', [[
                             2 => [
                                 'autofocus' => $has_users && $first ? null : true,
                                 'id' => $id,
-                                'name' => 'user[pass]',
+                                'name' => 'pass',
                                 'type' => 'password'
                             ]
                         ]
@@ -91,7 +91,7 @@ echo new HTML(Hook::fire('y.form.user', [[
                             0 => 'button',
                             1 => i('Enter'),
                             2 => [
-                                'name' => 'user[task]',
+                                'name' => 'task',
                                 'type' => 'submit',
                                 'value' => 'enter'
                             ]
@@ -107,7 +107,7 @@ echo new HTML(Hook::fire('y.form.user', [[
             0 => 'input',
             1 => false,
             2 => [
-                'name' => 'user[token]',
+                'name' => 'token',
                 'type' => 'hidden',
                 'value' => token('user')
             ]
@@ -116,7 +116,7 @@ echo new HTML(Hook::fire('y.form.user', [[
             0 => 'input',
             1 => false,
             2 => [
-                'name' => 'user[kick]',
+                'name' => 'kick',
                 'type' => 'hidden',
                 'value' => $kick ?? null
             ]

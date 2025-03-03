@@ -1,7 +1,7 @@
 <?php
 
 $route = trim($state->x->user->route ?? 'user', '/');
-$route_secret = trim($state->x->user->guard->route ?? $route, '/');
+$route_x = trim($state->x->user->guard->route ?? $route, '/');
 
 echo new HTML(Hook::fire('y.form.user', [[
     0 => 'form',
@@ -33,7 +33,7 @@ echo new HTML(Hook::fire('y.form.user', [[
                             0 => 'a',
                             1 => i('Exit'),
                             2 => [
-                                'href' => $url . '/' . $route_secret . '/' . $user->name . $url->query([
+                                'href' => $url . '/' . $route_x . '/' . $user->name . $url->query([
                                     'exit' => $user->token
                                 ]),
                                 'role' => 'button',
@@ -51,7 +51,7 @@ echo new HTML(Hook::fire('y.form.user', [[
             0 => 'input',
             1 => false,
             2 => [
-                'name' => 'user[token]',
+                'name' => 'token',
                 'type' => 'hidden',
                 'value' => token('user')
             ]
@@ -60,14 +60,14 @@ echo new HTML(Hook::fire('y.form.user', [[
             0 => 'input',
             1 => false,
             2 => [
-                'name' => 'user[kick]',
+                'name' => 'kick',
                 'type' => 'hidden',
                 'value' => $kick ?? null
             ]
         ]
     ],
     2 => [
-        'action' => $url . '/' . $route_secret . $url->query,
+        'action' => $url . '/' . $route_x . $url->query,
         'method' => 'post',
         'name' => 'user'
     ]
