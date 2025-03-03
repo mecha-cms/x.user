@@ -27,15 +27,12 @@ namespace x\user {
             return $content;
         }
         \extract(\lot(), \EXTR_SKIP);
-        $path = \trim($path ?? "", '/');
-        if ($part = \x\page\n($path)) {
-            $path = \substr($path, 0, -\strlen('/' . $part));
-        }
+        $path = \trim($path ?? $state->route ?? 'index', '/');
         $route = \trim($state->x->user->route ?? 'user', '/');
         if ("" !== ($v = \substr($path, \strlen($route) + 1))) {
             \State::set('[x].query.user', $v);
         }
-        return \Hook::fire('route.user', [$content, '/' . $path . ($part ? '/' . $part : ""), $query, $hash]);
+        return \Hook::fire('route.user', [$content, '/' . $path, $query, $hash]);
     }
     function route__user($content, $path, $query, $hash) {
         if (null !== $content) {
@@ -45,16 +42,13 @@ namespace x\user {
         $can_alert = \class_exists("\\Alert");
         $folder = \LOT . \D. 'user' . \D . ($name = \State::get('[x].query.user') ?? "");
         $path = \trim($path ?? "", '/');
-        if ($part = \x\page\n($path)) {
-            $path = \substr($path, 0, -\strlen('/' . $part));
-        }
         $route = \trim($state->x->user->route ?? 'user', '/');
         $route_x = \trim($state->x->user->guard->route ?? $route, '/');
         $exit = $_GET['exit'] ?? null;
         $kick = $_GET['kick'] ?? null;
         $token = $user->token;
         // Force log-out with `http://127.0.0.1/user/:name?exit=:token`
-        if ('GET' === $_SERVER['REQUEST_METHOD'] && $exit && 0 === \strpos(\trim($path, '/') . '/', $route_x . '/')) {
+        if ('GET' === $_SERVER['REQUEST_METHOD'] && $exit && 0 === \strpos($path . '/', $route_x . '/')) {
             if ($token && $exit === $token) {
                 \is_file($f = $folder . \D . 'token.data') && \unlink($f);
                 \is_file($f = $folder . \D . 'try.data') && \unlink($f);
@@ -78,12 +72,12 @@ namespace x\user {
                 'page' => false,
                 'pages' => false,
                 'parent' => false,
-                'part' => $part > 0,
+                'part' => false,
                 'prev' => false
             ],
             'is' => [
                 'error' => 404,
-                'page' => true,
+                'page' => false,
                 'pages' => false,
                 'user' => true,
                 'users' => false
@@ -109,7 +103,7 @@ namespace x\user {
     $path = \trim($url->path ?? $state->route ?? 'index', '/');
     $route = \trim($state->x->user->route ?? 'user', '/');
     $route_x = \trim($state->x->user->guard->route ?? $route, '/');
-    if (0 === \strpos($path . '/', $route_x . '/') || 0 === \strpos($path . '/', $route . '/')) {
+    if ((0 === \strpos($path . '/', $route_x . '/') || 0 === \strpos($path . '/', $route . '/')) && null === \x\page\n($path)) {
         \Hook::set('route', __NAMESPACE__ . "\\route", 90);
         \Hook::set('route.user', __NAMESPACE__ . "\\route__user", 100);
     }
@@ -123,9 +117,6 @@ namespace x\user\route {
         \extract(\lot(), \EXTR_SKIP);
         $can_alert = \class_exists("\\Alert");
         $path = \trim($path ?? $state->route ?? 'index', '/');
-        if ($part = \x\page\n($path)) {
-            $path = \substr($path, 0, -\strlen('/' . $part));
-        }
         $route = \trim($state->x->user->route ?? 'user', '/');
         $route_x = \trim($state->x->user->guard->route ?? $route, '/');
         if ($path !== $route_x) {
@@ -139,12 +130,12 @@ namespace x\user\route {
                     'page' => false,
                     'pages' => false,
                     'parent' => false,
-                    'part' => $part > 0,
+                    'part' => false,
                     'prev' => false
                 ],
                 'is' => [
                     'error' => false,
-                    'page' => true,
+                    'page' => false,
                     'pages' => false,
                     'user' => true,
                     'users' => false
@@ -267,9 +258,6 @@ namespace x\user\route {
         \extract(\lot(), EXTR_SKIP);
         $can_alert = \class_exists("\\Alert");
         $path = \trim($path ?? $state->route ?? 'index', '/');
-        if ($part = \x\page\n($path)) {
-            $path = \substr($path, 0, -\strlen('/' . $part));
-        }
         $route = \trim($state->x->user->route ?? 'user', '/');
         $route_x = \trim($state->x->user->guard->route ?? $route, '/');
         if ($path !== $route_x) {
@@ -283,7 +271,7 @@ namespace x\user\route {
                     'page' => false,
                     'pages' => false,
                     'parent' => false,
-                    'part' => $part > 0,
+                    'part' => false,
                     'prev' => false
                 ],
                 'is' => [
