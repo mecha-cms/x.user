@@ -103,7 +103,7 @@ namespace x\user {
     $path = \trim($url->path ?? $state->route ?? 'index', '/');
     $route = \trim($state->x->user->route ?? 'user', '/');
     $route_x = \trim($state->x->user->guard->route ?? $route, '/');
-    if ((0 === \strpos($path . '/', $route_x . '/') || 0 === \strpos($path . '/', $route . '/')) && null === \x\page\n($path)) {
+    if ((0 === \strpos($path . '/', $route_x . '/') || 0 === \strpos($path . '/', $route . '/')) && null === \x\page\part($path)) {
         \Hook::set('route', __NAMESPACE__ . "\\route", 90);
         \Hook::set('route.user', __NAMESPACE__ . "\\route__user", 100);
     }
