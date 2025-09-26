@@ -151,8 +151,6 @@ namespace x\user\route {
         $token = $_POST['token'] ?? null;
         // Has only 1 user
         if (1 === \q($it = \g($folder = \LOT . \D . 'user', 'page'))) {
-            // To get the first element of a `RecursiveIteratorIterator` instance, a rewind is needed, somehow.
-            $it->rewind(); // This should execute the `RecursiveIteratorIterator::beginIteration()` method.
             // Set the `key` value to the only user, automatically!
             $key = \basename($it->key(), '.page');
         }
