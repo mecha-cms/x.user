@@ -15,10 +15,12 @@ class User extends Page {
         return (string) $this->user();
     }
 
-    public function URL(...$lot) {
-        extract(lot(), EXTR_SKIP);
-        $n = $this->_exist() ? parent::name() : null;
-        return $n ? $url . '/' . trim($state->x->user->route ?? 'user', '/') . '/' . $n : null;
+    public function route(...$lot) {
+        if (0 === strpos($this->path ?? P, LOT . D . 'user' . D)) {
+            extract(lot(), EXTR_SKIP);
+            return '/' . trim($state->x->user->route ?? 'user', '/') . '/' . $this->name;
+        }
+        return parent::route(...$lot);
     }
 
     // This should not emit `E_DEPRECATED` in PHP 7 because the `__construct()` method is already defined.
