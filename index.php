@@ -12,7 +12,7 @@ namespace {
         !\Layout::path('user') && \Layout::set('user', __DIR__ . \D . 'engine' . \D . 'y' . \D . 'user.php');
     }
     \State::set('[x].count.user', \State::get('[x].count.user') ?? \q(\g(\LOT . \D . 'user', 'page')));
-    \State::set('has.user', \State::get('has.user') ?? !!\Is::user());
+    \State::set('with.user', \State::get('with.user') ?? (isset($user) && $user->exist ? $user->user : false));
 }
 
 namespace x\user {
@@ -94,7 +94,7 @@ namespace x\user {
         \lot('t')[] = \i('User');
         \lot('t')[] = $user->title = $user . "";
         \State::set('is', [
-            'active' => !!\Is::user($user->user),
+            'active' => $user->exist && $user->name === \cookie('user.name'),
             'error' => false
         ]);
         return ['page/user/' . $user->name, [], 200];
@@ -122,7 +122,7 @@ namespace x\user\route {
         if ($path !== $route_x) {
             return $content;
         }
-        \lot('t')[] = \i(\Is::user() ? 'Exit' : 'Enter');
+        \lot('t')[] = \i(isset($user) && $user->exist ? 'Exit' : 'Enter');
         if ('POST' !== $_SERVER['REQUEST_METHOD']) {
             \State::set([
                 'has' => [
