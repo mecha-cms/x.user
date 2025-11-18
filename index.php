@@ -11,7 +11,7 @@ namespace {
         !\Layout::path('form/user') && \Layout::set('form/user', __DIR__ . \D . 'engine' . \D . 'y' . \D . 'form' . \D . 'user.php');
         !\Layout::path('user') && \Layout::set('user', __DIR__ . \D . 'engine' . \D . 'y' . \D . 'user.php');
     }
-    \State::set('with.user', \State::get('with.user') ?? (isset($user) && $user->exist ? $user->user : false));
+    \State::set('with.user', isset($user) && $user->exist ? $user->user : false);
 }
 
 namespace x\user {
