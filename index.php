@@ -35,11 +35,21 @@ namespace x\user {
     if ($part < 0 && 0 === \strpos($path . '/', $route_x . '/')) {
         \Hook::set('route', __NAMESPACE__ . "\\route", 90);
         \Hook::set('route.user', __NAMESPACE__ . "\\route__user", 100);
-        \State::set('is', [
-            'secret' => $route !== $route_x,
-            'user' => true
+        // A user does not need to exist in order to declare route query data. Given the subjective nature of this
+        // method, it is up to the developer of the extension to keep track of the data for later use. It can then be
+        // used across the route since Mecha lacks a native mechanism to collect route information.
+        \State::set([
+            'is' => [
+                'secret' => $route !== $route_x,
+                'user' => true
+            ],
+            'q' => [
+                'user' => [
+                    'name' => $path !== $route_x ? \substr(\strstr($path, '/'), 1) : null,
+                    'part' => null
+                ]
+            ]
         ]);
-        \State::set('q.user', $path !== $route_x ? \substr(\strstr($path, '/'), 1) : null);
     }
     function route($content, $path, $query, $hash) {
         if (null !== $content) {
@@ -56,7 +66,7 @@ namespace x\user {
         $route_x = \trim($state->x->user->guard->route ?? $route, '/');
         $with_alert = isset($state->x->alert);
         // For `/user/…`
-        if ($name = $state->q->user ?? "") {
+        if ($name = $state->q('user.name')) {
             $folder = \LOT . \D . 'user' . \D . $name;
             if (!$file = \exist([
                 $folder . '.archive',
@@ -79,7 +89,7 @@ namespace x\user {
                     \delete($folder . \D . 'token.data');
                     $with_alert && \Alert::success('Logged out.');
                     // Trigger the hook
-                    \Hook::fire('on.user.exit', [$user->path], $user);
+                    \Hook::fire('on.user.exit', [$file], $user);
                 } else {
                     $with_alert && \Alert::error('Invalid token.');
                 }
@@ -108,7 +118,9 @@ namespace x\user {
         $token = $_POST['token'] ?? null;
         // Has only 1 user
         if ("" === $key && 1 === $count) {
-            // Set the `key` value to the only user, automatically!
+            // Set the `key` value to the only user if it is not present in the HTTP request. This will also entail the
+            // elimination of the key field from the user’s log-in form. This way, the only user in the system only has
+            // to enter their pass data to sign in.
             $key = \basename($it->key(), '.page');
         }
         // Check token…
@@ -124,7 +136,8 @@ namespace x\user {
             $with_alert && \Alert::error('Please fill out the %s field.', 'Pass');
             ++$error;
         }
-        // No user(s) yet
+        // No user(s) yet. The form will be used to create the first user and will resemble a registration form, despite
+        // having the same structure as the log-in form.
         if (0 === $count) {
             if (0 === $error) {
                 $with_alert && \Alert::info('Your %s is %s.', ['pass', '<em>' . $pass . '</em>']);
@@ -146,7 +159,7 @@ namespace x\user {
                 \chmod($file, 0600);
                 \cookie('user.name', $name, '+7 days');
                 \cookie('user.token', $token, '+7 days');
-                // Show success message
+                // Show success alert
                 $with_alert && \Alert::success('Logged in.');
                 // Trigger the hook
                 \Hook::fire('on.user.start', [$file], new \User($file));
@@ -160,8 +173,24 @@ namespace x\user {
             \kick('/' . $route_x . $url->query . $url->hash);
         }
         $file = ($folder .= \D . ($name = \ltrim($key, '@'))) . '.page';
-        $try_max = ($state->x->user->guard->try ?? 5) + 1;
-        $try_now = ((int) (\content($try_file = $folder . \D . '.try' . \D . \md5(\ip())) ?? 0)) + 1;
+        $try_max = $state->x->user->guard->try ?? 5;
+        $try_now = (int) (\content($try_file = $folder . \D . '.try' . \D . \md5(\ip())) ?? 0);
+        // Check for the log-in attempt quota. It should continue to reject the attempt, even after it successfully
+        // figures out the user’s pass value.
+        if ($try_now >= $try_max) {
+            // Clear all previous alert(s)…
+            $with_alert && \Alert::let();
+            if (\defined("\\TEST") && \TEST) {
+                $path = \strtr(\dirname($try_file, 3), [\PATH . \D => '.' . \D]) . \D . $name[0] . \str_repeat('&#x2022;', \strlen($name) - 1) . \D . '.try' . \D . \basename($try_file);
+                if (\function_exists("\\abort")) {
+                    \http_response_code(403);
+                    \abort(\i('Please delete the %s file to enter.', '<code>' . $path . '</code>'));
+                }
+                \kick('/');
+            }
+            $with_alert && \Alert::error('Too many failed attempts.');
+            \kick('/' . $route_x . $url->query . $url->hash);
+        }
         if (0 === $error) {
             // Check if user already exists…
             if (\is_file($file)) {
@@ -171,10 +200,10 @@ namespace x\user {
                     \chmod($f, 0600);
                     $with_alert && \Alert::info('Your %s is %s.', ['pass', '<em>' . $pass . '</em>']);
                 }
-                // Validate pass hash
+                // Validate pass hash…
                 if (0 === \strpos($h = \file_get_contents($f), \P)) {
                     $valid = \password_verify($pass . '@' . $name, \substr($h, 1));
-                // Validate pass text
+                // Validate pass text…
                 } else {
                     $valid = $pass === $h;
                 }
@@ -191,9 +220,9 @@ namespace x\user {
                     }
                     \cookie('user.name', $name, '+7 days');
                     \cookie('user.token', $token, '+7 days');
-                    // Remove “try again” message
+                    // Clear all previous alert(s)
                     $with_alert && \Alert::let();
-                    // Show success message
+                    // Show success alert
                     $with_alert && \Alert::success('Logged in.');
                     // Trigger the hook
                     \Hook::fire('on.user.enter', [$file], new \User($file));
@@ -211,26 +240,13 @@ namespace x\user {
         if ($error > 0) {
             // Store form `key` to session
             $_SESSION['form']['key'] = $key;
-            // Check for log-in attempt quota
-            if ($try_now > $try_max - 1) {
-                $with_alert && \Alert::let(); // Clear all previous alert(s)
-                if (\defined("\\TEST") && \TEST) {
-                    $path = \strtr(\dirname($try_file, 3), [\PATH . \D => '.' . \D]) . \D . $name[0] . \str_repeat('&#x2022;', \strlen($name) - 1) . \D . '.try' . \D . \basename($try_file);
-                    if (\function_exists("\\abort")) {
-                        \abort(\i('Please delete the %s file to enter.', '<code>' . $path . '</code>'));
-                    }
-                    \kick('/');
-                }
-                $with_alert && \Alert::error('Too many failed attempts.');
-                \kick('/' . $route_x . $url->query . $url->hash);
-            }
             if (\is_file($file)) {
                 // Show remaining log-in attempt quota
                 $with_alert && \Alert::info('Try again for %d more time' . (1 === ($v = $try_max - $try_now) ? "" : 's') . '.', $v);
                 // Record log-in attempt
-                \content($try_file, (string) $try_now, 0600);
+                \content($try_file, (string) ($try_now + 1), 0600);
                 // Trigger the hook
-                \Hook::fire('on.user.try', [$file], new \User($file));
+                \Hook::fire('on.user.try', [$file, $try_now, $try_max], new \User($file));
             }
         }
         \kick('/' . $route_x . $url->query . $url->hash);
