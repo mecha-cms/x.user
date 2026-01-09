@@ -201,11 +201,11 @@ namespace x\user {
                     $with_alert && \Alert::info('Your %s is %s.', ['pass', '<em>' . $pass . '</em>']);
                 }
                 // Validate pass hash…
-                if (0 === \strpos($h = \file_get_contents($f), \P)) {
-                    $valid = \password_verify($pass . '@' . $name, \substr($h, 1));
+                if (0 === \strpos($p = \file_get_contents($f), \P)) {
+                    $valid = \password_verify($pass . '@' . $name, \substr($p, 1));
                 // Validate pass text…
                 } else {
-                    $valid = $pass === $h;
+                    $valid = $pass === $p;
                 }
                 // Is valid, then…
                 if ($valid) {
