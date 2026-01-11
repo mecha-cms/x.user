@@ -16,7 +16,7 @@
 
 $user = new User(is_file($f = LOT . D . 'user' . D . basename(cookie('user.name') ?? P) . '.page') ? $f : null);
 
-if (($user['token'] ?? 0) !== (cookie('user.token') ?? 1)) {
+if (($user->token ?? 0) !== (cookie('user.token') ?? 1)) {
     $user = new User; // Invalid token!
 }
 
