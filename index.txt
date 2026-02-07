@@ -1,13 +1,16 @@
 ---
 title: User
 description: User feature.
-icon: 'M16 17V19H2V17S2 13 9 13 16 17 16 17M12.5 7.5A3.5 3.5 0 1 0 9 11A3.5 3.5 0 0 0 12.5 7.5M15.94 13A5.32 5.32 0 0 1 18 17V19H22V17S22 13.37 15.94 13M15 4A3.39 3.39 0 0 0 13.07 4.59A5 5 0 0 1 13.07 10.41A3.39 3.39 0 0 0 15 11A3.5 3.5 0 0 0 15 4Z'
+icon: >-
+  M16 17V19H2V17S2 13 9 13 16 17 16 17M12.5 7.5A3.5 3.5 0 1 0 9 11A3.5 3.5 0 0 0 12.5 7.5M15.94 13A5.32 5.32 0 0 1 18
+  17V19H22V17S22 13.37 15.94 13M15 4A3.39 3.39 0 0 0 13.07 4.59A5 5 0 0 1 13.07 10.41A3.39 3.39 0 0 0 15 11A3.5 3.5 0 0
+  0 15 4Z
 color: '#4a8a90'
 image: /lot/x/user/index.png
 images:
-- /lot/x/user/index.png
-- /lot/x/user/index/1.png
-- /lot/x/user/index/2.png
+  - /lot/x/user/index.png
+  - /lot/x/user/index/1.png
+  - /lot/x/user/index/2.png
 author: Taufik Nurrohman
 type: Markdown
 version: 3.0.0
@@ -22,12 +25,12 @@ after the user name you want. For example, here I will create a user with the na
 .\
 └── lot\
     └── user\
-        └── john-doe.page ✔
+        └── john-doe.txt ✔
 ~~~
 
 And this will be what it contains:
 
-~~~ .yaml
+~~~ .md.yaml
 ---
 author: John Doe
 type: Markdown
@@ -46,17 +49,17 @@ remove the user name from the link:
 http://127.0.0.1/user
 ~~~
 
-Please note that if the `.\lot\user\john-doe\pass.data` file does not exist, the password field will work as a password
-generator. You can enter any password and `pass.data` file will be created automatically. This is how you would reset a
-user password. Simply delete the `pass.data` file.
+Please note that if the `.\lot\user\john-doe\+\pass.txt` file does not exist, the password field will work as a password
+generator. You can enter any password and `pass.txt` file will be created automatically. This is how you would reset a
+user password. Simply delete the `pass.txt` file.
 
 ### Result
 
 #### Without User Extension
 
-The page in `.\lot\page\lorem-ipsum.page`:
+The page in `.\lot\page\lorem-ipsum.txt`:
 
-~~~ .yaml
+~~~ .txt.yaml
 ---
 title: Page Title
 author: John Doe
@@ -73,9 +76,9 @@ To get the author data:
 
 #### With User Extension
 
-The page in `.\lot\page\lorem-ipsum.page`:
+The page in `.\lot\page\lorem-ipsum.txt`:
 
-~~~ .yaml
+~~~ .txt.yaml
 ---
 title: Page Title
 author: '@‌john-doe'
@@ -84,9 +87,9 @@ author: '@‌john-doe'
 Page content.
 ~~~
 
-The user file in `.\lot\user\john-doe.page`:
+The user file in `.\lot\user\john-doe.txt`:
 
-~~~ .yaml
+~~~ .txt.yaml
 ---
 author: John Doe
 link: 'http://example.com'
