@@ -19,5 +19,6 @@ if ($f = exist(LOT . D . 'user' . D . basename(cookie('user.name') ?? P) . '.{' 
     if (($user->token ?? 0) !== (cookie('user.token') ?? 1)) {
         $user = new User; // Invalid token!
     }
-    lot('user', $user);
 }
+
+lot('user', $user ?? new User);

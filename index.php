@@ -86,7 +86,7 @@ namespace x\user {
                 if ($token && $exit === $token) {
                     \cookie('user.name', "", -1);
                     \cookie('user.token', "", -1);
-                    \delete($folder . \D . '+' . \D . '.try' . \D . \md5(\ip()));
+                    \delete($folder . \D . '+' . \D . 'try' . \D . \hash('xxh3', \ip() ?? \P) . '.json');
                     \delete($folder . \D . '+' . \D . 'token.txt');
                     $with_alert && \Alert::success('Logged out.');
                     // Trigger the hook
@@ -183,14 +183,14 @@ namespace x\user {
         }
         $file = \exist(($folder .= \D . ($name = \ltrim($key, '@'))) . '.{' . \x\page\x() . '}', 1);
         $try_max = $state->x->user->guard->try ?? 5;
-        $try_now = (int) (\content($try_file = $folder . \D . '+' . \D . '.try' . \D . \md5(\ip())) ?? 0);
+        $try_now = (int) (\content($try_file = $folder . \D . '+' . \D . 'try' . \D . \hash('xxh3', \ip() ?? \P) . '.json') ?? 0);
         // Check for the log-in attempt quota. It should continue to reject the attempt, even after it successfully
         // figures out the user’s pass value.
         if ($try_now >= $try_max) {
             // Clear all previous alert(s)…
             $with_alert && \Alert::let();
             if (\defined("\\TEST") && \TEST) {
-                $path = \strtr(\dirname($try_file, 3), [\PATH . \D => '.' . \D]) . \D . $name[0] . \str_repeat('&#x2022;', \strlen($name) - 1) . \D . '+' . \D . '.try' . \D . \basename($try_file);
+                $path = \strtr(\dirname($try_file, 3), [\PATH . \D => '.' . \D]) . \D . $name[0] . \str_repeat('&#x2022;', \strlen($name) - 1) . \D . '+' . \D . 'try' . \D . \basename($try_file);
                 if (\function_exists("\\abort")) {
                     \http_response_code(403);
                     \abort(\i('Please delete the %s file to enter.', '<code>' . $path . '</code>'));
