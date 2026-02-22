@@ -118,7 +118,7 @@ echo new HTML(Hook::fire('y.form.user', [[
         ]
     ],
     2 => [
-        'action' => $url . '/' . trim($state->x->user->guard->route ?? $state->x->user->route ?? 'user', '/') . $url->query,
+        'action' => '/' . trim($state->x->user->guard->route ?? $state->x->user->route ?? 'user', '/') . $link->query,
         'method' => 'post',
         'name' => 'user'
     ]

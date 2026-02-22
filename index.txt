@@ -92,7 +92,7 @@ The user file in `.\lot\user\john-doe.txt`:
 ~~~ .txt.yaml
 ---
 author: John Doe
-link: 'http://example.com'
+links: [http://example.com]
 ...
 
 Page content.

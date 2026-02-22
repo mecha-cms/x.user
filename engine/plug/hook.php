@@ -10,9 +10,9 @@
 // There is no particular reason why I chose this `hook.php` file, except that it (the `Hook` class) is the most ideal
 // class to watch its initial loading event because most extension(s) will call it in their `index.php` file, so it will
 // immediately trigger the `$user` variable below to be declared. There are several other class(es) that are loaded much
-// earlier than the `Hook` class, such as the `State` and the `URL` class(es), but they are loaded before the class
-// and plug file(s) from other extension(s) are loaded, so there will be more potential for unpredictable error(s) due
-// to declaring the `User` class too early.
+// earlier than the `Hook` class, such as the `Link` and the `State` class(es), but they are loaded before the class and
+// plug file(s) from other extension(s) are loaded, so there will be more potential for unpredictable error(s) due to
+// declaring the `User` class too early.
 
 if ($f = exist(LOT . D . 'user' . D . basename(cookie('user.name') ?? P) . '.{' . x\page\x() . '}', 1)) {
     $user = new User($f);
