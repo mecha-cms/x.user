@@ -95,10 +95,10 @@ namespace x\user {
                     $with_alert && \Alert::error('Invalid token.');
                 }
                 // Redirect to the log-in page (by default)
-                \kick($kick ?? ('/' . $route_x . $link->query([
+                \kick($kick ?? $link->base('/' . $route_x, [
                     'exit' => false,
                     'kick' => false
-                ]) . $link->hash));
+                ], true));
             }
             \State::set('is.active', $name === \cookie('user.name'));
             return [
@@ -173,13 +173,13 @@ namespace x\user {
                 // Trigger the hook
                 \Hook::fire('on.user.start', [$file], new \User($file));
                 // Redirect to the user page (by default)
-                \kick($kick ?? ('/' . $route_x . $link->query([
+                \kick($kick ?? $link->base('/' . $route_x, [
                     'kick' => false
-                ]) . $link->hash));
+                ], true));
             }
             // Store form `key` to session
             $_SESSION['form']['key'] = $key;
-            \kick('/' . $route_x . $link->query . $link->hash);
+            \kick($link->base('/' . $route_x, true, true));
         }
         $file = \exist(($folder .= \D . ($name = \ltrim($key, '@'))) . '.{' . \x\page\x() . '}', 1);
         $try_max = $state->x->user->guard->try ?? 5;
@@ -198,7 +198,7 @@ namespace x\user {
                 \kick('/');
             }
             $with_alert && \Alert::error('Too many failed attempts.');
-            \kick('/' . $route_x . $link->query . $link->hash);
+            \kick($link->base('/' . $route_x, true, true));
         }
         if (0 === $error) {
             // Check if user already exists…
@@ -238,9 +238,9 @@ namespace x\user {
                     // Remove the log-in attempt log
                     \delete($try_file);
                     // Redirect to the home page (by default)
-                    \kick($kick ?? '/' . $link->query([
+                    \kick($kick ?? $link->base('/', [
                         'kick' => false
-                    ]) . $link->hash);
+                    ], true));
                 }
             }
             $with_alert && \Alert::error('Invalid key or pass.');
@@ -258,6 +258,6 @@ namespace x\user {
                 \Hook::fire('on.user.try', [$file, $try_now, $try_max], new \User($file));
             }
         }
-        \kick('/' . $route_x . $link->query . $link->hash);
+        \kick($link->base('/' . $route_x, true, true));
     }
 }

@@ -7,7 +7,7 @@
     <title>
       <?= w($t->reverse); ?>
     </title>
-    <link href="<?= eat(long('/favicon.ico')); ?>" rel="icon">
+    <link href="<?= eat($link->base('/favicon.ico')); ?>" rel="icon">
   </head>
   <body>
     <div>

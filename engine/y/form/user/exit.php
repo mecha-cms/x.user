@@ -25,7 +25,7 @@ echo new HTML(Hook::fire('y.form.user', [[
                             0 => 'a',
                             1 => i('Profile'),
                             2 => [
-                                'href' => long('/' . $route . '/' . $user->name),
+                                'href' => $link->base('/' . $route . '/' . $user->name),
                                 'role' => 'button'
                             ]
                         ],
@@ -48,7 +48,7 @@ echo new HTML(Hook::fire('y.form.user', [[
         ]
     ],
     2 => [
-        'action' => long('/' . $route_x . '/' . $user->name),
+        'action' => $link->base('/' . $route_x . '/' . $user->name, true, true),
         'method' => 'get',
         'name' => 'user'
     ]
