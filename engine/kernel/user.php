@@ -11,8 +11,11 @@ class User extends Page {
 
     public function route(...$lot) {
         if (0 === strpos($this->path ?? P, LOT . D . 'user' . D)) {
+            if (!is_string($name = $this->name())) {
+                return null;
+            }
             extract(lot(), EXTR_SKIP);
-            return '/' . trim($state->x->user->route ?? 'user', '/') . '/' . $this->name;
+            return '/' . trim($state->x->user->route ?? 'user', '/') . '/' . $name;
         }
         return parent::route(...$lot);
     }

@@ -14,8 +14,8 @@
 // plug file(s) from other extension(s) are loaded, so there will be more potential for unpredictable error(s) due to
 // declaring the `User` class too early.
 
-if ($f = exist(LOT . D . 'user' . D . basename(cookie('user.name') ?? P) . '.{' . x\page\x() . '}', 1)) {
-    $user = new User($f);
+if ($path = exist(LOT . D . 'user' . D . basename(cookie('user.name') ?? P) . '.{' . x\page\x() . '}', 1)) {
+    $user = new User($path);
     if (($user->token ?? 0) !== (cookie('user.token') ?? 1)) {
         $user = new User; // Invalid token!
     }

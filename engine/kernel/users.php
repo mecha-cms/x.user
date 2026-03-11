@@ -3,6 +3,13 @@
 class Users extends Pages {
 
     public function page(...$lot) {
+        if (($v = $lot[0] ?? 0) instanceof User) {
+            return $v;
+        }
+        if (is_array($v)) {
+            unset($v[P]);
+            $lot[0] = $v;
+        }
         return new User(...$lot);
     }
 
