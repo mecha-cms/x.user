@@ -21,7 +21,7 @@ class User extends Page {
     }
 
     public function user() {
-        return $this->_exist() ? '@' . parent::name() : null;
+        return $this->file->exist() ? '@' . parent::name() : null;
     }
 
 }
