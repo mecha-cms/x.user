@@ -15,7 +15,7 @@ class User extends Page {
                 return null;
             }
             extract(lot(), EXTR_SKIP);
-            return '/' . strtr(rawurlencode(trim($state->x->user->route ?? 'user', '/') . '/' . $name), ['%2F' => '/']);
+            return '/' . strtr(rawurlencode(trim($state->x->user->sub ?? 'user', '/') . '/' . $name), ['%2F' => '/']);
         }
         return parent::route(...$lot);
     }

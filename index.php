@@ -26,13 +26,13 @@ namespace x\user {
         $path = \substr($path, 0, -\strlen('/' . $part));
     }
     $part = ($part ?? 0) - 1;
-    $route = \trim($state->x->user->route ?? 'user', '/');
-    $route_x = \trim($state->x->user->guard->route ?? $route, '/');
+    $sub = \trim($state->x->user->sub ?? 'user', '/');
+    $sub_x = \trim($state->x->user->guard->sub ?? $sub, '/');
     // For `/user/…`
-    if ('GET' === $_SERVER['REQUEST_METHOD'] && $route !== $route_x && \substr_count($path, '/') > 0 && !\array_key_exists('exit', $_GET)) {
-        $route_x = $route;
+    if ('GET' === $_SERVER['REQUEST_METHOD'] && $sub !== $sub_x && \substr_count($path, '/') > 0 && !\array_key_exists('exit', $_GET)) {
+        $sub_x = $sub;
     }
-    if ($part < 0 && 0 === \strpos($path . '/', $route_x . '/')) {
+    if ($part < 0 && 0 === \strpos($path . '/', $sub_x . '/')) {
         \Hook::set('route', __NAMESPACE__ . "\\route", 90);
         \Hook::set('route.user', __NAMESPACE__ . "\\route__user", 100);
         // A user does not need to exist in order to declare route query data. Given the subjective nature of this
@@ -40,12 +40,12 @@ namespace x\user {
         // used across the route since Mecha lacks a native mechanism to collect route information.
         \State::set([
             'is' => [
-                'secure' => $route !== $route_x,
+                'secure' => $sub !== $sub_x,
                 'user' => true
             ],
             'q' => [
                 'user' => [
-                    'name' => $path !== $route_x ? \substr(\strstr($path, '/'), 1) : null,
+                    'name' => $path !== $sub_x ? \substr(\strstr($path, '/'), 1) : null,
                     'part' => null
                 ]
             ]
@@ -62,8 +62,8 @@ namespace x\user {
             return $content;
         }
         \extract(\lot(), \EXTR_SKIP);
-        $route = \trim($state->x->user->route ?? 'user', '/');
-        $route_x = \trim($state->x->user->guard->route ?? $route, '/');
+        $sub = \trim($state->x->user->sub ?? 'user', '/');
+        $sub_x = \trim($state->x->user->guard->sub ?? $sub, '/');
         $with_alert = isset($state->x->alert);
         // For `/user/…`
         if ($name = $state->q('user.name')) {
@@ -95,7 +95,7 @@ namespace x\user {
                     $with_alert && \Alert::error('Invalid token.');
                 }
                 // Redirect to the log-in page (by default)
-                \kick($kick ?? $link->base('/' . $route_x, [
+                \kick($kick ?? $link->base('/' . $sub_x, [
                     'exit' => false,
                     'kick' => false
                 ], true));
@@ -173,13 +173,13 @@ namespace x\user {
                 // Trigger the hook
                 \Hook::fire('on.user.start', [$file], new \User($file));
                 // Redirect to the user page (by default)
-                \kick($kick ?? $link->base('/' . $route_x, [
+                \kick($kick ?? $link->base('/' . $sub_x, [
                     'kick' => false
                 ], true));
             }
             // Store form `key` to session
             $_SESSION['form']['key'] = $key;
-            \kick($link->base('/' . $route_x, true, true));
+            \kick($link->base('/' . $sub_x, true, true));
         }
         $file = \exist(($folder .= \D . ($name = \ltrim($key, '@'))) . '.{' . \x\page\x() . '}', 1);
         $try_max = $state->x->user->guard->try ?? 5;
@@ -198,7 +198,7 @@ namespace x\user {
                 \kick('/');
             }
             $with_alert && \Alert::error('Too many failed attempts.');
-            \kick($link->base('/' . $route_x, true, true));
+            \kick($link->base('/' . $sub_x, true, true));
         }
         if (0 === $error) {
             // Check if user already exists…
@@ -258,6 +258,6 @@ namespace x\user {
                 \Hook::fire('on.user.try', [$file, $try_now, $try_max], new \User($file));
             }
         }
-        \kick($link->base('/' . $route_x, true, true));
+        \kick($link->base('/' . $sub_x, true, true));
     }
 }

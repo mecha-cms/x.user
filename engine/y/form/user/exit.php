@@ -1,7 +1,7 @@
 <?php
 
-$route = trim($state->x->user->route ?? 'user', '/');
-$route_x = trim($state->x->user->guard->route ?? $route, '/');
+$sub = trim($state->x->user->sub ?? 'user', '/');
+$sub_x = trim($state->x->user->guard->sub ?? $sub, '/');
 
 echo new HTML(Hook::fire('y.form.user', [[
     0 => 'form',
@@ -25,7 +25,7 @@ echo new HTML(Hook::fire('y.form.user', [[
                             0 => 'a',
                             1 => i('Profile'),
                             2 => [
-                                'href' => $link->base('/' . $route . '/' . $user->name),
+                                'href' => $link->base('/' . $sub . '/' . $user->name),
                                 'role' => 'button'
                             ]
                         ],
@@ -48,7 +48,7 @@ echo new HTML(Hook::fire('y.form.user', [[
         ]
     ],
     2 => [
-        'action' => $link->base('/' . $route_x . '/' . $user->name, true, true),
+        'action' => $link->base('/' . $sub_x . '/' . $user->name, true, true),
         'method' => 'get',
         'name' => 'user'
     ]
