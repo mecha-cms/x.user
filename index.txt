@@ -19,7 +19,7 @@ version: 3.0.0
 ### File
 
 All you need to do after installing this extension is to create a page file in the `.\lot\user` folder. Name the page
-after the user name you want. For example, here I will create a user with the name `@‌john-doe`:
+after the user name you want. For example, here I will create a user with the name <code>&#64;john-doe</code>:
 
 ~~~ .txt
 .\
@@ -32,7 +32,7 @@ And this will be what it contains:
 
 ~~~ .md.yaml
 ---
-author: John Doe
+title: John Doe
 type: Markdown
 status: 1
 ...
@@ -81,7 +81,7 @@ The page in `.\lot\page\lorem-ipsum.txt`:
 ~~~ .txt.yaml
 ---
 title: Page Title
-author: '@‌john-doe'
+author: '@john-doe'
 ...
 
 Page content.
@@ -91,8 +91,9 @@ The user file in `.\lot\user\john-doe.txt`:
 
 ~~~ .txt.yaml
 ---
-author: John Doe
-links: [http://example.com]
+title: John Doe
+links:
+  - http://example.com
 ...
 
 Page content.
@@ -101,7 +102,7 @@ Page content.
 To get the author data:
 
 ~~~ .html.php
-<a href="<?= $page->author->link; ?>">
+<a href="<?= first($page->author->links ?? []); ?>">
   <?= $page->author; ?>
 </a>
 ~~~

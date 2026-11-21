@@ -3,7 +3,7 @@
 class User extends Page {
 
     public function __toString(): string {
-        if (is_string($v = parent::author())) {
+        if (is_string($v = parent::title())) {
             return $v;
         }
         return (string) $this->user();

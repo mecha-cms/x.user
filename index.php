@@ -8,8 +8,8 @@ namespace {
         return new \Users(...$lot);
     }
     if (\class_exists("\\Layout")) {
-        !\Layout::path('form/user') && \Layout::set('form/user', __DIR__ . \D . 'engine' . \D . 'y' . \D . 'form' . \D . 'user.php');
-        !\Layout::path('user') && \Layout::set('user', __DIR__ . \D . 'engine' . \D . 'y' . \D . 'user.php');
+        !\Layout::path('form/user') && \Layout::set('form/user', __DIR__ . \D . 'form' . \D . 'user.phtml');
+        !\Layout::path('user') && \Layout::set('user', __DIR__ . \D . 'index.phtml');
     }
     \State::set('with.user', isset($user) && $user->exist ? $user->user : false);
 }
@@ -70,15 +70,11 @@ namespace x\user {
             $folder = \LOT . \D . 'user' . \D . $name;
             if (!$file = \exist($folder . '.{' . \x\page\x() . '}', 1)) {
                 \lot('t')[] = \i('Error');
-                return [
-                    'lot' => [],
-                    'status' => 404,
-                    'y' => 'page/user'
-                ];
+                return 404;
             }
             \lot('page', $user = new \User($file));
             \lot('t')[] = \i('User');
-            \lot('t')[] = $user->title = $user . "";
+            \lot('t')[] = $user->title;
             $token = $user->token ?? "";
             // Force log-out with `/user/:name?exit=:token`
             if ('GET' === $_SERVER['REQUEST_METHOD'] && ($exit = $_GET['exit'] ?? 0)) {
@@ -101,11 +97,7 @@ namespace x\user {
                 ], true));
             }
             \State::set('is.active', $name === \cookie('user.name'));
-            return [
-                'lot' => [],
-                'status' => 200,
-                'y' => 'page/user/' . $name
-            ];
+            return 200;
         }
         // For `/user`
         $count = \q($it = \g($folder = \LOT . \D . 'user', \x\page\x()));
@@ -114,11 +106,7 @@ namespace x\user {
                 \Asset::set(__DIR__ . \D . 'index' . (\defined("\\TEST") && \TEST ? '.' : '.min.') . 'css', 20.1);
             }
             \lot('t')[] = \i(0 === $count ? 'Create' : (isset($user) && $user->exist ? 'Exit' : 'Enter'));
-            return [
-                'lot' => [],
-                'status' => 200,
-                'y' => 'user'
-            ];
+            return ['key' => 'user', 'status' => 200];
         }
         $error = $valid = 0;
         $key = $_POST['key'] ?? "";
@@ -151,7 +139,7 @@ namespace x\user {
             if (0 === $error) {
                 $with_alert && \Alert::info('Your %s is %s.', ['pass', '<em>' . $pass . '</em>']);
                 $name = \To::kebab(\ltrim($key, '@')); // Force `foo-bar-baz` format
-                $pass = \P . \password_hash($pass . '@' . $name, \PASSWORD_DEFAULT);
+                $pass = \password_hash($pass . '@' . $name, \PASSWORD_DEFAULT);
                 if (!\is_dir($folder .= \D . $name . \D . '+')) {
                     \mkdir($folder, 0775, true);
                 }
@@ -210,8 +198,8 @@ namespace x\user {
                     $with_alert && \Alert::info('Your %s is %s.', ['pass', '<em>' . $pass . '</em>']);
                 }
                 // Validate pass hash…
-                if (0 === \strpos($p = \file_get_contents($f), \P)) {
-                    $valid = \password_verify($pass . '@' . $name, \substr($p, 1));
+                if (\password_get_info($p = \file_get_contents($f))['algo'] ?? 0) {
+                    $valid = \password_verify($pass . '@' . $name, $p);
                 // Validate pass text…
                 } else {
                     $valid = $pass === $p;
