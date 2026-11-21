@@ -16,12 +16,52 @@ namespace {
 
 namespace x\user {
     function page__author($author) {
-        if ($author && \is_string($author) && 0 === \strpos($author, '@') && ($file = \exist(\LOT . \D . 'user' . \D . \substr($author, 1) . '.{' . \x\page\x() . '}', 1))) {
+        $author ??= \first($this->offsetGet('authors') ?? []);
+        if (\is_string($author ?? 0) && '@' === ($author[0] ?? 0) && ($file = \exist(\LOT . \D . 'user' . \D . \substr($author, 1) . '.{' . \x\page\x() . '}', 1))) {
             return new \User($file);
         }
         return $author;
     }
+    function page__authors($authors) {
+        $lot = [];
+        if (!$authors) {
+            return $lot;
+        }
+        foreach ($authors as $author) {
+            if ($author = page__author($author)) {
+                $lot[$author instanceof \User ? $author->name : $author] = $author;
+            }
+        }
+        return new \Users($lot);
+    }
+    function page__user($user) {
+        $user ??= \first($this->offsetGet('users') ?? []);
+        // Get user by ID
+        if (\is_int($user)) {
+            $user = \To::user($user);
+        }
+        // Get user by name
+        if (\is_string($user) && ($file = \exist(\LOT . \D . 'user' . \D . $user . '.{' . \x\page\x() . '}', 1))) {
+            return new \User($file);
+        }
+        return null; // User does not exist
+    }
+    function page__users($users) {
+        $lot = [];
+        if (!$users) {
+            return $lot;
+        }
+        foreach ($users as $user) {
+            if ($user = page__user($user)) {
+                $lot[$user instanceof \User ? $user->name : $user] = $user;
+            }
+        }
+        return new \Users($lot);
+    }
     \Hook::set('page.author', __NAMESPACE__ . "\\page__author", 2);
+    \Hook::set('page.authors', __NAMESPACE__ . "\\page__authors", 2);
+    \Hook::set('page.user', __NAMESPACE__ . "\\page__user", 2);
+    \Hook::set('page.users', __NAMESPACE__ . "\\page__users", 2);
     if ($part = \x\page\part($path = \trim($link->path ?? "", '/'))) {
         $path = \substr($path, 0, -\strlen('/' . $part));
     }

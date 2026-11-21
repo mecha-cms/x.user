@@ -112,3 +112,77 @@ Or:
 ~~~ .php
 <?= $page->author; ?>
 ~~~
+
+### Various Ways to Reference a User
+
+There are various ways to reference a user:
+
+ 1. Reference a user by name via the `author` field:
+
+    ~~~ .txt.yaml
+    ---
+    title: Page Title
+    author: '@user-name'
+    ...
+
+    Page content.
+    ~~~
+
+    The `@` prefix is necessary when referencing a user. If omitted, the value will be interpreted as a plain author
+    (display) name.
+
+ 2. Reference a user by ID via the `user` field:
+
+    ~~~ .txt.yaml
+    ---
+    title: Page Title
+    user: 1
+    ...
+
+    Page content.
+    ~~~
+
+    You will need to store the ID this way:
+
+    ~~~ .txt
+    .\
+    └── lot\
+        └── user\
+            ├── user-name\
+            │   └── +\
+            │       └── id.json ✔
+            └── user-name.txt
+    ~~~
+
+ 3. Reference a user by name via the `user` field:
+
+    ~~~ .txt.yaml
+    ---
+    title: Page Title
+    user: user-name
+    ...
+
+    Page content.
+    ~~~
+
+ 4. Multiple authors:
+
+    ~~~ .txt.yaml
+    ---
+    title: Page Title
+    authors: [ Author 1, Author 2, Author 3, '@user-name' ]
+    ...
+
+    Page content.
+    ~~~
+
+ 4. Multiple users:
+
+    ~~~ .txt.yaml
+    ---
+    title: Page Title
+    users: [ 1, 2, 3, user-name ]
+    ...
+
+    Page content.
+    ~~~
