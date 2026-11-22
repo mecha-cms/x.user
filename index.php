@@ -24,10 +24,7 @@ namespace x\user {
     }
     function page__authors($authors) {
         $lot = [];
-        if (!$authors) {
-            return $lot;
-        }
-        foreach ($authors as $author) {
+        if ($authors) foreach ($authors as $author) {
             if ($author = page__author($author)) {
                 $lot[$author instanceof \User ? $author->name : $author] = $author;
             }
@@ -48,10 +45,7 @@ namespace x\user {
     }
     function page__users($users) {
         $lot = [];
-        if (!$users) {
-            return $lot;
-        }
-        foreach ($users as $user) {
+        if ($users) foreach ($users as $user) {
             if ($user = page__user($user)) {
                 $lot[$user instanceof \User ? $user->name : $user] = $user;
             }
@@ -146,7 +140,7 @@ namespace x\user {
                 \Asset::set(__DIR__ . \D . 'index' . (\defined("\\TEST") && \TEST ? '.' : '.min.') . 'css', 20.1);
             }
             \lot('t')[] = \i(0 === $count ? 'Create' : (isset($user) && $user->exist ? 'Exit' : 'Enter'));
-            return ['key' => 'user', 'status' => 200];
+            return ['status' => 200, 'view' => 'user'];
         }
         $error = $valid = 0;
         $key = $_POST['key'] ?? "";
